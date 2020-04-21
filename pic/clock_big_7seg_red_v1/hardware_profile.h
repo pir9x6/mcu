@@ -5,7 +5,7 @@
 
 #define I2C_FREQ                100000
 #define I2C_ADR_DS1307          0x68
-#define I2C_ADR_PCF8574         0x40
+#define I2C_ADR_PCF8574         0x20
 
 #define VERSION                 0x14
 

@@ -6,10 +6,8 @@
                    projectFiles="true">
       <itemPath>hardware_profile.h</itemPath>
       <itemPath>interrupts_management.h</itemPath>
-      <itemPath>../../lib_pic/adc.h</itemPath>
       <itemPath>../../lib_pic/i2c.h</itemPath>
       <itemPath>../../lib_misc/delays.h</itemPath>
-      <itemPath>../../lib_misc/clock.h</itemPath>
       <itemPath>../../lib_misc/misc.h</itemPath>
       <itemPath>../../lib_misc/types.h</itemPath>
       <itemPath>../../lib_pic/timer.h</itemPath>
@@ -17,6 +15,7 @@
       <itemPath>../../lib_misc/bcd.h</itemPath>
       <itemPath>../../lib_comp/ds1307.h</itemPath>
       <itemPath>../../lib_comp/pcf8574.h</itemPath>
+      <itemPath>../../lib_misc/date_time.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -26,16 +25,15 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
-      <itemPath>../../lib_pic/adc.c</itemPath>
       <itemPath>../../lib_pic/i2c.c</itemPath>
       <itemPath>../../lib_misc/delays.c</itemPath>
-      <itemPath>../../lib_misc/clock.c</itemPath>
       <itemPath>../../lib_misc/misc.c</itemPath>
       <itemPath>../../lib_pic/timer.c</itemPath>
       <itemPath>../../lib_pic/pwm.c</itemPath>
       <itemPath>../../lib_misc/bcd.c</itemPath>
       <itemPath>../../lib_comp/ds1307.c</itemPath>
       <itemPath>../../lib_comp/pcf8574.c</itemPath>
+      <itemPath>../../lib_misc/date_time.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -175,6 +173,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

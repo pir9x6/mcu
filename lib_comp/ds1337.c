@@ -1,4 +1,5 @@
 #include "bcd.h"
+#include "date_time.h"
 #include "ds1337.h"
 #include "i2c.h"
 #include "types.h"
@@ -31,7 +32,7 @@ result_t ds1337_init (I2C_BUS i2c_bus_id, u8 adr_chip)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------- Get Time & Date from RTC ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1337_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, time_t *t)
+result_t ds1337_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t *t)
 {
     u8 tmp;
 
@@ -70,7 +71,7 @@ result_t ds1337_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, time_t *t)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Update Time of RTC ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1337_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, time_t t)
+result_t ds1337_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t t)
 {
     u8 tmp;
 

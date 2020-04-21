@@ -49,17 +49,6 @@ typedef struct
     u8 hrs;
     u8 min;
     u8 sec;
-    u8 dow;
-    u8 day;
-    u8 mth;
-    u8 yrs;
-}time_t;
-
-typedef struct
-{
-    u8 hrs;
-    u8 min;
-    u8 sec;
     u8 frm;
 }timecode_t;
 

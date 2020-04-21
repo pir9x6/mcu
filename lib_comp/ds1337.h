@@ -1,6 +1,7 @@
 #ifndef LIB_COMP_DS1337_H
 #define LIB_COMP_DS1337_H
 
+#include "date_time.h"
 #include "i2c.h"
 #include "types.h"
 
@@ -22,7 +23,7 @@
 #define DS1337_REG_STATUS       0x0F
 
 result_t ds1337_init     (I2C_BUS i2c_bus_id, u8 adr_chip);
-result_t ds1337_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, time_t *t);
-result_t ds1337_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, time_t t);
+result_t ds1337_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t *t);
+result_t ds1337_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t t);
 
 #endif

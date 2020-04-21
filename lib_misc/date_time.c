@@ -1,7 +1,7 @@
-#include "clock.h"
+#include "date_time.h"
 #include "types.h"
 
-void datetime_decrease_seconds(time_t *t)
+void datetime_decrease_seconds(date_time_t *t)
 {
     if (t->sec == 0)
     {
@@ -14,7 +14,7 @@ void datetime_decrease_seconds(time_t *t)
     }
 }
 
-void datetime_increase_seconds(time_t *t)
+void datetime_increase_seconds(date_time_t *t)
 {
     if (t->sec >= 59)
     {
@@ -27,7 +27,7 @@ void datetime_increase_seconds(time_t *t)
     }
 }
 
-void datetime_decrease_minutes(time_t *t)
+void datetime_decrease_minutes(date_time_t *t)
 {
     if (t->min == 0)
     {
@@ -40,7 +40,7 @@ void datetime_decrease_minutes(time_t *t)
     }
 }
 
-void datetime_increase_minutes(time_t *t)
+void datetime_increase_minutes(date_time_t *t)
 {
     if (t->min >= 59)
     {
@@ -53,7 +53,7 @@ void datetime_increase_minutes(time_t *t)
     }
 }
 
-void datetime_decrease_hours(time_t *t)
+void datetime_decrease_hours(date_time_t *t)
 {
     if (t->hrs == 0)
     {
@@ -66,7 +66,7 @@ void datetime_decrease_hours(time_t *t)
     }
 }
 
-void datetime_increase_hours(time_t *t)
+void datetime_increase_hours(date_time_t *t)
 {
     if (t->hrs >= 23)
     {
@@ -79,7 +79,7 @@ void datetime_increase_hours(time_t *t)
     }
 }
 
-void datetime_decrease_days(time_t *t)
+void datetime_decrease_days(date_time_t *t)
 {
     if (t->day == 0)
     {
@@ -91,7 +91,7 @@ void datetime_decrease_days(time_t *t)
     }
 }
 
-void datetime_increase_days(time_t *t)
+void datetime_increase_days(date_time_t *t)
 {
     if (t->day >= 23)
     {

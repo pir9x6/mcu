@@ -1,5 +1,5 @@
-#ifndef _I2C_H_
-#define _I2C_H_
+#ifndef LIB_PIC_I2C_H
+#define LIB_PIC_I2C_H
 
 #include <xc.h>
 #include "hardware_profile.h"
@@ -11,14 +11,13 @@
     #include "uart.h"
 #endif
 
-typedef enum eI2C_BUS
-{
+typedef enum{
     I2C_BUS_1 = 0,
-    I2C_BUS_2 = 1,
-    I2C_BUS_3 = 2,
-    I2C_BUS_4 = 3,
-    I2C_BUS_5 = 4,
-    I2C_BUS_6 = 5
+    I2C_BUS_2,
+    I2C_BUS_3,
+    I2C_BUS_4,
+    I2C_BUS_5,
+    I2C_BUS_6
 }I2C_BUS;
 
 #define I2C_MASTER              0x0001
@@ -48,17 +47,17 @@ typedef enum eI2C_BUS
 #define I2C_ADR_TMP75           0x48
 
 
-RESULT i2c_init     (I2C_BUS bus_id, u32 freq, u16 opt);
-RESULT i2c_start    (I2C_BUS bus_id);
-RESULT i2c_rstart   (I2C_BUS bus_id);
-RESULT i2c_stop     (I2C_BUS bus_id);
-RESULT i2c_read     (I2C_BUS bus_id, u8 ack, u8 *data);
-RESULT i2c_write    (I2C_BUS bus_id, u8 data);
-RESULT i2c_send_ack (I2C_BUS bus_id, u8 ack);
-RESULT i2c_wait_ack (I2C_BUS bus_id);
-RESULT i2c_read_reg (I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data);
-RESULT i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data);
-RESULT i2c_idle     (I2C_BUS bus_id);
+result_t i2c_init     (I2C_BUS bus_id, u32 freq, u16 opt);
+result_t i2c_start    (I2C_BUS bus_id);
+result_t i2c_rstart   (I2C_BUS bus_id);
+result_t i2c_stop     (I2C_BUS bus_id);
+result_t i2c_read     (I2C_BUS bus_id, u8 ack, u8 *data);
+result_t i2c_write    (I2C_BUS bus_id, u8 data);
+result_t i2c_send_ack (I2C_BUS bus_id, u8 ack);
+result_t i2c_wait_ack (I2C_BUS bus_id);
+result_t i2c_read_reg (I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data);
+result_t i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data);
+result_t i2c_idle     (I2C_BUS bus_id);
 
 
 #if defined (__dsPIC33F__)

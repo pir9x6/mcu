@@ -19,9 +19,9 @@
 #define __STM32F10x_TYPE_H
 
 
-typedef signed long  s32;
-typedef signed short s16;
-typedef signed char  s8;
+// typedef signed long  s32;        /* PBL - conflit avec les types.h des PIC */
+// typedef signed short s16;
+// typedef signed char  s8;
 
 typedef signed long  const sc32;  // Read Only 
 typedef signed short const sc16;  // Read Only 
@@ -35,9 +35,9 @@ typedef volatile signed long  const vsc32;  // Read Only
 typedef volatile signed short const vsc16;  // Read Only 
 typedef volatile signed char  const vsc8;   // Read Only 
 
-typedef unsigned long  u32;
-typedef unsigned short u16;
-typedef unsigned char  u8;
+// typedef unsigned long  u32;
+// typedef unsigned short u16;
+// typedef unsigned char  u8;
 
 typedef unsigned long  const uc32;  // Read Only 
 typedef unsigned short const uc16;  // Read Only 

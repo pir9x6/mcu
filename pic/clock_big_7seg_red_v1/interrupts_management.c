@@ -78,7 +78,7 @@ void uart_isr (void)
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
-        if (U1STAbits.URXDA)                // si donnée dans buffer RX alors :
+        if (U1STAbits.URXDA)                // si donnï¿½e dans buffer RX alors :
         {
 
         }

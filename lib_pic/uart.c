@@ -32,7 +32,7 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Configuration de l'UART ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
+result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
@@ -207,7 +207,7 @@ void __attribute__ ((interrupt, no_auto_psv))_U1RXInterrupt(void)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //-------------------------- Envoi d'un caractère -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write (UART_ID uart_id, u8 data)
+result_t uart_write (UART_ID uart_id, u8 data)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
@@ -256,7 +256,7 @@ RESULT uart_write (UART_ID uart_id, u8 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------- Envoi d'une string de caractères ----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_string (UART_ID uart_id, ROM char *data)
+result_t uart_write_string (UART_ID uart_id, ROM char *data)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
@@ -316,7 +316,7 @@ RESULT uart_write_string (UART_ID uart_id, ROM char *data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Envoi d'un registre 8 bits ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_char (UART_ID uart_id, u8 data)
+result_t uart_write_char (UART_ID uart_id, u8 data)
 {
     u8 bcd[5];
 
@@ -333,7 +333,7 @@ RESULT uart_write_char (UART_ID uart_id, u8 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Envoi d'un registre 8 bits ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_hexa_u8 (UART_ID uart_id, u8 data, u8 opt)
+result_t uart_write_hexa_u8 (UART_ID uart_id, u8 data, u8 opt)
 {
     u8 bcd[2];
 
@@ -358,7 +358,7 @@ RESULT uart_write_hexa_u8 (UART_ID uart_id, u8 data, u8 opt)
     return SUCCESS;
 }
 
-RESULT uart_write_u8 (UART_ID uart_id, u8 data, u8 opt)
+result_t uart_write_u8 (UART_ID uart_id, u8 data, u8 opt)
 {
     u8 bcd[5];
 
@@ -383,7 +383,7 @@ RESULT uart_write_u8 (UART_ID uart_id, u8 data, u8 opt)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Envoi d'un registre 16 bits ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_hexa_u16 (UART_ID uart_id, u16 data, u8 opt)
+result_t uart_write_hexa_u16 (UART_ID uart_id, u16 data, u8 opt)
 {
     u8 bcd[4];
 
@@ -412,7 +412,7 @@ RESULT uart_write_hexa_u16 (UART_ID uart_id, u16 data, u8 opt)
     return SUCCESS;
 }
 
-RESULT uart_write_u16 (UART_ID uart_id, u16 data, u8 opt)
+result_t uart_write_u16 (UART_ID uart_id, u16 data, u8 opt)
 {
     u8 bcd[5];
     dec_2_bcd (data, bcd);
@@ -438,7 +438,7 @@ RESULT uart_write_u16 (UART_ID uart_id, u16 data, u8 opt)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Envoi d'un registre 32 bits ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_hexa_u32 (UART_ID uart_id, u32 data, u8 opt)
+result_t uart_write_hexa_u32 (UART_ID uart_id, u32 data, u8 opt)
 {
     u8 bcd[8];
 
@@ -477,7 +477,7 @@ RESULT uart_write_hexa_u32 (UART_ID uart_id, u32 data, u8 opt)
     return SUCCESS;
 }
 
-RESULT uart_write_u32 (UART_ID uart_id, u32 data, u8 opt)
+result_t uart_write_u32 (UART_ID uart_id, u32 data, u8 opt)
 {
     u8 bcd[10];
     dec_2_bcd32 (data, bcd);
@@ -508,7 +508,7 @@ RESULT uart_write_u32 (UART_ID uart_id, u32 data, u8 opt)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- send date and hour ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_date (UART_ID uart_id, t_time t)
+result_t uart_write_date (UART_ID uart_id, t_time t)
 {
     u8 bcd[5];
 
@@ -557,7 +557,7 @@ RESULT uart_write_date (UART_ID uart_id, t_time t)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //-------------------------- Envoi de la temperature --------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT uart_write_temperature (UART_ID uart_id, u8 temp[])
+result_t uart_write_temperature (UART_ID uart_id, u8 temp[])
 {
     u8 bcd[5];
 

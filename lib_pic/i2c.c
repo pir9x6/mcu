@@ -14,6 +14,7 @@
 #include "pic_compiler.h"
 #include "hardware_profile.h"
 #include "delays.h"
+#include "types.h"
 
 u8 addr_flag = 0;  // Initlize AddFlag
 u8 data_flag = 0;  // Initlize DataFlag
@@ -22,7 +23,7 @@ u8 addr_ptr = 0;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Configuration du bus I2C --------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
+result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 {
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -151,9 +152,9 @@ RESULT i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send start condition ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_start(I2C_BUS bus_id)
+result_t i2c_start(I2C_BUS bus_id)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -195,9 +196,9 @@ RESULT i2c_start(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Send restart condition -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_rstart(I2C_BUS bus_id)
+result_t i2c_rstart(I2C_BUS bus_id)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -237,9 +238,9 @@ RESULT i2c_rstart(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send of Not Acknowledge ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_send_ack(I2C_BUS bus_id, u8 Ack)
+result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -279,7 +280,7 @@ RESULT i2c_send_ack(I2C_BUS bus_id, u8 Ack)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Reception of Acknowledge ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_wait_ack(I2C_BUS bus_id)
+result_t i2c_wait_ack(I2C_BUS bus_id)
 {
     u8 i;
     #if defined (__18CXX) || defined(_PIC18)
@@ -336,9 +337,9 @@ RESULT i2c_wait_ack(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Read operation ----------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
+result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -386,9 +387,9 @@ RESULT i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Write operation ---------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_write(I2C_BUS bus_id, u8 data)
+result_t i2c_write(I2C_BUS bus_id, u8 data)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -433,7 +434,7 @@ RESULT i2c_write(I2C_BUS bus_id, u8 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send stop condition -------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_stop(I2C_BUS bus_id)
+result_t i2c_stop(I2C_BUS bus_id)
 {
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -473,7 +474,7 @@ RESULT i2c_stop(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------------- Idle --------------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_idle(I2C_BUS bus_id)
+result_t i2c_idle(I2C_BUS bus_id)
 {
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -528,9 +529,9 @@ RESULT i2c_idle(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Read a register of a chip -------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
+result_t i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     if (result == SUCCESS)
@@ -568,9 +569,9 @@ RESULT i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------- Write in a register of a chip -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data)
+result_t i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     if (result == SUCCESS)

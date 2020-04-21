@@ -1,0 +1,245 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"48 ../../lib_misc/types.h
+[; ;../../lib_misc/types.h: 48: {
+[s S2 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 ]
+[n S2 . hrs min sec dow day mth yrs ]
+"22 ../../lib_misc/clock.c
+[; ;../../lib_misc/clock.c: 22: void clock_update(time_t *t)
+[v _clock_update `(v ~T0 @X0 1 ef1`*S2 ]
+"23
+[; ;../../lib_misc/clock.c: 23: {
+{
+[e :U _clock_update ]
+"22
+[; ;../../lib_misc/clock.c: 22: void clock_update(time_t *t)
+[v _t `*S2 ~T0 @X0 1 r1 ]
+"23
+[; ;../../lib_misc/clock.c: 23: {
+[f ]
+"24
+[; ;../../lib_misc/clock.c: 24:     if (t->sec >= 59){
+[e $ ! >= -> . *U _t 2 `i -> 59 `i 5  ]
+{
+"25
+[; ;../../lib_misc/clock.c: 25:         t->sec = 0;
+[e = . *U _t 2 -> -> 0 `i `uc ]
+"26
+[; ;../../lib_misc/clock.c: 26:         if (t->min >= 59){
+[e $ ! >= -> . *U _t 1 `i -> 59 `i 6  ]
+{
+"27
+[; ;../../lib_misc/clock.c: 27:             t->min = 0;
+[e = . *U _t 1 -> -> 0 `i `uc ]
+"28
+[; ;../../lib_misc/clock.c: 28:             if (t->hrs >= 23){
+[e $ ! >= -> . *U _t 0 `i -> 23 `i 7  ]
+{
+"29
+[; ;../../lib_misc/clock.c: 29:                 t->hrs = 0;
+[e = . *U _t 0 -> -> 0 `i `uc ]
+"30
+[; ;../../lib_misc/clock.c: 30:             }else{
+}
+[e $U 8  ]
+[e :U 7 ]
+{
+"31
+[; ;../../lib_misc/clock.c: 31:                 t->hrs++;
+[e ++ . *U _t 0 -> -> 1 `i `uc ]
+"32
+[; ;../../lib_misc/clock.c: 32:             }
+}
+[e :U 8 ]
+"33
+[; ;../../lib_misc/clock.c: 33:         }else{
+}
+[e $U 9  ]
+[e :U 6 ]
+{
+"34
+[; ;../../lib_misc/clock.c: 34:             t->min++;
+[e ++ . *U _t 1 -> -> 1 `i `uc ]
+"35
+[; ;../../lib_misc/clock.c: 35:         }
+}
+[e :U 9 ]
+"36
+[; ;../../lib_misc/clock.c: 36:     }
+}
+[e :U 5 ]
+"37
+[; ;../../lib_misc/clock.c: 37: }
+[e :UE 4 ]
+}
+"42
+[; ;../../lib_misc/clock.c: 42: void datetime_decrease_minutes(time_t *t)
+[v _datetime_decrease_minutes `(v ~T0 @X0 1 ef1`*S2 ]
+"43
+[; ;../../lib_misc/clock.c: 43: {
+{
+[e :U _datetime_decrease_minutes ]
+"42
+[; ;../../lib_misc/clock.c: 42: void datetime_decrease_minutes(time_t *t)
+[v _t `*S2 ~T0 @X0 1 r1 ]
+"43
+[; ;../../lib_misc/clock.c: 43: {
+[f ]
+"44
+[; ;../../lib_misc/clock.c: 44:     if (t->min == 0)
+[e $ ! == -> . *U _t 1 `i -> 0 `i 11  ]
+"45
+[; ;../../lib_misc/clock.c: 45:     {
+{
+"46
+[; ;../../lib_misc/clock.c: 46:         t->min = 59;
+[e = . *U _t 1 -> -> 59 `i `uc ]
+"47
+[; ;../../lib_misc/clock.c: 47:     }
+}
+[e $U 12  ]
+"48
+[; ;../../lib_misc/clock.c: 48:     else
+[e :U 11 ]
+"49
+[; ;../../lib_misc/clock.c: 49:     {
+{
+"50
+[; ;../../lib_misc/clock.c: 50:         t->min--;
+[e -- . *U _t 1 -> -> 1 `i `uc ]
+"51
+[; ;../../lib_misc/clock.c: 51:     }
+}
+[e :U 12 ]
+"52
+[; ;../../lib_misc/clock.c: 52: }
+[e :UE 10 ]
+}
+"54
+[; ;../../lib_misc/clock.c: 54: void datetime_increase_minutes(time_t *t)
+[v _datetime_increase_minutes `(v ~T0 @X0 1 ef1`*S2 ]
+"55
+[; ;../../lib_misc/clock.c: 55: {
+{
+[e :U _datetime_increase_minutes ]
+"54
+[; ;../../lib_misc/clock.c: 54: void datetime_increase_minutes(time_t *t)
+[v _t `*S2 ~T0 @X0 1 r1 ]
+"55
+[; ;../../lib_misc/clock.c: 55: {
+[f ]
+"56
+[; ;../../lib_misc/clock.c: 56:     if (t->min >= 59)
+[e $ ! >= -> . *U _t 1 `i -> 59 `i 14  ]
+"57
+[; ;../../lib_misc/clock.c: 57:     {
+{
+"58
+[; ;../../lib_misc/clock.c: 58:         t->min = 0;
+[e = . *U _t 1 -> -> 0 `i `uc ]
+"59
+[; ;../../lib_misc/clock.c: 59:     }
+}
+[e $U 15  ]
+"60
+[; ;../../lib_misc/clock.c: 60:     else
+[e :U 14 ]
+"61
+[; ;../../lib_misc/clock.c: 61:     {
+{
+"62
+[; ;../../lib_misc/clock.c: 62:         t->min++;
+[e ++ . *U _t 1 -> -> 1 `i `uc ]
+"63
+[; ;../../lib_misc/clock.c: 63:     }
+}
+[e :U 15 ]
+"64
+[; ;../../lib_misc/clock.c: 64: }
+[e :UE 13 ]
+}
+"66
+[; ;../../lib_misc/clock.c: 66: void datetime_decrease_hours(time_t *t)
+[v _datetime_decrease_hours `(v ~T0 @X0 1 ef1`*S2 ]
+"67
+[; ;../../lib_misc/clock.c: 67: {
+{
+[e :U _datetime_decrease_hours ]
+"66
+[; ;../../lib_misc/clock.c: 66: void datetime_decrease_hours(time_t *t)
+[v _t `*S2 ~T0 @X0 1 r1 ]
+"67
+[; ;../../lib_misc/clock.c: 67: {
+[f ]
+"68
+[; ;../../lib_misc/clock.c: 68:     if (t->hrs == 0)
+[e $ ! == -> . *U _t 0 `i -> 0 `i 17  ]
+"69
+[; ;../../lib_misc/clock.c: 69:     {
+{
+"70
+[; ;../../lib_misc/clock.c: 70:         t->hrs = 23;
+[e = . *U _t 0 -> -> 23 `i `uc ]
+"71
+[; ;../../lib_misc/clock.c: 71:     }
+}
+[e $U 18  ]
+"72
+[; ;../../lib_misc/clock.c: 72:     else
+[e :U 17 ]
+"73
+[; ;../../lib_misc/clock.c: 73:     {
+{
+"74
+[; ;../../lib_misc/clock.c: 74:         t->hrs--;
+[e -- . *U _t 0 -> -> 1 `i `uc ]
+"75
+[; ;../../lib_misc/clock.c: 75:     }
+}
+[e :U 18 ]
+"76
+[; ;../../lib_misc/clock.c: 76: }
+[e :UE 16 ]
+}
+"78
+[; ;../../lib_misc/clock.c: 78: void datetime_increase_hours(time_t *t)
+[v _datetime_increase_hours `(v ~T0 @X0 1 ef1`*S2 ]
+"79
+[; ;../../lib_misc/clock.c: 79: {
+{
+[e :U _datetime_increase_hours ]
+"78
+[; ;../../lib_misc/clock.c: 78: void datetime_increase_hours(time_t *t)
+[v _t `*S2 ~T0 @X0 1 r1 ]
+"79
+[; ;../../lib_misc/clock.c: 79: {
+[f ]
+"80
+[; ;../../lib_misc/clock.c: 80:     if (t->hrs >= 23)
+[e $ ! >= -> . *U _t 0 `i -> 23 `i 20  ]
+"81
+[; ;../../lib_misc/clock.c: 81:     {
+{
+"82
+[; ;../../lib_misc/clock.c: 82:         t->hrs = 0;
+[e = . *U _t 0 -> -> 0 `i `uc ]
+"83
+[; ;../../lib_misc/clock.c: 83:     }
+}
+[e $U 21  ]
+"84
+[; ;../../lib_misc/clock.c: 84:     else
+[e :U 20 ]
+"85
+[; ;../../lib_misc/clock.c: 85:     {
+{
+"86
+[; ;../../lib_misc/clock.c: 86:         t->hrs++;
+[e ++ . *U _t 0 -> -> 1 `i `uc ]
+"87
+[; ;../../lib_misc/clock.c: 87:     }
+}
+[e :U 21 ]
+"88
+[; ;../../lib_misc/clock.c: 88: }
+[e :UE 19 ]
+}

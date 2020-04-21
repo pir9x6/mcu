@@ -26,7 +26,7 @@
 #elif defined(__dsPIC33F__) && defined(__C30__) // Microchip C30 compiler
     #define COMPILER_MPLAB_C30
     #include <p33Fxxxx.h>
-    //#include <Libpic30.h>
+    #include <Libpic30.h>
 #elif defined(__dsPIC33E__) && defined(__C30__) // Microchip C30 compiler
     #define COMPILER_MPLAB_C30
     #include <p33Exxxx.h>
@@ -44,8 +44,8 @@
         #define Sleep()  {__asm__ volatile ("pwrsav #0");}
         #define Idle()   {__asm__ volatile ("pwrsav #1");}
     #endif
-#elif defined (__18CXX)
-    #include <p18CXXX.h>
+// #elif defined (__18CXX)
+//     #include <p18CXXX.h>
 #elif defined (__XC8)
     #include <xc.h>
 #else

@@ -4,14 +4,12 @@
 #include "pic_compiler.h"
 
 #define I2C_FREQ                100000
+#define I2C_ADR_DS1307          0x68
+#define I2C_ADR_PCF8574         0x40
 
-#define VERSION                 0x13
-
-#define PCB1
+#define VERSION                 0x14
 
 #define GetSystemClock()        16000000L
 #define GetPeripheralClock()    GetSystemClock()
-
-#define I2C_SLAVE_ADDRESS       0x22    // 7 bit address
 
 #endif

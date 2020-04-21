@@ -1,5 +1,5 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef TYPES_H
+#define TYPES_H
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 typedef signed char                 s8;
@@ -42,7 +42,7 @@ typedef struct
 {
     double im;
     double re;
-}t_complex;
+}complex_t;
 
 typedef struct
 {
@@ -53,7 +53,7 @@ typedef struct
     u8 day;
     u8 mth;
     u8 yrs;
-}t_time;
+}time_t;
 
 typedef struct
 {
@@ -61,7 +61,7 @@ typedef struct
     u8 min;
     u8 sec;
     u8 frm;
-}t_timecode;
+}timecode_t;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #ifndef TRUE
@@ -72,14 +72,14 @@ typedef struct
 #define FALSE   0
 #endif
 
-typedef enum eRESULT
+typedef enum
 {
     SUCCESS = 0,
     ERROR,
     WARNING,
     TIMEOUT,
     UNKNOWN
-} RESULT;
+} result_t;
 
 #if defined (__18CXX)
 #define ROM     const rom

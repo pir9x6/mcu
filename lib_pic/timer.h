@@ -4,7 +4,7 @@
 #include "types.h"
 #include "pic_compiler.h"
 
-typedef enum eTIMER_ID
+typedef enum
 {
     TIMER_ID_0 = 0,
     TIMER_ID_1 = 1,
@@ -14,7 +14,7 @@ typedef enum eTIMER_ID
     TIMER_ID_5 = 5
 }TIMER_ID;
 
-typedef enum ePRESCALER
+typedef enum
 {
     TMR_PRES_1 = 0,
     TMR_PRES_8 = 1,

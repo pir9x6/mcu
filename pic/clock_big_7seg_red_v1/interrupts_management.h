@@ -1,5 +1,5 @@
-#ifndef _INTERRUPTS_MANAGEMENT_H_
-#define _INTERRUPTS_MANAGEMENT_H_
+#ifndef INTERRUPTS_MANAGEMENT_H
+#define INTERRUPTS_MANAGEMENT_H
 
 void timer1_isr();
 void timer2_isr();

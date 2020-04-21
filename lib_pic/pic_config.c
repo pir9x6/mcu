@@ -12,8 +12,8 @@
 
 #include "pic_compiler.h"
 
-#if defined (__18CXX)
-    #error -- Config are not done for PIC18 family
+#if defined (__18CXX) || defined (_PIC18)
+    //#error -- Config are not done for PIC18 family
 #elif defined(__PIC24FJ64GB002__)
     _CONFIG4(DSWDTEN_OFF & RTCOSC_LPRC )                                // RTCC uses Low Power RC Oscillator (LPRC)
     _CONFIG3(SOSCSEL_IO  & WPCFG_WPCFGDIS)

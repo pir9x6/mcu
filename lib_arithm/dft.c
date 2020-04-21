@@ -17,7 +17,7 @@
 void dft(double *data_in, double *data_out, u32 N)
 {
     u32 i, k;
-    t_complex complex[N];
+    complex_t complex[N];
     double angle;
     double w = 2*PI/N;
 

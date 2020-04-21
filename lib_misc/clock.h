@@ -3,8 +3,11 @@
 
 #include "types.h"
 
-void clock_update(t_time *t);
+void clock_update(time_t *t);
 
-void clock_switches(t_time *t);
+void datetime_decrease_minutes(time_t *t);
+void datetime_increase_minutes(time_t *t);
+void datetime_decrease_hours(time_t *t);
+void datetime_increase_hours(time_t *t);
 
 #endif

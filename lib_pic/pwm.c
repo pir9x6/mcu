@@ -1,23 +1,6 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Project     :   Global                                              &&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Company     :   PiTech                                              &&&
-//&&&   Date        :   10/11/2014                                          &&&
-//&&&   Version     :   v1.0                                                &&&
-//&&&   File        :   pwm.c                                               &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - Init PWM                                          &&&
-//&&&                   - Set PWM duty cycle                                &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Infos       :   - Tested with ds33FJ128MC802 (DOESNT WORK YET !!!!!)&&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Version     :   1.0 - First release                                 &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #include "pwm.h"
 #include "hardware_profile.h"
 #include "interrupts_management.h"
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- Init of PWM Module ----------------------------
@@ -26,8 +9,13 @@ void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
     
-    CCP1CONbits.CCP1M = 15;             // PWM mode
-    
+    if (pwm_id == PWM_ID_1){
+        CCP1CONbits.CCP1M = 15;             // PWM mode
+    }
+    else if (pwm_id == PWM_ID_2){
+        CCP2CONbits.CCP2M = 15;             // PWM mode
+    }
+
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
     #if defined (_RP0R)
@@ -55,15 +43,32 @@ void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
     #endif
 }
 
-
-
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//------------------------------- Set Duty Cycle ------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void pwm_set_duty (PWM_ID pwm_id, u16 duty)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
+    if (duty > 1023){
+        duty = 1023;
+    }
+
+    if (pwm_id == PWM_ID_1){
+        CCPR1L = (duty >> 2);                       // bits 9 to 2
+        CCP1CONbits.DC1B1 = (duty >> 1) & 0x01;     // bit 1
+        CCP1CONbits.DC1B0 = duty & 0x01;            // bit 0
+    }
+    else if (pwm_id == PWM_ID_2){
+        CCPR2L = (duty >> 2);                       // bits 9 to 2
+        CCP2CONbits.DC2B1 = (duty >> 1) & 0x01;     // bit 1
+        CCP2CONbits.DC2B0 = duty & 0x01;            // bit 0
+    }
+
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
     
     OC1RS = duty;                   // Load the Compare Register Value
+
     #endif
 }
 

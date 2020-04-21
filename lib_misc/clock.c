@@ -1,6 +1,6 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Date        :   11 Juanuary 2015                                    &&&
+//&&&   Date        :   11 January 2015                                     &&&
 //&&&   Version     :   v1.2                                                &&&
 //&&&   Requirements:   types.h                                             &&&
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -8,17 +8,18 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //&&&   Infos       :   -                                                   &&&
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions    :   v1.0    10/10/13    Creation                        &&&
-//&&&                   v1.1    03/06/14    Updated with new types          &&&
-//&&&                   v1.2    11/01/15    Rebuild all the librarie        &&&
+//&&&   Versions    :   v1.0    10 Oct 2013    Creation                     &&&
+//&&&                   v1.1    03 Jun 2014    Updated with new types       &&&
+//&&&                   v1.2    11 Jan 2015    Rebuild the library          &&&
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 #include "clock.h"
+#include "types.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------- Update Time and Date every seconds ---------------------
+//-------------------------- Update Time and Date -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void clock_update(t_time *t)
+void clock_update(time_t *t)
 {
     if (t->sec >= 59){
         t->sec = 0;
@@ -35,48 +36,55 @@ void clock_update(t_time *t)
     }
 }
 
-
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------- check switches state -----------------------------
+//------------------------------ Update Time ----------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-// void clock_switches (t_time *t)
-// {
-    // static u16 clock_sel_sw;
-    
-    // if (!SW1_PIN)
-    // {
-        // delay_ms (150);
-        // clock_sel_sw++;
-        // if (clock_sel_sw > 6)
-            // clock_sel_sw = 0;
-    // }
-    // if (!SW2_PIN)
-    // {
-        // delay_ms (150);
-        // if (clock_sel_sw == 1) {t->min--; if (t->min>59) t->min=59;}
-        // if (clock_sel_sw == 2) {t->hrs--; if (t->hrs>23) t->hrs=23;}
-        // if (clock_sel_sw == 3) {t->day--; if (t->day>31) t->day=31;}
-        // if (clock_sel_sw == 4) {t->dow--; if (t->dow>7)  t->dow=7;}
-        // if (clock_sel_sw == 5) {t->mth--; if (t->mth>12) t->mth=12;}
-        // if (clock_sel_sw == 6) {t->yrs--; if (t->yrs>99) t->yrs=99;}
-        // ds1337_set_time(bus_id, *t);
-    // }
-    // if (!SW3_PIN)
-    // {
-        // delay_ms (150);
-        // if (clock_sel_sw == 1) {t->min++; if (t->min>59) t->min=0;}
-        // if (clock_sel_sw == 2) {t->hrs++; if (t->hrs>23) t->hrs=0;}
-        // if (clock_sel_sw == 3) {t->day++; if (t->day>31) t->day=1;}
-        // if (clock_sel_sw == 4) {t->dow++; if (t->dow>7)  t->dow=1;}
-        // if (clock_sel_sw == 5) {t->mth++; if (t->mth>12) t->mth=1;}
-        // if (clock_sel_sw == 6) {t->yrs++; if (t->yrs>99) t->yrs=0;}
-        // ds1337_set_time(bus_id, *t);
-    // }
-// }
+void datetime_decrease_minutes(time_t *t)
+{
+    if (t->min == 0)
+    {
+        t->min = 59;
+        datetime_decrease_hours(t);
+    }
+    else
+    {
+        t->min--;
+    }
+}
 
+void datetime_increase_minutes(time_t *t)
+{
+    if (t->min >= 59)
+    {
+        t->min = 0;
+        datetime_increase_hours(t);
+    }
+    else
+    {
+        t->min++;
+    }
+}
 
+void datetime_decrease_hours(time_t *t)
+{
+    if (t->hrs == 0)
+    {
+        t->hrs = 23;
+    }
+    else
+    {
+        t->hrs--;
+    }
+}
 
-
-
+void datetime_increase_hours(time_t *t)
+{
+    if (t->hrs >= 23)
+    {
+        t->hrs = 0;
+    }
+    else
+    {
+        t->hrs++;
+    }
+}

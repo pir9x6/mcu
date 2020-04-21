@@ -10,9 +10,9 @@ typedef enum eSPI_ID
     SPI_ID_2 = 1
 }SPI_ID;
 
-RESULT spi_init (SPI_ID spi_id);
+result_t spi_init (SPI_ID spi_id);
 u8     spi_write(SPI_ID spi_id, u8 data);
-RESULT spi_read (SPI_ID spi_id, u8 *data);
+result_t spi_read (SPI_ID spi_id, u8 *data);
 void   spi_cs_low();
 void   spi_cs_high();
 

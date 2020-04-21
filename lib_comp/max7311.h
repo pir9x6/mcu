@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIB_COMP_MAX7311_H
+#define LIB_COMP_MAX7311_H
 
 #include "types.h"
 #include "i2c.h"
@@ -14,9 +15,8 @@
 #define MAX7311_REG_TIMEOUT        0x08
 
 result_t max7311_init (I2C_BUS i2c_bus_id, u8 port1_io, u8 port2_io);
-
 result_t max7311_write_port1 (I2C_BUS i2c_bus_id, u8 port);
-
 result_t max7311_write_port2 (I2C_BUS i2c_bus_id, u8 port);
-
 result_t max7311_read(I2C_BUS i2c_bus_id, u8 *data);
+
+#endif

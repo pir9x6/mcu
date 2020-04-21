@@ -1,22 +1,12 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Title           :   Audio Processor TDA7468                         &&&
-//&&&   Autor           :   Pierre Blaché                                   &&&
-//&&&   Date            :   June 2015                                       &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Info            :   This chip is write only                         &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions        :   v1.0 - 14/06/2015 - Creation                    &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& 
-
 #include "tda7309.h"
-
+#include "types.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- initialisation --------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7309_init(I2C_BUS i2c_bus_id, TDA7309_INPUT input, TDA7309_MUTE mute, u8 volume, TDA7309_CHANNEL channel)
+result_t tda7309_init(I2C_BUS i2c_bus_id, TDA7309_INPUT input, TDA7309_MUTE mute, u8 volume, TDA7309_CHANNEL channel)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // select input
     if (result == SUCCESS)
@@ -42,9 +32,9 @@ RESULT tda7309_init(I2C_BUS i2c_bus_id, TDA7309_INPUT input, TDA7309_MUTE mute, 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------ input selection ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7309_mute(I2C_BUS i2c_bus_id, TDA7309_MUTE mute)
+result_t tda7309_mute(I2C_BUS i2c_bus_id, TDA7309_MUTE mute)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);
@@ -69,9 +59,9 @@ RESULT tda7309_mute(I2C_BUS i2c_bus_id, TDA7309_MUTE mute)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------ input selection ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7309_input(I2C_BUS i2c_bus_id, TDA7309_INPUT input)
+result_t tda7309_input(I2C_BUS i2c_bus_id, TDA7309_INPUT input)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);
@@ -96,9 +86,9 @@ RESULT tda7309_input(I2C_BUS i2c_bus_id, TDA7309_INPUT input)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------ channel selection ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7309_channel(I2C_BUS i2c_bus_id, TDA7309_CHANNEL channel)
+result_t tda7309_channel(I2C_BUS i2c_bus_id, TDA7309_CHANNEL channel)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);
@@ -123,9 +113,9 @@ RESULT tda7309_channel(I2C_BUS i2c_bus_id, TDA7309_CHANNEL channel)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------- Set Volume Level from +0dB to -95dB ---------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7309_volume(I2C_BUS i2c_bus_id, u8 volume)
+result_t tda7309_volume(I2C_BUS i2c_bus_id, u8 volume)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);

@@ -1,5 +1,5 @@
-#ifndef _MCP23009_H_
-#define _MCP23009_H_
+#ifndef LIB_COMP_MCP23009_H
+#define LIB_COMP_MCP23009_H
 
 #include "types.h"
 #include "i2c.h"
@@ -25,11 +25,8 @@
 
 // functions
 result_t mcp23009_set_direction (I2C_BUS bus_id, u8 adr_chip, u8 dir);
-
 result_t mcp23009_set_pullup (I2C_BUS bus_id, u8 adr_chip, u8 pullup);
-
 result_t mcp23009_write_port (I2C_BUS bus_id, u8 adr_chip, u8 data);
-
 result_t mcp23009_read_port (I2C_BUS bus_id, u8 adr_chip, u8 *data);
 
 #endif

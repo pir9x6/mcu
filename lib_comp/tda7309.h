@@ -1,5 +1,5 @@
-#ifndef _TDA7309_H_
-#define _TDA7309_H_
+#ifndef LIB_COMP_TDA7309_H
+#define LIB_COMP_TDA7309_H
 
 #include "i2c.h"
 #include "types.h"
@@ -39,14 +39,10 @@ typedef enum eTDA7309_CHANNEL{
 }TDA7309_CHANNEL;
 
 // prototypes ==========================
-RESULT tda7309_init(I2C_BUS i2c_bus_id, TDA7309_INPUT input, TDA7309_MUTE mute, u8 volume, TDA7309_CHANNEL channel);
-
-RESULT tda7309_mute(I2C_BUS i2c_bus_id, TDA7309_MUTE mute);
-
-RESULT tda7309_input(I2C_BUS i2c_bus_id, TDA7309_INPUT input);
-
-RESULT tda7309_channel(I2C_BUS i2c_bus_id, TDA7309_CHANNEL channel);
-
-RESULT tda7309_volume(I2C_BUS i2c_bus_id, u8 volume);
+result_t tda7309_init(I2C_BUS i2c_bus_id, TDA7309_INPUT input, TDA7309_MUTE mute, u8 volume, TDA7309_CHANNEL channel);
+result_t tda7309_mute(I2C_BUS i2c_bus_id, TDA7309_MUTE mute);
+result_t tda7309_input(I2C_BUS i2c_bus_id, TDA7309_INPUT input);
+result_t tda7309_channel(I2C_BUS i2c_bus_id, TDA7309_CHANNEL channel);
+result_t tda7309_volume(I2C_BUS i2c_bus_id, u8 volume);
 
 #endif

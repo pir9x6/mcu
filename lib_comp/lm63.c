@@ -46,16 +46,7 @@ result_t lm63_init (I2C_BUS i2c_bus_id)
     // - normal operation
     i2c_write_reg(i2c_bus_id, I2C_ADR_LM63, LM63_REG_CONFIG1,           0x84);
 
-    // check if the chip have been well configured
-    i2c_read_reg(i2c_bus_id, I2C_ADR_LM63, LM63_REG_CONFIG_FAN,      &tmp[0]);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_LM63, LM63_REG_FAN_SPIN_UP_CFG, &tmp[1]);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_LM63, LM63_REG_PWM_FREQ,        &tmp[2]);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_LM63, LM63_REG_CONFIG1,         &tmp[3]);
-
-    if ((tmp[0] == 0x20) && (tmp[1] == 0x00) && (tmp[2] == 0x17) && (tmp[3] == 0x84))
-        return SUCCESS;
-    else 
-        return ERROR;
+    return SUCCESS;
 }
 
 

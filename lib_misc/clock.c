@@ -1,44 +1,32 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Date        :   11 January 2015                                     &&&
-//&&&   Version     :   v1.2                                                &&&
-//&&&   Requirements:   types.h                                             &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - Some functions related to time and date           &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Infos       :   -                                                   &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions    :   v1.0    10 Oct 2013    Creation                     &&&
-//&&&                   v1.1    03 Jun 2014    Updated with new types       &&&
-//&&&                   v1.2    11 Jan 2015    Rebuild the library          &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #include "clock.h"
 #include "types.h"
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------- Update Time and Date -----------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void clock_update(time_t *t)
+void datetime_decrease_seconds(time_t *t)
 {
-    if (t->sec >= 59){
-        t->sec = 0;
-        if (t->min >= 59){
-            t->min = 0;
-            if (t->hrs >= 23){
-                t->hrs = 0;
-            }else{
-                t->hrs++;
-            }
-        }else{
-            t->min++;
-        }
+    if (t->sec == 0)
+    {
+        t->sec = 59;
+        datetime_decrease_minutes(t);
+    }
+    else
+    {
+        t->sec--;
     }
 }
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------------ Update Time ----------------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+void datetime_increase_seconds(time_t *t)
+{
+    if (t->sec >= 59)
+    {
+        t->sec = 0;
+        datetime_increase_minutes(t);
+    }
+    else
+    {
+        t->sec++;
+    }
+}
+
 void datetime_decrease_minutes(time_t *t)
 {
     if (t->min == 0)
@@ -70,6 +58,7 @@ void datetime_decrease_hours(time_t *t)
     if (t->hrs == 0)
     {
         t->hrs = 23;
+        datetime_decrease_days(t);
     }
     else
     {
@@ -82,9 +71,34 @@ void datetime_increase_hours(time_t *t)
     if (t->hrs >= 23)
     {
         t->hrs = 0;
+        datetime_increase_days(t);
     }
     else
     {
         t->hrs++;
+    }
+}
+
+void datetime_decrease_days(time_t *t)
+{
+    if (t->day == 0)
+    {
+        t->day = 23;
+    }
+    else
+    {
+        t->day--;
+    }
+}
+
+void datetime_increase_days(time_t *t)
+{
+    if (t->day >= 23)
+    {
+        t->day = 0;
+    }
+    else
+    {
+        t->day++;
     }
 }

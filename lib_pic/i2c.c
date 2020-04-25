@@ -1,15 +1,3 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Titre           :   Fonctions bus I2C                               &&&
-//&&&   Fichier         :   I2C.c                                           &&&
-//&&&   Description     :   Fonctions pour le bus I2C                       &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Auteur          :   Pierre BLACHÉ                                   &&&
-//&&&   Date            :   Août 2010                                       &&&
-//&&&   Version         :   2.0    (nov 2011)                               &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Fichiers Requis :   I2C.h                                           &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #include "i2c.h"
 #include "pic_compiler.h"
 #include "hardware_profile.h"
@@ -29,10 +17,6 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 
         if (bus_id == I2C_BUS_1){
             u32 I2C_BRG = (GetSystemClock() / freq) - 1;
-
-            // set i2c pin as input (usefull ??)
-            TRISCbits.TRISC3 = 1;
-            TRISCbits.TRISC4 = 1;
 
             // set module in i2c master mode
             SSPCON1bits.SSPM = 8;
@@ -147,8 +131,6 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send start condition ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -191,8 +173,6 @@ result_t i2c_start(I2C_BUS bus_id)
     return result;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Send restart condition -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -232,8 +212,6 @@ result_t i2c_rstart(I2C_BUS bus_id)
 
     return result;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send of Not Acknowledge ---------------------------
@@ -275,8 +253,6 @@ result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
     return result;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Reception of Acknowledge ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -291,10 +267,11 @@ result_t i2c_wait_ack(I2C_BUS bus_id)
         {
             if (!SSPCON2bits.ACKSTAT)    // attendre reception du Ack du slave
             {
-                return 1;
+                return SUCCESS;
             }
         }
         PIR1bits.SSPIF = 0;         // WTF !!! ToDo before return
+        return SUCCESS; // @@@@@@@@@@@@@@@@@@@@@@ TODO @@@@@@@@@@@@@@@@@
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -329,10 +306,9 @@ result_t i2c_wait_ack(I2C_BUS bus_id)
         #error -- processor ID not specified in generic header file
 
     #endif
-    return I2C_NACK;
+
+    return ERROR;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Read operation ----------------------------------
@@ -344,9 +320,9 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
     #if defined (__18CXX) || defined(_PIC18)
 
         SSPCON2bits.RCEN = 1;
-        while (!PIR1bits.SSPIF);            // attendre que SSPIF=1
+        while (!PIR1bits.SSPIF);
         PIR1bits.SSPIF = 0;
-        i2c_send_ack(bus_id, ack);          // envoi d'un ack ou nack
+        i2c_send_ack(bus_id, ack);
         *data = SSPBUF;
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
@@ -382,8 +358,6 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
     return ERROR;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Write operation ---------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -395,24 +369,27 @@ result_t i2c_write(I2C_BUS bus_id, u8 data)
 
         SSPBUF = data;
         PIR1bits.SSPIF = 0;
-        if (i2c_wait_ack(bus_id))   result = SUCCESS;           // wait for the reception of Ack
-        else                        result = ERROR;
+
+        // wait for the reception of Ack
+        result = i2c_wait_ack(bus_id);
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            result = i2c_idle (bus_id);                             // wait for the bus to be free
+            // wait for the bus to be free
+            result = i2c_idle (bus_id);                             
             I2C1TRN = data;
-            if (i2c_wait_ack(bus_id) == I2C_ACK) return SUCCESS;    // wait for the reception of Ack
-            else                                 return ERROR;
+            // wait for the reception of Ack
+            result = i2c_wait_ack(bus_id);
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            result = i2c_idle (bus_id);                     // wait for the bus to be free
+            // wait for the bus to be free
+            result = i2c_idle (bus_id);                     
             I2C2TRN = data;
-            if (i2c_wait_ack(bus_id)) return SUCCESS;       // wait for the reception of Ack
-            else                      return ERROR;
+            // wait for the reception of Ack
+            result = i2c_wait_ack(bus_id);
         }
         #endif
 
@@ -426,10 +403,8 @@ result_t i2c_write(I2C_BUS bus_id, u8 data)
 
     #endif
     
-    return ERROR;
+    return result;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Send stop condition -------------------------------
@@ -469,8 +444,6 @@ result_t i2c_stop(I2C_BUS bus_id)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------------- Idle --------------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -492,7 +465,12 @@ result_t i2c_idle(I2C_BUS bus_id)
         u16 timeout = 0;
 
         if (bus_id == I2C_BUS_1){
-            while(I2C1CONbits.SEN || I2C1CONbits.PEN || I2C1CONbits.RCEN || I2C1CONbits.RSEN || I2C1CONbits.ACKEN || I2C1STATbits.TRSTAT){
+            while(I2C1CONbits.SEN || 
+                  I2C1CONbits.PEN || 
+                  I2C1CONbits.RCEN || 
+                  I2C1CONbits.RSEN || 
+                  I2C1CONbits.ACKEN || 
+                  I2C1STATbits.TRSTAT){
                 timeout++;
                 delay_us(1);
                 if (timeout >= 500)
@@ -502,7 +480,12 @@ result_t i2c_idle(I2C_BUS bus_id)
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            while(I2C2CONbits.SEN || I2C2CONbits.PEN || I2C2CONbits.RCEN || I2C2CONbits.RSEN || I2C2CONbits.ACKEN || I2C2STATbits.TRSTAT){
+            while(I2C2CONbits.SEN || 
+                  I2C2CONbits.PEN || 
+                  I2C2CONbits.RCEN || 
+                  I2C2CONbits.RSEN || 
+                  I2C2CONbits.ACKEN ||
+                   I2C2STATbits.TRSTAT){
                 timeout++;
                 delay_us(1);
                 if (timeout >= 500)
@@ -524,8 +507,6 @@ result_t i2c_idle(I2C_BUS bus_id)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Read a register of a chip -------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -534,70 +515,63 @@ result_t i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
     result_t result = SUCCESS;
 
     // send start condition
-    if (result == SUCCESS)
-        result = i2c_start (bus_id);
+    if (i2c_start(bus_id) != SUCCESS)
+        return ERROR;
 
     // address of the chip + W
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, (adr_chip<<1) & 0xFE);
+    if (i2c_write(bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+        return ERROR;
 
     // address of the register
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, adr_reg);
+    if (i2c_write(bus_id, adr_reg) != SUCCESS)
+        return ERROR;
 
     // send restart condition
-    if (result == SUCCESS)
-        result = i2c_rstart(bus_id);
+    if (i2c_rstart(bus_id) != SUCCESS)
+        return ERROR;
 
     // next operation is a reading
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, (adr_chip<<1) | 0x01);
+    if (i2c_write(bus_id, (adr_chip<<1) | 0x01) != SUCCESS)
+        return ERROR;
 
     // get data
-    if (result == SUCCESS)
-        result = i2c_read  (bus_id, I2C_NACK, data);
+    if (i2c_read(bus_id, I2C_NACK, data) != SUCCESS)
+        return ERROR;
 
     // send stop condition
-    if (result == SUCCESS)
-        result = i2c_stop  (bus_id);
+    if (i2c_stop(bus_id) != SUCCESS)
+        return ERROR;
 
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------- Write in a register of a chip -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data)
 {
-    result_t result = SUCCESS;
-
     // send start condition
-    if (result == SUCCESS)
-        result = i2c_start (bus_id);
+    if (i2c_start(bus_id) != SUCCESS)
+        return ERROR;
 
     // address of the chip + W
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, (adr_chip<<1) & 0xFE);
+    if (i2c_write(bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+        return ERROR;
 
     // address of the register
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, adr_reg);
+    if (i2c_write(bus_id, adr_reg) != SUCCESS)
+        return ERROR;
 
     // data to write
-    if (result == SUCCESS)
-        result = i2c_write (bus_id, data);
+    if (i2c_write(bus_id, data) != SUCCESS)
+        return ERROR;
 
     // send stop condition
-    if (result == SUCCESS)
-        result = i2c_stop  (bus_id);
+    if (i2c_stop(bus_id) != SUCCESS)
+        return ERROR;
 
     return SUCCESS;
 }
-
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- IT for Slave I2C --------------------------------
@@ -625,9 +599,6 @@ void __attribute__((interrupt, no_auto_psv))_SI2C1Interrupt()
     _SI2C1IF = 0;   //clear I2C1 Slave interrupt flag
 }
 #endif
-
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //-------------------------- IT for Master I2C --------------------------------

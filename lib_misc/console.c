@@ -22,7 +22,7 @@ RESULT command_line_interpreter (u8 uart_rx_data)
 {
     u8 arg[10];
     u8 tmp=0;
-    #ifdef USE_DS1337
+    #ifdef USE_DS1337       // @@@@@@@@@@@@@@@@@@@@@ faire mieux: peut etre avec le define du .h ???
     t_time t;
     #endif
     #ifdef USE_DS1621

@@ -4,8 +4,8 @@
 #include "delays.h"
 #include "types.h"
 
-RESULT ir_nec_decoding();
+result_t ir_nec_decoding();
 
-RESULT ir_rc5_decoding();
+result_t ir_rc5_decoding();
 
 #endif

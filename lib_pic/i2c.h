@@ -2,10 +2,10 @@
 #define LIB_PIC_I2C_H
 
 #include <xc.h>
+
+#include "delays.h"
 #include "hardware_profile.h"
 #include "types.h"
-#include "misc.h"
-#include "delays.h"
 
 #if defined UART_VERBOSE
     #include "uart.h"
@@ -27,25 +27,6 @@ typedef enum{
 
 #define I2C_ACK                 0
 #define I2C_NACK                1
-
-#define I2C_ADR_24LC1025        0x50
-#define I2C_ADR_BH1750          0x23
-#define I2C_ADR_BMP085          0x77
-#define I2C_ADR_CY22393         0x69
-#define I2C_ADR_DS1621          0x48
-#define I2C_ADR_LM63            0x4C
-#define I2C_ADR_MAX517          0x2C
-#define I2C_ADR_MAX518          0x2C
-#define I2C_ADR_MAX6956         0x40
-#define I2C_ADR_MAX7311         0x20
-#define I2C_ADR_MCP23009        0x20
-#define I2C_ADR_MMA7660         0x4C
-#define I2C_ADR_TDA7309         0x18
-#define I2C_ADR_TDA7439         0x44
-#define I2C_ADR_TDA7468         0x44
-#define I2C_ADR_TEA5767         0x60
-#define I2C_ADR_TMP75           0x48
-
 
 result_t i2c_init     (I2C_BUS bus_id, u32 freq, u16 opt);
 result_t i2c_start    (I2C_BUS bus_id);

@@ -15,6 +15,10 @@ void init_array(char array[], u8 val);
 
 u8 swap_bits(u8 i);
 
+const char  *u8_to_bin(u8  data);
+const char *u16_to_bin(u16 data);
+const char *u32_to_bin(u32 data);
+
 #define Lo(X)   (unsigned char)(X&0x00ff)
 #define Hi(X)   (unsigned char)((X>>8)&0x00ff)
 

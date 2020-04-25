@@ -14,6 +14,7 @@ void datetime_decrease_seconds(date_time_t *t)
     }
 }
 
+
 void datetime_increase_seconds(date_time_t *t)
 {
     if (t->sec >= 59)

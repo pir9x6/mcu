@@ -9,6 +9,8 @@ void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
     
+    (void)freq;
+    
     if (pwm_id == PWM_ID_1){
         CCP1CONbits.CCP1M = 15;             // PWM mode
     }

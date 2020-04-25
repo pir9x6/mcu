@@ -1,20 +1,5 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Project     :   Global                                              &&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Company     :   PiTech                                              &&&
-//&&&   Date        :   10/11/2014                                          &&&
-//&&&   Version     :   v1.0                                                &&&
-//&&&   File        :   timer.c                                             &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - Init Timers                                       &&&
-//&&&                   - Set Period                                        &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Infos       :   - Tested with ds33FJ128MC802                        &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Version     :   1.0 - First release                                 &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #include "timer.h"
+#include "types.h"
 
 #if defined(__PIC24F__) || defined(__dsPIC33F__)
 #include "interrupts_management.h"
@@ -23,10 +8,51 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------- Configuration of 16 bits Timers -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+result_t timer_init(TIMER_ID id, 
+                    TMR_PRESCALER prescaler, 
+                    TMR_POSTSCALER postscaler,
+                    u8 timer)
+{
+    if (id == TIMER_ID_0){
 
+    }
+    else if (id == TIMER_ID_1){
+
+    }
+    else if (id == TIMER_ID_2){
+        /* Enables the TMR2 to PR2 match interrupt */
+        PIE1bits.TMR2IE = 1;
+
+        /* enable global interrupts */
+        INTCONbits.GIE = 1;         
+
+        /* enable peripheral interrupts */
+        INTCONbits.PEIE = 1;            
+        
+        /* Set timer period */
+        PR2 = timer;                    
+        
+        /* Prescaler */
+        T2CONbits.T2CKPS = prescaler;
+
+        /* postscaler */
+        T2CONbits.TOUTPS = postscaler;  
+
+        /* enable timer */
+        T2CONbits.TMR2ON = 1;           
+        
+        // Enable priority levels on interrupts
+        RCONbits.IPEN = 1;  
+    }
+    else if (id == TIMER_ID_3){
+
+    }
+
+    return SUCCESS;
+}
 //=============================================================================
 #if defined (TMR0IF_bit)
-void timer0_init (PRESCALER scaler)
+void timer0_init (TMR_PRESCALER scaler)
 {
     // ========  ToDo  ========
     PIE1  = 0x02;                   // enable interrupt sur timer 2
@@ -42,7 +68,7 @@ void timer0_init (PRESCALER scaler)
 
 //=============================================================================
 #if defined (_T1IF) || defined (TMR1IF_bit)
-void timer1_init (PRESCALER scaler, u16 timer)
+void timer1_init (TMR_PRESCALER prescaler, u16 timer)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
     
@@ -53,7 +79,7 @@ void timer1_init (PRESCALER scaler, u16 timer)
     INTCONbits.PEIE = 1;            // enable peripheral interrupts
     
     T0CONbits.T08BIT = 0;           // configure as a 16-bits timer
-    T0CONbits.T0PS = scaler;        // set prescaler
+    T0CONbits.T0PS = prescaler;     // set prescaler
     T0CONbits.TMR0ON = 1;           // Enable Timer
     RCONbits.IPEN = 1;              // Interruption prioritaires activées
     
@@ -79,25 +105,34 @@ void timer1_init (PRESCALER scaler, u16 timer)
 
 //=============================================================================
 #if defined (_T2IF) || defined (TMR2IF_bit)
-void timer2_init (PRESCALER scaler, u16 timer)
+void timer2_init (TMR_PRESCALER scaler, u16 timer)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
-    PIE1bits.TMR2IE = 1;            // enable interrupt sur timer 2
+    /* Enables the TMR2 to PR2 match interrupt */
+    PIE1bits.TMR2IE = 1;
 
-    INTCONbits.GIE = 1;             // enable global interrupts
-    INTCONbits.PEIE = 1;            // enable peripheral interrupts
+    /* enable global interrupts */
+    INTCONbits.GIE = 1;         
+
+    /* enable peripheral interrupts */
+    INTCONbits.PEIE = 1;            
     
-    PR2 = timer;                    // Valeur de debordement du Timer 2
+    /* Set timer period */
+    PR2 = timer;                    
     
+    /* Prescaler */
     T2CONbits.T2CKPS = 3;
-    T2CONbits.TOUTPS = scaler-1;    // postscaler
-    T2CONbits.TMR2ON = 1;           // enable timer
-    
-    RCONbits.IPEN = 1;              // Interruption prioritaires activées
 
+    /* postscaler */
+    T2CONbits.TOUTPS = scaler-1;  
+
+    /* enable timer */
+    T2CONbits.TMR2ON = 1;           
     
-    
+    // Enable priority levels on interrupts
+    RCONbits.IPEN = 1;              
+
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
@@ -122,7 +157,7 @@ void timer2_init (PRESCALER scaler, u16 timer)
 
 //=============================================================================
 #if defined (_T3IF) || defined (TMR3IF_bit)
-void timer3_init (PRESCALER scaler, u16 timer)
+void timer3_init (TMR_PRESCALER scaler, u16 timer)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
     
@@ -152,7 +187,7 @@ void timer3_init (PRESCALER scaler, u16 timer)
 //--------------------- Configuration of 32 bits Timers -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #ifdef _T3IF
-void timer23_init (PRESCALER scaler, u32 timer)
+void timer23_init (TMR_PRESCALER scaler, u32 timer)
 {
     #if defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -183,7 +218,7 @@ void timer23_init (PRESCALER scaler, u32 timer)
 
 
 #ifdef _T5IF
-void timer45_init (PRESCALER scaler, u32 timer)
+void timer45_init (TMR_PRESCALER scaler, u32 timer)
 {
     #if defined(__PIC24F__) || defined(__dsPIC33F__)
 

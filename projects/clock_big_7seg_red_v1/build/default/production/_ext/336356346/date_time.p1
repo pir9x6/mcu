@@ -1,0 +1,385 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"7 ../../lib_misc/date_time.h
+[; ;../../lib_misc/date_time.h: 7: {
+[s S3 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 ]
+[n S3 . hrs min sec dow day mth yrs ]
+"19
+[; ;../../lib_misc/date_time.h: 19: void datetime_decrease_minutes(date_time_t *t);
+[v _datetime_decrease_minutes `(v ~T0 @X0 0 ef1`*S3 ]
+"20
+[; ;../../lib_misc/date_time.h: 20: void datetime_increase_minutes(date_time_t *t);
+[v _datetime_increase_minutes `(v ~T0 @X0 0 ef1`*S3 ]
+"21
+[; ;../../lib_misc/date_time.h: 21: void datetime_decrease_hours(date_time_t *t);
+[v _datetime_decrease_hours `(v ~T0 @X0 0 ef1`*S3 ]
+"22
+[; ;../../lib_misc/date_time.h: 22: void datetime_increase_hours(date_time_t *t);
+[v _datetime_increase_hours `(v ~T0 @X0 0 ef1`*S3 ]
+"23
+[; ;../../lib_misc/date_time.h: 23: void datetime_decrease_days(date_time_t *t);
+[v _datetime_decrease_days `(v ~T0 @X0 0 ef1`*S3 ]
+"24
+[; ;../../lib_misc/date_time.h: 24: void datetime_increase_days(date_time_t *t);
+[v _datetime_increase_days `(v ~T0 @X0 0 ef1`*S3 ]
+"4 ../../lib_misc/date_time.c
+[; ;../../lib_misc/date_time.c: 4: void datetime_decrease_seconds(date_time_t *t)
+[v _datetime_decrease_seconds `(v ~T0 @X0 1 ef1`*S3 ]
+"5
+[; ;../../lib_misc/date_time.c: 5: {
+{
+[e :U _datetime_decrease_seconds ]
+"4
+[; ;../../lib_misc/date_time.c: 4: void datetime_decrease_seconds(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"5
+[; ;../../lib_misc/date_time.c: 5: {
+[f ]
+"6
+[; ;../../lib_misc/date_time.c: 6:     if (t->sec == 0)
+[e $ ! == -> . *U _t 2 `i -> 0 `i 5  ]
+"7
+[; ;../../lib_misc/date_time.c: 7:     {
+{
+"8
+[; ;../../lib_misc/date_time.c: 8:         t->sec = 59;
+[e = . *U _t 2 -> -> 59 `i `uc ]
+"9
+[; ;../../lib_misc/date_time.c: 9:         datetime_decrease_minutes(t);
+[e ( _datetime_decrease_minutes (1 _t ]
+"10
+[; ;../../lib_misc/date_time.c: 10:     }
+}
+[e $U 6  ]
+"11
+[; ;../../lib_misc/date_time.c: 11:     else
+[e :U 5 ]
+"12
+[; ;../../lib_misc/date_time.c: 12:     {
+{
+"13
+[; ;../../lib_misc/date_time.c: 13:         t->sec--;
+[e -- . *U _t 2 -> -> 1 `i `uc ]
+"14
+[; ;../../lib_misc/date_time.c: 14:     }
+}
+[e :U 6 ]
+"15
+[; ;../../lib_misc/date_time.c: 15: }
+[e :UE 4 ]
+}
+"18
+[; ;../../lib_misc/date_time.c: 18: void datetime_increase_seconds(date_time_t *t)
+[v _datetime_increase_seconds `(v ~T0 @X0 1 ef1`*S3 ]
+"19
+[; ;../../lib_misc/date_time.c: 19: {
+{
+[e :U _datetime_increase_seconds ]
+"18
+[; ;../../lib_misc/date_time.c: 18: void datetime_increase_seconds(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"19
+[; ;../../lib_misc/date_time.c: 19: {
+[f ]
+"20
+[; ;../../lib_misc/date_time.c: 20:     if (t->sec >= 59)
+[e $ ! >= -> . *U _t 2 `i -> 59 `i 8  ]
+"21
+[; ;../../lib_misc/date_time.c: 21:     {
+{
+"22
+[; ;../../lib_misc/date_time.c: 22:         t->sec = 0;
+[e = . *U _t 2 -> -> 0 `i `uc ]
+"23
+[; ;../../lib_misc/date_time.c: 23:         datetime_increase_minutes(t);
+[e ( _datetime_increase_minutes (1 _t ]
+"24
+[; ;../../lib_misc/date_time.c: 24:     }
+}
+[e $U 9  ]
+"25
+[; ;../../lib_misc/date_time.c: 25:     else
+[e :U 8 ]
+"26
+[; ;../../lib_misc/date_time.c: 26:     {
+{
+"27
+[; ;../../lib_misc/date_time.c: 27:         t->sec++;
+[e ++ . *U _t 2 -> -> 1 `i `uc ]
+"28
+[; ;../../lib_misc/date_time.c: 28:     }
+}
+[e :U 9 ]
+"29
+[; ;../../lib_misc/date_time.c: 29: }
+[e :UE 7 ]
+}
+"31
+[; ;../../lib_misc/date_time.c: 31: void datetime_decrease_minutes(date_time_t *t)
+[v _datetime_decrease_minutes `(v ~T0 @X0 1 ef1`*S3 ]
+"32
+[; ;../../lib_misc/date_time.c: 32: {
+{
+[e :U _datetime_decrease_minutes ]
+"31
+[; ;../../lib_misc/date_time.c: 31: void datetime_decrease_minutes(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"32
+[; ;../../lib_misc/date_time.c: 32: {
+[f ]
+"33
+[; ;../../lib_misc/date_time.c: 33:     if (t->min == 0)
+[e $ ! == -> . *U _t 1 `i -> 0 `i 11  ]
+"34
+[; ;../../lib_misc/date_time.c: 34:     {
+{
+"35
+[; ;../../lib_misc/date_time.c: 35:         t->min = 59;
+[e = . *U _t 1 -> -> 59 `i `uc ]
+"36
+[; ;../../lib_misc/date_time.c: 36:         datetime_decrease_hours(t);
+[e ( _datetime_decrease_hours (1 _t ]
+"37
+[; ;../../lib_misc/date_time.c: 37:     }
+}
+[e $U 12  ]
+"38
+[; ;../../lib_misc/date_time.c: 38:     else
+[e :U 11 ]
+"39
+[; ;../../lib_misc/date_time.c: 39:     {
+{
+"40
+[; ;../../lib_misc/date_time.c: 40:         t->min--;
+[e -- . *U _t 1 -> -> 1 `i `uc ]
+"41
+[; ;../../lib_misc/date_time.c: 41:     }
+}
+[e :U 12 ]
+"42
+[; ;../../lib_misc/date_time.c: 42: }
+[e :UE 10 ]
+}
+"44
+[; ;../../lib_misc/date_time.c: 44: void datetime_increase_minutes(date_time_t *t)
+[v _datetime_increase_minutes `(v ~T0 @X0 1 ef1`*S3 ]
+"45
+[; ;../../lib_misc/date_time.c: 45: {
+{
+[e :U _datetime_increase_minutes ]
+"44
+[; ;../../lib_misc/date_time.c: 44: void datetime_increase_minutes(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"45
+[; ;../../lib_misc/date_time.c: 45: {
+[f ]
+"46
+[; ;../../lib_misc/date_time.c: 46:     if (t->min >= 59)
+[e $ ! >= -> . *U _t 1 `i -> 59 `i 14  ]
+"47
+[; ;../../lib_misc/date_time.c: 47:     {
+{
+"48
+[; ;../../lib_misc/date_time.c: 48:         t->min = 0;
+[e = . *U _t 1 -> -> 0 `i `uc ]
+"49
+[; ;../../lib_misc/date_time.c: 49:         datetime_increase_hours(t);
+[e ( _datetime_increase_hours (1 _t ]
+"50
+[; ;../../lib_misc/date_time.c: 50:     }
+}
+[e $U 15  ]
+"51
+[; ;../../lib_misc/date_time.c: 51:     else
+[e :U 14 ]
+"52
+[; ;../../lib_misc/date_time.c: 52:     {
+{
+"53
+[; ;../../lib_misc/date_time.c: 53:         t->min++;
+[e ++ . *U _t 1 -> -> 1 `i `uc ]
+"54
+[; ;../../lib_misc/date_time.c: 54:     }
+}
+[e :U 15 ]
+"55
+[; ;../../lib_misc/date_time.c: 55: }
+[e :UE 13 ]
+}
+"57
+[; ;../../lib_misc/date_time.c: 57: void datetime_decrease_hours(date_time_t *t)
+[v _datetime_decrease_hours `(v ~T0 @X0 1 ef1`*S3 ]
+"58
+[; ;../../lib_misc/date_time.c: 58: {
+{
+[e :U _datetime_decrease_hours ]
+"57
+[; ;../../lib_misc/date_time.c: 57: void datetime_decrease_hours(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"58
+[; ;../../lib_misc/date_time.c: 58: {
+[f ]
+"59
+[; ;../../lib_misc/date_time.c: 59:     if (t->hrs == 0)
+[e $ ! == -> . *U _t 0 `i -> 0 `i 17  ]
+"60
+[; ;../../lib_misc/date_time.c: 60:     {
+{
+"61
+[; ;../../lib_misc/date_time.c: 61:         t->hrs = 23;
+[e = . *U _t 0 -> -> 23 `i `uc ]
+"62
+[; ;../../lib_misc/date_time.c: 62:         datetime_decrease_days(t);
+[e ( _datetime_decrease_days (1 _t ]
+"63
+[; ;../../lib_misc/date_time.c: 63:     }
+}
+[e $U 18  ]
+"64
+[; ;../../lib_misc/date_time.c: 64:     else
+[e :U 17 ]
+"65
+[; ;../../lib_misc/date_time.c: 65:     {
+{
+"66
+[; ;../../lib_misc/date_time.c: 66:         t->hrs--;
+[e -- . *U _t 0 -> -> 1 `i `uc ]
+"67
+[; ;../../lib_misc/date_time.c: 67:     }
+}
+[e :U 18 ]
+"68
+[; ;../../lib_misc/date_time.c: 68: }
+[e :UE 16 ]
+}
+"70
+[; ;../../lib_misc/date_time.c: 70: void datetime_increase_hours(date_time_t *t)
+[v _datetime_increase_hours `(v ~T0 @X0 1 ef1`*S3 ]
+"71
+[; ;../../lib_misc/date_time.c: 71: {
+{
+[e :U _datetime_increase_hours ]
+"70
+[; ;../../lib_misc/date_time.c: 70: void datetime_increase_hours(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"71
+[; ;../../lib_misc/date_time.c: 71: {
+[f ]
+"72
+[; ;../../lib_misc/date_time.c: 72:     if (t->hrs >= 23)
+[e $ ! >= -> . *U _t 0 `i -> 23 `i 20  ]
+"73
+[; ;../../lib_misc/date_time.c: 73:     {
+{
+"74
+[; ;../../lib_misc/date_time.c: 74:         t->hrs = 0;
+[e = . *U _t 0 -> -> 0 `i `uc ]
+"75
+[; ;../../lib_misc/date_time.c: 75:         datetime_increase_days(t);
+[e ( _datetime_increase_days (1 _t ]
+"76
+[; ;../../lib_misc/date_time.c: 76:     }
+}
+[e $U 21  ]
+"77
+[; ;../../lib_misc/date_time.c: 77:     else
+[e :U 20 ]
+"78
+[; ;../../lib_misc/date_time.c: 78:     {
+{
+"79
+[; ;../../lib_misc/date_time.c: 79:         t->hrs++;
+[e ++ . *U _t 0 -> -> 1 `i `uc ]
+"80
+[; ;../../lib_misc/date_time.c: 80:     }
+}
+[e :U 21 ]
+"81
+[; ;../../lib_misc/date_time.c: 81: }
+[e :UE 19 ]
+}
+"83
+[; ;../../lib_misc/date_time.c: 83: void datetime_decrease_days(date_time_t *t)
+[v _datetime_decrease_days `(v ~T0 @X0 1 ef1`*S3 ]
+"84
+[; ;../../lib_misc/date_time.c: 84: {
+{
+[e :U _datetime_decrease_days ]
+"83
+[; ;../../lib_misc/date_time.c: 83: void datetime_decrease_days(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"84
+[; ;../../lib_misc/date_time.c: 84: {
+[f ]
+"85
+[; ;../../lib_misc/date_time.c: 85:     if (t->day == 0)
+[e $ ! == -> . *U _t 4 `i -> 0 `i 23  ]
+"86
+[; ;../../lib_misc/date_time.c: 86:     {
+{
+"87
+[; ;../../lib_misc/date_time.c: 87:         t->day = 23;
+[e = . *U _t 4 -> -> 23 `i `uc ]
+"88
+[; ;../../lib_misc/date_time.c: 88:     }
+}
+[e $U 24  ]
+"89
+[; ;../../lib_misc/date_time.c: 89:     else
+[e :U 23 ]
+"90
+[; ;../../lib_misc/date_time.c: 90:     {
+{
+"91
+[; ;../../lib_misc/date_time.c: 91:         t->day--;
+[e -- . *U _t 4 -> -> 1 `i `uc ]
+"92
+[; ;../../lib_misc/date_time.c: 92:     }
+}
+[e :U 24 ]
+"93
+[; ;../../lib_misc/date_time.c: 93: }
+[e :UE 22 ]
+}
+"95
+[; ;../../lib_misc/date_time.c: 95: void datetime_increase_days(date_time_t *t)
+[v _datetime_increase_days `(v ~T0 @X0 1 ef1`*S3 ]
+"96
+[; ;../../lib_misc/date_time.c: 96: {
+{
+[e :U _datetime_increase_days ]
+"95
+[; ;../../lib_misc/date_time.c: 95: void datetime_increase_days(date_time_t *t)
+[v _t `*S3 ~T0 @X0 1 r1 ]
+"96
+[; ;../../lib_misc/date_time.c: 96: {
+[f ]
+"97
+[; ;../../lib_misc/date_time.c: 97:     if (t->day >= 23)
+[e $ ! >= -> . *U _t 4 `i -> 23 `i 26  ]
+"98
+[; ;../../lib_misc/date_time.c: 98:     {
+{
+"99
+[; ;../../lib_misc/date_time.c: 99:         t->day = 0;
+[e = . *U _t 4 -> -> 0 `i `uc ]
+"100
+[; ;../../lib_misc/date_time.c: 100:     }
+}
+[e $U 27  ]
+"101
+[; ;../../lib_misc/date_time.c: 101:     else
+[e :U 26 ]
+"102
+[; ;../../lib_misc/date_time.c: 102:     {
+{
+"103
+[; ;../../lib_misc/date_time.c: 103:         t->day++;
+[e ++ . *U _t 4 -> -> 1 `i `uc ]
+"104
+[; ;../../lib_misc/date_time.c: 104:     }
+}
+[e :U 27 ]
+"105
+[; ;../../lib_misc/date_time.c: 105: }
+[e :UE 25 ]
+}

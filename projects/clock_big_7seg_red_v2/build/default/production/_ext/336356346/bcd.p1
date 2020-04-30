@@ -1,0 +1,775 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"8 ../../lib_misc/bcd.c
+[; ;../../lib_misc/bcd.c: 8: void dec_2_bcd(u16 dec, u8 bcd[])
+[v _dec_2_bcd `(v ~T0 @X0 1 ef2`us`*uc ]
+"9
+[; ;../../lib_misc/bcd.c: 9: {
+{
+[e :U _dec_2_bcd ]
+"8
+[; ;../../lib_misc/bcd.c: 8: void dec_2_bcd(u16 dec, u8 bcd[])
+[v _dec `us ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"9
+[; ;../../lib_misc/bcd.c: 9: {
+[f ]
+"10
+[; ;../../lib_misc/bcd.c: 10:     bcd[0]=0, bcd[1]=0, bcd[2]=0, bcd[3]=0, bcd[4]=0;
+[e ; ; ; ; = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 4 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"12
+[; ;../../lib_misc/bcd.c: 12:     while (dec>=10000) {bcd[4]++; dec -= 10000;}
+[e $U 7  ]
+[e :U 8 ]
+{
+[e ++ *U + _bcd * -> -> 4 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 10000 `i `us ]
+}
+[e :U 7 ]
+[e $ >= -> _dec `ui -> -> 10000 `i `ui 8  ]
+[e :U 9 ]
+"13
+[; ;../../lib_misc/bcd.c: 13:     while (dec>=1000) {bcd[3]++; dec -= 1000;}
+[e $U 10  ]
+[e :U 11 ]
+{
+[e ++ *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 1000 `i `us ]
+}
+[e :U 10 ]
+[e $ >= -> _dec `ui -> -> 1000 `i `ui 11  ]
+[e :U 12 ]
+"14
+[; ;../../lib_misc/bcd.c: 14:     while (dec>=100) {bcd[2]++; dec -= 100;}
+[e $U 13  ]
+[e :U 14 ]
+{
+[e ++ *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 100 `i `us ]
+}
+[e :U 13 ]
+[e $ >= -> _dec `ui -> -> 100 `i `ui 14  ]
+[e :U 15 ]
+"15
+[; ;../../lib_misc/bcd.c: 15:     while (dec>=10) {bcd[1]++; dec -= 10;}
+[e $U 16  ]
+[e :U 17 ]
+{
+[e ++ *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 10 `i `us ]
+}
+[e :U 16 ]
+[e $ >= -> _dec `ui -> -> 10 `i `ui 17  ]
+[e :U 18 ]
+"16
+[; ;../../lib_misc/bcd.c: 16:     bcd[0] = dec;
+[e = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> _dec `uc ]
+"17
+[; ;../../lib_misc/bcd.c: 17: }
+[e :UE 6 ]
+}
+"20
+[; ;../../lib_misc/bcd.c: 20: void dec_2_bcd32(u32 dec, u8 bcd[])
+[v _dec_2_bcd32 `(v ~T0 @X0 1 ef2`ul`*uc ]
+"21
+[; ;../../lib_misc/bcd.c: 21: {
+{
+[e :U _dec_2_bcd32 ]
+"20
+[; ;../../lib_misc/bcd.c: 20: void dec_2_bcd32(u32 dec, u8 bcd[])
+[v _dec `ul ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"21
+[; ;../../lib_misc/bcd.c: 21: {
+[f ]
+"22
+[; ;../../lib_misc/bcd.c: 22:     bcd[0]=0, bcd[1]=0, bcd[2]=0, bcd[3]=0, bcd[4]=0;
+[e ; ; ; ; = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 4 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"23
+[; ;../../lib_misc/bcd.c: 23:     bcd[5]=0, bcd[6]=0, bcd[7]=0, bcd[8]=0, bcd[9]=0;
+[e ; ; ; ; = *U + _bcd * -> -> 5 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 6 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 7 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 8 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 9 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"25
+[; ;../../lib_misc/bcd.c: 25:     while (dec>=1000000000) {bcd[9]++; dec -= 1000000000;}
+[e $U 20  ]
+[e :U 21 ]
+{
+[e ++ *U + _bcd * -> -> 9 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 1000000000 `l `ul ]
+}
+[e :U 20 ]
+[e $ >= _dec -> -> 1000000000 `l `ul 21  ]
+[e :U 22 ]
+"26
+[; ;../../lib_misc/bcd.c: 26:     while (dec>=100000000) {bcd[8]++; dec -= 100000000;}
+[e $U 23  ]
+[e :U 24 ]
+{
+[e ++ *U + _bcd * -> -> 8 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 100000000 `l `ul ]
+}
+[e :U 23 ]
+[e $ >= _dec -> -> 100000000 `l `ul 24  ]
+[e :U 25 ]
+"27
+[; ;../../lib_misc/bcd.c: 27:     while (dec>=10000000) {bcd[7]++; dec -= 10000000;}
+[e $U 26  ]
+[e :U 27 ]
+{
+[e ++ *U + _bcd * -> -> 7 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 10000000 `l `ul ]
+}
+[e :U 26 ]
+[e $ >= _dec -> -> 10000000 `l `ul 27  ]
+[e :U 28 ]
+"28
+[; ;../../lib_misc/bcd.c: 28:     while (dec>=1000000) {bcd[6]++; dec -= 1000000;}
+[e $U 29  ]
+[e :U 30 ]
+{
+[e ++ *U + _bcd * -> -> 6 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 1000000 `l `ul ]
+}
+[e :U 29 ]
+[e $ >= _dec -> -> 1000000 `l `ul 30  ]
+[e :U 31 ]
+"29
+[; ;../../lib_misc/bcd.c: 29:     while (dec>=100000) {bcd[5]++; dec -= 100000;}
+[e $U 32  ]
+[e :U 33 ]
+{
+[e ++ *U + _bcd * -> -> 5 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> 100000 `l `ul ]
+}
+[e :U 32 ]
+[e $ >= _dec -> -> 100000 `l `ul 33  ]
+[e :U 34 ]
+"30
+[; ;../../lib_misc/bcd.c: 30:     while (dec>=10000) {bcd[4]++; dec -= 10000;}
+[e $U 35  ]
+[e :U 36 ]
+{
+[e ++ *U + _bcd * -> -> 4 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> -> 10000 `i `l `ul ]
+}
+[e :U 35 ]
+[e $ >= _dec -> -> -> 10000 `i `l `ul 36  ]
+[e :U 37 ]
+"31
+[; ;../../lib_misc/bcd.c: 31:     while (dec>=1000) {bcd[3]++; dec -= 1000;}
+[e $U 38  ]
+[e :U 39 ]
+{
+[e ++ *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> -> 1000 `i `l `ul ]
+}
+[e :U 38 ]
+[e $ >= _dec -> -> -> 1000 `i `l `ul 39  ]
+[e :U 40 ]
+"32
+[; ;../../lib_misc/bcd.c: 32:     while (dec>=100) {bcd[2]++; dec -= 100;}
+[e $U 41  ]
+[e :U 42 ]
+{
+[e ++ *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> -> 100 `i `l `ul ]
+}
+[e :U 41 ]
+[e $ >= _dec -> -> -> 100 `i `l `ul 42  ]
+[e :U 43 ]
+"33
+[; ;../../lib_misc/bcd.c: 33:     while (dec>=10) {bcd[1]++; dec -= 10;}
+[e $U 44  ]
+[e :U 45 ]
+{
+[e ++ *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _dec -> -> -> 10 `i `l `ul ]
+}
+[e :U 44 ]
+[e $ >= _dec -> -> -> 10 `i `l `ul 45  ]
+[e :U 46 ]
+"34
+[; ;../../lib_misc/bcd.c: 34:     bcd[0] = dec;
+[e = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> _dec `uc ]
+"35
+[; ;../../lib_misc/bcd.c: 35: }
+[e :UE 19 ]
+}
+"38
+[; ;../../lib_misc/bcd.c: 38: void float_2_bcd(f32 flt, u8 bcd_int[], u8 bcd_dec[])
+[v _float_2_bcd `(v ~T0 @X0 1 ef3`f`*uc`*uc ]
+"39
+[; ;../../lib_misc/bcd.c: 39: {
+{
+[e :U _float_2_bcd ]
+"38
+[; ;../../lib_misc/bcd.c: 38: void float_2_bcd(f32 flt, u8 bcd_int[], u8 bcd_dec[])
+[v _flt `f ~T0 @X0 1 r1 ]
+[v _bcd_int `*uc ~T0 @X0 1 r2 ]
+[v _bcd_dec `*uc ~T0 @X0 1 r3 ]
+"39
+[; ;../../lib_misc/bcd.c: 39: {
+[f ]
+"40
+[; ;../../lib_misc/bcd.c: 40:     bcd_int[0]=0, bcd_int[1]=0, bcd_int[2]=0, bcd_int[3]=0, bcd_int[4]=0;
+[e ; ; ; ; = *U + _bcd_int * -> -> 0 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 1 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 2 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 3 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 4 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc ]
+"41
+[; ;../../lib_misc/bcd.c: 41:     bcd_int[5]=0, bcd_int[6]=0, bcd_int[7]=0, bcd_int[8]=0, bcd_int[9]=0;
+[e ; ; ; ; = *U + _bcd_int * -> -> 5 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 6 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 7 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 8 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 9 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc ]
+"42
+[; ;../../lib_misc/bcd.c: 42:     bcd_dec[0]=0, bcd_dec[1]=0, bcd_dec[2]=0, bcd_dec[3]=0, bcd_dec[4]=0;
+[e ; ; ; ; = *U + _bcd_dec * -> -> 0 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 1 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 2 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 3 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 4 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc ]
+"44
+[; ;../../lib_misc/bcd.c: 44:     while (flt>=1000000000.0) {bcd_int[9]++; flt -= 1000000000.0;}
+[e $U 48  ]
+[e :U 49 ]
+{
+[e ++ *U + _bcd_int * -> -> 9 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .1000000000.0 `f ]
+}
+[e :U 48 ]
+[e $ >= -> _flt `d .1000000000.0 49  ]
+[e :U 50 ]
+"45
+[; ;../../lib_misc/bcd.c: 45:     while (flt>=100000000.0) {bcd_int[8]++; flt -= 100000000.0;}
+[e $U 51  ]
+[e :U 52 ]
+{
+[e ++ *U + _bcd_int * -> -> 8 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .100000000.0 `f ]
+}
+[e :U 51 ]
+[e $ >= -> _flt `d .100000000.0 52  ]
+[e :U 53 ]
+"46
+[; ;../../lib_misc/bcd.c: 46:     while (flt>=10000000.0) {bcd_int[7]++; flt -= 10000000.0;}
+[e $U 54  ]
+[e :U 55 ]
+{
+[e ++ *U + _bcd_int * -> -> 7 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .10000000.0 `f ]
+}
+[e :U 54 ]
+[e $ >= -> _flt `d .10000000.0 55  ]
+[e :U 56 ]
+"47
+[; ;../../lib_misc/bcd.c: 47:     while (flt>=1000000.0) {bcd_int[6]++; flt -= 1000000.0;}
+[e $U 57  ]
+[e :U 58 ]
+{
+[e ++ *U + _bcd_int * -> -> 6 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .1000000.0 `f ]
+}
+[e :U 57 ]
+[e $ >= -> _flt `d .1000000.0 58  ]
+[e :U 59 ]
+"48
+[; ;../../lib_misc/bcd.c: 48:     while (flt>=100000.0) {bcd_int[5]++; flt -= 100000.0;}
+[e $U 60  ]
+[e :U 61 ]
+{
+[e ++ *U + _bcd_int * -> -> 5 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .100000.0 `f ]
+}
+[e :U 60 ]
+[e $ >= -> _flt `d .100000.0 61  ]
+[e :U 62 ]
+"49
+[; ;../../lib_misc/bcd.c: 49:     while (flt>=10000.0) {bcd_int[4]++; flt -= 10000.0;}
+[e $U 63  ]
+[e :U 64 ]
+{
+[e ++ *U + _bcd_int * -> -> 4 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .10000.0 `f ]
+}
+[e :U 63 ]
+[e $ >= -> _flt `d .10000.0 64  ]
+[e :U 65 ]
+"50
+[; ;../../lib_misc/bcd.c: 50:     while (flt>=1000.0) {bcd_int[3]++; flt -= 1000.0;}
+[e $U 66  ]
+[e :U 67 ]
+{
+[e ++ *U + _bcd_int * -> -> 3 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .1000.0 `f ]
+}
+[e :U 66 ]
+[e $ >= -> _flt `d .1000.0 67  ]
+[e :U 68 ]
+"51
+[; ;../../lib_misc/bcd.c: 51:     while (flt>=100.0) {bcd_int[2]++; flt -= 100.0;}
+[e $U 69  ]
+[e :U 70 ]
+{
+[e ++ *U + _bcd_int * -> -> 2 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .100.0 `f ]
+}
+[e :U 69 ]
+[e $ >= -> _flt `d .100.0 70  ]
+[e :U 71 ]
+"52
+[; ;../../lib_misc/bcd.c: 52:     while (flt>=10.0) {bcd_int[1]++; flt -= 10.0;}
+[e $U 72  ]
+[e :U 73 ]
+{
+[e ++ *U + _bcd_int * -> -> 1 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .10.0 `f ]
+}
+[e :U 72 ]
+[e $ >= -> _flt `d .10.0 73  ]
+[e :U 74 ]
+"53
+[; ;../../lib_misc/bcd.c: 53:     while (flt>=1.0) {bcd_int[0]++; flt -= 1.0;}
+[e $U 75  ]
+[e :U 76 ]
+{
+[e ++ *U + _bcd_int * -> -> 0 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .1.0 `f ]
+}
+[e :U 75 ]
+[e $ >= -> _flt `d .1.0 76  ]
+[e :U 77 ]
+"54
+[; ;../../lib_misc/bcd.c: 54:     while (flt>=0.1) {bcd_dec[0]++; flt -= 0.1;}
+[e $U 78  ]
+[e :U 79 ]
+{
+[e ++ *U + _bcd_dec * -> -> 0 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .0.1 `f ]
+}
+[e :U 78 ]
+[e $ >= -> _flt `d .0.1 79  ]
+[e :U 80 ]
+"55
+[; ;../../lib_misc/bcd.c: 55:     while (flt>=0.01) {bcd_dec[1]++; flt -= 0.01;}
+[e $U 81  ]
+[e :U 82 ]
+{
+[e ++ *U + _bcd_dec * -> -> 1 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .0.01 `f ]
+}
+[e :U 81 ]
+[e $ >= -> _flt `d .0.01 82  ]
+[e :U 83 ]
+"56
+[; ;../../lib_misc/bcd.c: 56:     while (flt>=0.001) {bcd_dec[2]++; flt -= 0.001;}
+[e $U 84  ]
+[e :U 85 ]
+{
+[e ++ *U + _bcd_dec * -> -> 2 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .0.001 `f ]
+}
+[e :U 84 ]
+[e $ >= -> _flt `d .0.001 85  ]
+[e :U 86 ]
+"57
+[; ;../../lib_misc/bcd.c: 57:     while (flt>=0.0001) {bcd_dec[3]++; flt -= 0.0001;}
+[e $U 87  ]
+[e :U 88 ]
+{
+[e ++ *U + _bcd_dec * -> -> 3 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .0.0001 `f ]
+}
+[e :U 87 ]
+[e $ >= -> _flt `d .0.0001 88  ]
+[e :U 89 ]
+"58
+[; ;../../lib_misc/bcd.c: 58:     while (flt>=0.00001) {bcd_dec[4]++; flt -= 0.00001;}
+[e $U 90  ]
+[e :U 91 ]
+{
+[e ++ *U + _bcd_dec * -> -> 4 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt -> .0.00001 `f ]
+}
+[e :U 90 ]
+[e $ >= -> _flt `d .0.00001 91  ]
+[e :U 92 ]
+"59
+[; ;../../lib_misc/bcd.c: 59: }
+[e :UE 47 ]
+}
+"62
+[; ;../../lib_misc/bcd.c: 62: void double_2_bcd(f64 flt, u8 bcd_int[], u8 bcd_dec[])
+[v _double_2_bcd `(v ~T0 @X0 1 ef3`d`*uc`*uc ]
+"63
+[; ;../../lib_misc/bcd.c: 63: {
+{
+[e :U _double_2_bcd ]
+"62
+[; ;../../lib_misc/bcd.c: 62: void double_2_bcd(f64 flt, u8 bcd_int[], u8 bcd_dec[])
+[v _flt `d ~T0 @X0 1 r1 ]
+[v _bcd_int `*uc ~T0 @X0 1 r2 ]
+[v _bcd_dec `*uc ~T0 @X0 1 r3 ]
+"63
+[; ;../../lib_misc/bcd.c: 63: {
+[f ]
+"64
+[; ;../../lib_misc/bcd.c: 64:     bcd_int[0]=0, bcd_int[1]=0, bcd_int[2]=0, bcd_int[3]=0, bcd_int[4]=0;
+[e ; ; ; ; = *U + _bcd_int * -> -> 0 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 1 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 2 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 3 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 4 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc ]
+"65
+[; ;../../lib_misc/bcd.c: 65:     bcd_int[5]=0, bcd_int[6]=0, bcd_int[7]=0, bcd_int[8]=0, bcd_int[9]=0;
+[e ; ; ; ; = *U + _bcd_int * -> -> 5 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 6 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 7 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 8 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc = *U + _bcd_int * -> -> 9 `i `x -> -> # *U _bcd_int `i `x -> -> 0 `i `uc ]
+"66
+[; ;../../lib_misc/bcd.c: 66:     bcd_dec[0]=0, bcd_dec[1]=0, bcd_dec[2]=0, bcd_dec[3]=0, bcd_dec[4]=0;
+[e ; ; ; ; = *U + _bcd_dec * -> -> 0 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 1 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 2 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 3 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc = *U + _bcd_dec * -> -> 4 `i `x -> -> # *U _bcd_dec `i `x -> -> 0 `i `uc ]
+"68
+[; ;../../lib_misc/bcd.c: 68:     while (flt>=1000000000.0) {bcd_int[9]++; flt -= 1000000000.0;}
+[e $U 94  ]
+[e :U 95 ]
+{
+[e ++ *U + _bcd_int * -> -> 9 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .1000000000.0 ]
+}
+[e :U 94 ]
+[e $ >= _flt .1000000000.0 95  ]
+[e :U 96 ]
+"69
+[; ;../../lib_misc/bcd.c: 69:     while (flt>=100000000.0) {bcd_int[8]++; flt -= 100000000.0;}
+[e $U 97  ]
+[e :U 98 ]
+{
+[e ++ *U + _bcd_int * -> -> 8 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .100000000.0 ]
+}
+[e :U 97 ]
+[e $ >= _flt .100000000.0 98  ]
+[e :U 99 ]
+"70
+[; ;../../lib_misc/bcd.c: 70:     while (flt>=10000000.0) {bcd_int[7]++; flt -= 10000000.0;}
+[e $U 100  ]
+[e :U 101 ]
+{
+[e ++ *U + _bcd_int * -> -> 7 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .10000000.0 ]
+}
+[e :U 100 ]
+[e $ >= _flt .10000000.0 101  ]
+[e :U 102 ]
+"71
+[; ;../../lib_misc/bcd.c: 71:     while (flt>=1000000.0) {bcd_int[6]++; flt -= 1000000.0;}
+[e $U 103  ]
+[e :U 104 ]
+{
+[e ++ *U + _bcd_int * -> -> 6 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .1000000.0 ]
+}
+[e :U 103 ]
+[e $ >= _flt .1000000.0 104  ]
+[e :U 105 ]
+"72
+[; ;../../lib_misc/bcd.c: 72:     while (flt>=100000.0) {bcd_int[5]++; flt -= 100000.0;}
+[e $U 106  ]
+[e :U 107 ]
+{
+[e ++ *U + _bcd_int * -> -> 5 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .100000.0 ]
+}
+[e :U 106 ]
+[e $ >= _flt .100000.0 107  ]
+[e :U 108 ]
+"73
+[; ;../../lib_misc/bcd.c: 73:     while (flt>=10000.0) {bcd_int[4]++; flt -= 10000.0;}
+[e $U 109  ]
+[e :U 110 ]
+{
+[e ++ *U + _bcd_int * -> -> 4 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .10000.0 ]
+}
+[e :U 109 ]
+[e $ >= _flt .10000.0 110  ]
+[e :U 111 ]
+"74
+[; ;../../lib_misc/bcd.c: 74:     while (flt>=1000.0) {bcd_int[3]++; flt -= 1000.0;}
+[e $U 112  ]
+[e :U 113 ]
+{
+[e ++ *U + _bcd_int * -> -> 3 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .1000.0 ]
+}
+[e :U 112 ]
+[e $ >= _flt .1000.0 113  ]
+[e :U 114 ]
+"75
+[; ;../../lib_misc/bcd.c: 75:     while (flt>=100.0) {bcd_int[2]++; flt -= 100.0;}
+[e $U 115  ]
+[e :U 116 ]
+{
+[e ++ *U + _bcd_int * -> -> 2 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .100.0 ]
+}
+[e :U 115 ]
+[e $ >= _flt .100.0 116  ]
+[e :U 117 ]
+"76
+[; ;../../lib_misc/bcd.c: 76:     while (flt>=10.0) {bcd_int[1]++; flt -= 10.0;}
+[e $U 118  ]
+[e :U 119 ]
+{
+[e ++ *U + _bcd_int * -> -> 1 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .10.0 ]
+}
+[e :U 118 ]
+[e $ >= _flt .10.0 119  ]
+[e :U 120 ]
+"77
+[; ;../../lib_misc/bcd.c: 77:     while (flt>=1.0) {bcd_int[0]++; flt -= 1.0;}
+[e $U 121  ]
+[e :U 122 ]
+{
+[e ++ *U + _bcd_int * -> -> 0 `i `x -> -> # *U _bcd_int `i `x -> -> 1 `i `uc ]
+[e =- _flt .1.0 ]
+}
+[e :U 121 ]
+[e $ >= _flt .1.0 122  ]
+[e :U 123 ]
+"78
+[; ;../../lib_misc/bcd.c: 78:     while (flt>=0.1) {bcd_dec[0]++; flt -= 0.1;}
+[e $U 124  ]
+[e :U 125 ]
+{
+[e ++ *U + _bcd_dec * -> -> 0 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt .0.1 ]
+}
+[e :U 124 ]
+[e $ >= _flt .0.1 125  ]
+[e :U 126 ]
+"79
+[; ;../../lib_misc/bcd.c: 79:     while (flt>=0.01) {bcd_dec[1]++; flt -= 0.01;}
+[e $U 127  ]
+[e :U 128 ]
+{
+[e ++ *U + _bcd_dec * -> -> 1 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt .0.01 ]
+}
+[e :U 127 ]
+[e $ >= _flt .0.01 128  ]
+[e :U 129 ]
+"80
+[; ;../../lib_misc/bcd.c: 80:     while (flt>=0.001) {bcd_dec[2]++; flt -= 0.001;}
+[e $U 130  ]
+[e :U 131 ]
+{
+[e ++ *U + _bcd_dec * -> -> 2 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt .0.001 ]
+}
+[e :U 130 ]
+[e $ >= _flt .0.001 131  ]
+[e :U 132 ]
+"81
+[; ;../../lib_misc/bcd.c: 81:     while (flt>=0.0001) {bcd_dec[3]++; flt -= 0.0001;}
+[e $U 133  ]
+[e :U 134 ]
+{
+[e ++ *U + _bcd_dec * -> -> 3 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt .0.0001 ]
+}
+[e :U 133 ]
+[e $ >= _flt .0.0001 134  ]
+[e :U 135 ]
+"82
+[; ;../../lib_misc/bcd.c: 82:     while (flt>=0.00001) {bcd_dec[4]++; flt -= 0.00001;}
+[e $U 136  ]
+[e :U 137 ]
+{
+[e ++ *U + _bcd_dec * -> -> 4 `i `x -> -> # *U _bcd_dec `i `x -> -> 1 `i `uc ]
+[e =- _flt .0.00001 ]
+}
+[e :U 136 ]
+[e $ >= _flt .0.00001 137  ]
+[e :U 138 ]
+"83
+[; ;../../lib_misc/bcd.c: 83: }
+[e :UE 93 ]
+}
+"89
+[; ;../../lib_misc/bcd.c: 89: void hex_2_bcd(u8 hex, u8 bcd[])
+[v _hex_2_bcd `(v ~T0 @X0 1 ef2`uc`*uc ]
+"90
+[; ;../../lib_misc/bcd.c: 90: {
+{
+[e :U _hex_2_bcd ]
+"89
+[; ;../../lib_misc/bcd.c: 89: void hex_2_bcd(u8 hex, u8 bcd[])
+[v _hex `uc ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"90
+[; ;../../lib_misc/bcd.c: 90: {
+[f ]
+"91
+[; ;../../lib_misc/bcd.c: 91:     bcd[0]=0, bcd[1]=0;
+[e ; = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"92
+[; ;../../lib_misc/bcd.c: 92:     while (hex>=16) {bcd[1]++; hex -= 16;}
+[e $U 140  ]
+[e :U 141 ]
+{
+[e ++ *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> 16 `i `uc ]
+}
+[e :U 140 ]
+[e $ >= -> _hex `i -> 16 `i 141  ]
+[e :U 142 ]
+"93
+[; ;../../lib_misc/bcd.c: 93:     bcd[0] = hex;
+[e = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x _hex ]
+"94
+[; ;../../lib_misc/bcd.c: 94: }
+[e :UE 139 ]
+}
+"96
+[; ;../../lib_misc/bcd.c: 96: void hex16_2_bcd(u16 hex, u8 bcd[])
+[v _hex16_2_bcd `(v ~T0 @X0 1 ef2`us`*uc ]
+"97
+[; ;../../lib_misc/bcd.c: 97: {
+{
+[e :U _hex16_2_bcd ]
+"96
+[; ;../../lib_misc/bcd.c: 96: void hex16_2_bcd(u16 hex, u8 bcd[])
+[v _hex `us ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"97
+[; ;../../lib_misc/bcd.c: 97: {
+[f ]
+"98
+[; ;../../lib_misc/bcd.c: 98:     bcd[0]=0, bcd[1]=0, bcd[2]=0, bcd[3]=0;
+[e ; ; ; = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"99
+[; ;../../lib_misc/bcd.c: 99:     while (hex>=4096) {bcd[3]++; hex -= 4096;}
+[e $U 144  ]
+[e :U 145 ]
+{
+[e ++ *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> 4096 `i `us ]
+}
+[e :U 144 ]
+[e $ >= -> _hex `ui -> -> 4096 `i `ui 145  ]
+[e :U 146 ]
+"100
+[; ;../../lib_misc/bcd.c: 100:     while (hex>=256) {bcd[2]++; hex -= 256;}
+[e $U 147  ]
+[e :U 148 ]
+{
+[e ++ *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> 256 `i `us ]
+}
+[e :U 147 ]
+[e $ >= -> _hex `ui -> -> 256 `i `ui 148  ]
+[e :U 149 ]
+"101
+[; ;../../lib_misc/bcd.c: 101:     while (hex>=16) {bcd[1]++; hex -= 16;}
+[e $U 150  ]
+[e :U 151 ]
+{
+[e ++ *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> 16 `i `us ]
+}
+[e :U 150 ]
+[e $ >= -> _hex `ui -> -> 16 `i `ui 151  ]
+[e :U 152 ]
+"102
+[; ;../../lib_misc/bcd.c: 102:     bcd[0] = hex;
+[e = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> _hex `uc ]
+"103
+[; ;../../lib_misc/bcd.c: 103: }
+[e :UE 143 ]
+}
+"105
+[; ;../../lib_misc/bcd.c: 105: void hex32_2_bcd(u32 hex, u8 bcd[])
+[v _hex32_2_bcd `(v ~T0 @X0 1 ef2`ul`*uc ]
+"106
+[; ;../../lib_misc/bcd.c: 106: {
+{
+[e :U _hex32_2_bcd ]
+"105
+[; ;../../lib_misc/bcd.c: 105: void hex32_2_bcd(u32 hex, u8 bcd[])
+[v _hex `ul ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"106
+[; ;../../lib_misc/bcd.c: 106: {
+[f ]
+"107
+[; ;../../lib_misc/bcd.c: 107:     bcd[0]=0, bcd[1]=0, bcd[2]=0, bcd[3]=0;
+[e ; ; ; = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"108
+[; ;../../lib_misc/bcd.c: 108:     bcd[4]=0, bcd[5]=0, bcd[6]=0, bcd[7]=0;
+[e ; ; ; = *U + _bcd * -> -> 4 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 5 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 6 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc = *U + _bcd * -> -> 7 `i `x -> -> # *U _bcd `i `x -> -> 0 `i `uc ]
+"114
+[; ;../../lib_misc/bcd.c: 114:     while (hex>=16*16*16) {bcd[3]++; hex -= 16*16*16;}
+[e $U 154  ]
+[e :U 155 ]
+{
+[e ++ *U + _bcd * -> -> 3 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> * * -> 16 `i -> 16 `i -> 16 `i `l `ul ]
+}
+[e :U 154 ]
+[e $ >= _hex -> -> * * -> 16 `i -> 16 `i -> 16 `i `l `ul 155  ]
+[e :U 156 ]
+"115
+[; ;../../lib_misc/bcd.c: 115:     while (hex>=16*16) {bcd[2]++; hex -= 16*16;}
+[e $U 157  ]
+[e :U 158 ]
+{
+[e ++ *U + _bcd * -> -> 2 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> * -> 16 `i -> 16 `i `l `ul ]
+}
+[e :U 157 ]
+[e $ >= _hex -> -> * -> 16 `i -> 16 `i `l `ul 158  ]
+[e :U 159 ]
+"116
+[; ;../../lib_misc/bcd.c: 116:     while (hex>=16) {bcd[1]++; hex -= 16;}
+[e $U 160  ]
+[e :U 161 ]
+{
+[e ++ *U + _bcd * -> -> 1 `i `x -> -> # *U _bcd `i `x -> -> 1 `i `uc ]
+[e =- _hex -> -> -> 16 `i `l `ul ]
+}
+[e :U 160 ]
+[e $ >= _hex -> -> -> 16 `i `l `ul 161  ]
+[e :U 162 ]
+"117
+[; ;../../lib_misc/bcd.c: 117:     bcd[0] = hex;
+[e = *U + _bcd * -> -> 0 `i `x -> -> # *U _bcd `i `x -> _hex `uc ]
+"118
+[; ;../../lib_misc/bcd.c: 118: }
+[e :UE 153 ]
+}
+"124
+[; ;../../lib_misc/bcd.c: 124: void bin_2_bcd(u8 bin, u8 *bcd)
+[v _bin_2_bcd `(v ~T0 @X0 1 ef2`uc`*uc ]
+"125
+[; ;../../lib_misc/bcd.c: 125: {
+{
+[e :U _bin_2_bcd ]
+"124
+[; ;../../lib_misc/bcd.c: 124: void bin_2_bcd(u8 bin, u8 *bcd)
+[v _bin `uc ~T0 @X0 1 r1 ]
+[v _bcd `*uc ~T0 @X0 1 r2 ]
+"125
+[; ;../../lib_misc/bcd.c: 125: {
+[f ]
+"126
+[; ;../../lib_misc/bcd.c: 126:     *bcd = ((bin / 10) << 4) + (bin % 10);
+[e = *U _bcd -> + << / -> _bin `i -> 10 `i -> 4 `i % -> _bin `i -> 10 `i `uc ]
+"127
+[; ;../../lib_misc/bcd.c: 127: }
+[e :UE 163 ]
+}
+"133
+[; ;../../lib_misc/bcd.c: 133: void bcd_2_bin(u8 bcd, u8 *bin)
+[v _bcd_2_bin `(v ~T0 @X0 1 ef2`uc`*uc ]
+"134
+[; ;../../lib_misc/bcd.c: 134: {
+{
+[e :U _bcd_2_bin ]
+"133
+[; ;../../lib_misc/bcd.c: 133: void bcd_2_bin(u8 bcd, u8 *bin)
+[v _bcd `uc ~T0 @X0 1 r1 ]
+[v _bin `*uc ~T0 @X0 1 r2 ]
+"134
+[; ;../../lib_misc/bcd.c: 134: {
+[f ]
+"135
+[; ;../../lib_misc/bcd.c: 135:     *bin = ((bcd & 0x0F) + ((bcd >> 4) & 0x0F) * 10);
+[e = *U _bin -> + & -> _bcd `i -> 15 `i * & >> -> _bcd `i -> 4 `i -> 15 `i -> 10 `i `uc ]
+"136
+[; ;../../lib_misc/bcd.c: 136: }
+[e :UE 164 ]
+}

@@ -1,0 +1,393 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"54 C:\Programs\Microchip\xc8\v2.10\pic\include\c99\string.h
+[; ;C:\Programs\Microchip\xc8\v2.10\pic\include\c99\string.h: 54: size_t strlen (const char *);
+[v _strlen `(ui ~T0 @X0 0 ef1`*Cuc ]
+"74 ../../lib_misc/misc.c
+[; ;../../lib_misc/misc.c: 74:             return ERROR;
+[c E39 0 1 2 3 4 .. ]
+[n E39 . SUCCESS ERROR WARNING TIMEOUT UNKNOWN  ]
+"8 ../../lib_misc/misc.c
+[; ;../../lib_misc/misc.c: 8: void hexa_2_ascii(u8 hexa, u8 *ascii)
+[v _hexa_2_ascii `(v ~T0 @X0 1 ef2`uc`*uc ]
+"9
+[; ;../../lib_misc/misc.c: 9: {
+{
+[e :U _hexa_2_ascii ]
+"8
+[; ;../../lib_misc/misc.c: 8: void hexa_2_ascii(u8 hexa, u8 *ascii)
+[v _hexa `uc ~T0 @X0 1 r1 ]
+[v _ascii `*uc ~T0 @X0 1 r2 ]
+"9
+[; ;../../lib_misc/misc.c: 9: {
+[f ]
+"10
+[; ;../../lib_misc/misc.c: 10:     *ascii = hexa + 0x30;
+[e = *U _ascii -> + -> _hexa `i -> 48 `i `uc ]
+"11
+[; ;../../lib_misc/misc.c: 11:     if (*ascii > 0x39)
+[e $ ! > -> *U _ascii `i -> 57 `i 7  ]
+"12
+[; ;../../lib_misc/misc.c: 12:         *ascii+=7;
+[e =+ *U _ascii -> -> 7 `i `uc ]
+[e :U 7 ]
+"13
+[; ;../../lib_misc/misc.c: 13: }
+[e :UE 6 ]
+}
+"19
+[; ;../../lib_misc/misc.c: 19: void ascii_2_hexa(u8 ascii, u8 *hexa)
+[v _ascii_2_hexa `(v ~T0 @X0 1 ef2`uc`*uc ]
+"20
+[; ;../../lib_misc/misc.c: 20: {
+{
+[e :U _ascii_2_hexa ]
+"19
+[; ;../../lib_misc/misc.c: 19: void ascii_2_hexa(u8 ascii, u8 *hexa)
+[v _ascii `uc ~T0 @X0 1 r1 ]
+[v _hexa `*uc ~T0 @X0 1 r2 ]
+"20
+[; ;../../lib_misc/misc.c: 20: {
+[f ]
+"21
+[; ;../../lib_misc/misc.c: 21:     *hexa = ascii - 0x30;
+[e = *U _hexa -> - -> _ascii `i -> 48 `i `uc ]
+"22
+[; ;../../lib_misc/misc.c: 22:     if (*hexa > 0x09)
+[e $ ! > -> *U _hexa `i -> 9 `i 9  ]
+"23
+[; ;../../lib_misc/misc.c: 23:         *hexa-=7;
+[e =- *U _hexa -> -> 7 `i `uc ]
+[e :U 9 ]
+"24
+[; ;../../lib_misc/misc.c: 24: }
+[e :UE 8 ]
+}
+"30
+[; ;../../lib_misc/misc.c: 30: void signed_to_unsigned_8 (s8 s, u8 *u)
+[v _signed_to_unsigned_8 `(v ~T0 @X0 1 ef2`c`*uc ]
+"31
+[; ;../../lib_misc/misc.c: 31: {
+{
+[e :U _signed_to_unsigned_8 ]
+"30
+[; ;../../lib_misc/misc.c: 30: void signed_to_unsigned_8 (s8 s, u8 *u)
+[v _s `c ~T0 @X0 1 r1 ]
+[v _u `*uc ~T0 @X0 1 r2 ]
+"31
+[; ;../../lib_misc/misc.c: 31: {
+[f ]
+"32
+[; ;../../lib_misc/misc.c: 32:     s8 stmp;
+[v _stmp `c ~T0 @X0 1 a ]
+"34
+[; ;../../lib_misc/misc.c: 34:     stmp = s - 1;
+[e = _stmp -> - -> _s `i -> 1 `i `c ]
+"35
+[; ;../../lib_misc/misc.c: 35:     *u = ~stmp;
+[e = *U _u -> ~ -> _stmp `i `uc ]
+"36
+[; ;../../lib_misc/misc.c: 36: }
+[e :UE 10 ]
+}
+"38
+[; ;../../lib_misc/misc.c: 38: void signed_to_unsigned_16 (s16 s, u16 *u)
+[v _signed_to_unsigned_16 `(v ~T0 @X0 1 ef2`s`*us ]
+"39
+[; ;../../lib_misc/misc.c: 39: {
+{
+[e :U _signed_to_unsigned_16 ]
+"38
+[; ;../../lib_misc/misc.c: 38: void signed_to_unsigned_16 (s16 s, u16 *u)
+[v _s `s ~T0 @X0 1 r1 ]
+[v _u `*us ~T0 @X0 1 r2 ]
+"39
+[; ;../../lib_misc/misc.c: 39: {
+[f ]
+"40
+[; ;../../lib_misc/misc.c: 40:     s16 stmp;
+[v _stmp `s ~T0 @X0 1 a ]
+"42
+[; ;../../lib_misc/misc.c: 42:     stmp = s - 1;
+[e = _stmp -> - -> _s `i -> 1 `i `s ]
+"43
+[; ;../../lib_misc/misc.c: 43:     *u = ~stmp;
+[e = *U _u -> ~ -> _stmp `i `us ]
+"44
+[; ;../../lib_misc/misc.c: 44: }
+[e :UE 11 ]
+}
+"46
+[; ;../../lib_misc/misc.c: 46: void signed_to_unsigned_32 (s32 s, u32 *u)
+[v _signed_to_unsigned_32 `(v ~T0 @X0 1 ef2`l`*ul ]
+"47
+[; ;../../lib_misc/misc.c: 47: {
+{
+[e :U _signed_to_unsigned_32 ]
+"46
+[; ;../../lib_misc/misc.c: 46: void signed_to_unsigned_32 (s32 s, u32 *u)
+[v _s `l ~T0 @X0 1 r1 ]
+[v _u `*ul ~T0 @X0 1 r2 ]
+"47
+[; ;../../lib_misc/misc.c: 47: {
+[f ]
+"48
+[; ;../../lib_misc/misc.c: 48:     s32 stmp;
+[v _stmp `l ~T0 @X0 1 a ]
+"50
+[; ;../../lib_misc/misc.c: 50:     stmp = s - 1;
+[e = _stmp - _s -> -> 1 `i `l ]
+"51
+[; ;../../lib_misc/misc.c: 51:     *u = ~stmp;
+[e = *U _u -> ~ _stmp `ul ]
+"52
+[; ;../../lib_misc/misc.c: 52: }
+[e :UE 12 ]
+}
+"58
+[; ;../../lib_misc/misc.c: 58: void init_array(char array[], u8 val)
+[v _init_array `(v ~T0 @X0 1 ef2`*uc`uc ]
+"59
+[; ;../../lib_misc/misc.c: 59: {
+{
+[e :U _init_array ]
+"58
+[; ;../../lib_misc/misc.c: 58: void init_array(char array[], u8 val)
+[v _array `*uc ~T0 @X0 1 r1 ]
+[v _val `uc ~T0 @X0 1 r2 ]
+"59
+[; ;../../lib_misc/misc.c: 59: {
+[f ]
+"60
+[; ;../../lib_misc/misc.c: 60:     u32 i;
+[v _i `ul ~T0 @X0 1 a ]
+"62
+[; ;../../lib_misc/misc.c: 62:     for (i = 0; i < strlen(array); i++)
+{
+[e = _i -> -> -> 0 `i `l `ul ]
+[e $U 17  ]
+[e :U 14 ]
+"63
+[; ;../../lib_misc/misc.c: 63:         array[i] = val;
+[e = *U + _array * -> _i `ux -> -> # *U _array `ui `ux -> _val `uc ]
+[e ++ _i -> -> -> 1 `i `l `ul ]
+[e :U 17 ]
+[e $ < _i -> ( _strlen (1 -> _array `*Cuc `ul 14  ]
+[e :U 15 ]
+}
+"65
+[; ;../../lib_misc/misc.c: 65: }
+[e :UE 13 ]
+}
+"67
+[; ;../../lib_misc/misc.c: 67: u8 string_compare(const char *s1, const char *s2, u8 size)
+[v _string_compare `(uc ~T0 @X0 1 ef3`*Cuc`*Cuc`uc ]
+"68
+[; ;../../lib_misc/misc.c: 68: {
+{
+[e :U _string_compare ]
+"67
+[; ;../../lib_misc/misc.c: 67: u8 string_compare(const char *s1, const char *s2, u8 size)
+[v _s1 `*Cuc ~T0 @X0 1 r1 ]
+[v _s2 `*Cuc ~T0 @X0 1 r2 ]
+[v _size `uc ~T0 @X0 1 r3 ]
+"68
+[; ;../../lib_misc/misc.c: 68: {
+[f ]
+"69
+[; ;../../lib_misc/misc.c: 69:     u8 i;
+[v _i `uc ~T0 @X0 1 a ]
+"71
+[; ;../../lib_misc/misc.c: 71:     for (i = 0; i < size; i++)
+{
+[e = _i -> -> 0 `i `uc ]
+[e $U 22  ]
+[e :U 19 ]
+"72
+[; ;../../lib_misc/misc.c: 72:     {
+{
+"73
+[; ;../../lib_misc/misc.c: 73:         if (*s1++ != *s2++)
+[e $ ! != -> *U ++ _s1 * -> -> 1 `i `x -> -> # *U _s1 `i `x `i -> *U ++ _s2 * -> -> 1 `i `x -> -> # *U _s2 `i `x `i 23  ]
+"74
+[; ;../../lib_misc/misc.c: 74:             return ERROR;
+[e ) -> . `E39 1 `uc ]
+[e $UE 18  ]
+[e :U 23 ]
+"75
+[; ;../../lib_misc/misc.c: 75:     }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 22 ]
+[e $ < -> _i `i -> _size `i 19  ]
+[e :U 20 ]
+}
+"77
+[; ;../../lib_misc/misc.c: 77:     return SUCCESS;
+[e ) -> . `E39 0 `uc ]
+[e $UE 18  ]
+"78
+[; ;../../lib_misc/misc.c: 78: }
+[e :UE 18 ]
+}
+"84
+[; ;../../lib_misc/misc.c: 84: u8 swap_bits(u8 i)
+[v _swap_bits `(uc ~T0 @X0 1 ef1`uc ]
+"85
+[; ;../../lib_misc/misc.c: 85: {
+{
+[e :U _swap_bits ]
+"84
+[; ;../../lib_misc/misc.c: 84: u8 swap_bits(u8 i)
+[v _i `uc ~T0 @X0 1 r1 ]
+"85
+[; ;../../lib_misc/misc.c: 85: {
+[f ]
+"86
+[; ;../../lib_misc/misc.c: 86:   return i >> 7
+[e ) -> | | | | | | | >> -> _i `i -> 7 `i >> & -> _i `i -> 64 `i -> 5 `i >> & -> _i `i -> 32 `i -> 3 `i >> & -> _i `i -> 16 `i -> 1 `i << & -> _i `i -> 8 `i -> 1 `i << & -> _i `i -> 4 `i -> 3 `i << & -> _i `i -> 2 `i -> 5 `i << -> _i `i -> 7 `i `uc ]
+[e $UE 24  ]
+"94
+[; ;../../lib_misc/misc.c: 94: }
+[e :UE 24 ]
+}
+"100
+[; ;../../lib_misc/misc.c: 100: const char *u4_to_bin(u8 data)
+[v _u4_to_bin `(*Cuc ~T0 @X0 1 ef1`uc ]
+"101
+[; ;../../lib_misc/misc.c: 101: {
+{
+[e :U _u4_to_bin ]
+"100
+[; ;../../lib_misc/misc.c: 100: const char *u4_to_bin(u8 data)
+[v _data `uc ~T0 @X0 1 r1 ]
+"101
+[; ;../../lib_misc/misc.c: 101: {
+[f ]
+"102
+[; ;../../lib_misc/misc.c: 102:     switch(data)
+[e $U 27  ]
+"103
+[; ;../../lib_misc/misc.c: 103:     {
+{
+"104
+[; ;../../lib_misc/misc.c: 104:         case 0: return "0000";
+[e :U 28 ]
+[e ) :s 1C ]
+[e $UE 25  ]
+"105
+[; ;../../lib_misc/misc.c: 105:         case 1: return "0001";
+[e :U 29 ]
+[e ) :s 2C ]
+[e $UE 25  ]
+"106
+[; ;../../lib_misc/misc.c: 106:         case 2: return "0010";
+[e :U 30 ]
+[e ) :s 3C ]
+[e $UE 25  ]
+"107
+[; ;../../lib_misc/misc.c: 107:         case 3: return "0011";
+[e :U 31 ]
+[e ) :s 4C ]
+[e $UE 25  ]
+"108
+[; ;../../lib_misc/misc.c: 108:         case 4: return "0100";
+[e :U 32 ]
+[e ) :s 5C ]
+[e $UE 25  ]
+"109
+[; ;../../lib_misc/misc.c: 109:         case 5: return "0101";
+[e :U 33 ]
+[e ) :s 6C ]
+[e $UE 25  ]
+"110
+[; ;../../lib_misc/misc.c: 110:         case 6: return "0110";
+[e :U 34 ]
+[e ) :s 7C ]
+[e $UE 25  ]
+"111
+[; ;../../lib_misc/misc.c: 111:         case 7: return "0111";
+[e :U 35 ]
+[e ) :s 8C ]
+[e $UE 25  ]
+"112
+[; ;../../lib_misc/misc.c: 112:         case 8: return "1000";
+[e :U 36 ]
+[e ) :s 9C ]
+[e $UE 25  ]
+"113
+[; ;../../lib_misc/misc.c: 113:         case 9: return "1001";
+[e :U 37 ]
+[e ) :s 10C ]
+[e $UE 25  ]
+"114
+[; ;../../lib_misc/misc.c: 114:         case 10: return "1010";
+[e :U 38 ]
+[e ) :s 11C ]
+[e $UE 25  ]
+"115
+[; ;../../lib_misc/misc.c: 115:         case 11: return "1011";
+[e :U 39 ]
+[e ) :s 12C ]
+[e $UE 25  ]
+"116
+[; ;../../lib_misc/misc.c: 116:         case 12: return "1100";
+[e :U 40 ]
+[e ) :s 13C ]
+[e $UE 25  ]
+"117
+[; ;../../lib_misc/misc.c: 117:         case 13: return "1101";
+[e :U 41 ]
+[e ) :s 14C ]
+[e $UE 25  ]
+"118
+[; ;../../lib_misc/misc.c: 118:         case 14: return "1110";
+[e :U 42 ]
+[e ) :s 15C ]
+[e $UE 25  ]
+"119
+[; ;../../lib_misc/misc.c: 119:         default: return "1111";
+[e :U 43 ]
+[e ) :s 16C ]
+[e $UE 25  ]
+"120
+[; ;../../lib_misc/misc.c: 120:     }
+}
+[e $U 26  ]
+[e :U 27 ]
+[e [\ -> _data `i , $ -> 0 `i 28
+ , $ -> 1 `i 29
+ , $ -> 2 `i 30
+ , $ -> 3 `i 31
+ , $ -> 4 `i 32
+ , $ -> 5 `i 33
+ , $ -> 6 `i 34
+ , $ -> 7 `i 35
+ , $ -> 8 `i 36
+ , $ -> 9 `i 37
+ , $ -> 10 `i 38
+ , $ -> 11 `i 39
+ , $ -> 12 `i 40
+ , $ -> 13 `i 41
+ , $ -> 14 `i 42
+ 43 ]
+[e :U 26 ]
+"121
+[; ;../../lib_misc/misc.c: 121: }
+[e :UE 25 ]
+}
+[a 16C 49 49 49 49 0 ]
+[a 8C 48 49 49 49 0 ]
+[a 12C 49 48 49 49 0 ]
+[a 4C 48 48 49 49 0 ]
+[a 14C 49 49 48 49 0 ]
+[a 6C 48 49 48 49 0 ]
+[a 10C 49 48 48 49 0 ]
+[a 2C 48 48 48 49 0 ]
+[a 15C 49 49 49 48 0 ]
+[a 7C 48 49 49 48 0 ]
+[a 11C 49 48 49 48 0 ]
+[a 3C 48 48 49 48 0 ]
+[a 13C 49 49 48 48 0 ]
+[a 5C 48 49 48 48 0 ]
+[a 9C 49 48 48 48 0 ]
+[a 1C 48 48 48 48 0 ]

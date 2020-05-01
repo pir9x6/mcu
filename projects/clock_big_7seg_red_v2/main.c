@@ -20,10 +20,12 @@
 #include "hardware_profile.h"
 
 #include "bcd.h"
+#include "console.h"
 #include "date_time.h"
 #include "delays.h"
 #include "ds1307.h"
 #include "i2c.h"
+#include "io.h"
 #include "pcf8574.h"
 #include "pwm.h"
 #include "timer.h"
@@ -38,7 +40,8 @@
 
 //-------------------------------- Defines ------------------------------------
 #define SEG_OFF         10
-#define LED             LATCbits.LATC0      // Seconds LED
+#define LED0            LATAbits.LATA0      // Seconds LED
+#define LED1            LATAbits.LATA1      // Seconds LED
 #define BTN_HRS_M       PORTBbits.RB3       // Decrease Hours button
 #define BTN_HRS_P       PORTBbits.RB4       // Increase Hours button
 #define BTN_MIN_M       PORTCbits.RC6       // Decrease Minutes button
@@ -91,7 +94,7 @@ void __interrupt(high_priority) timer2_irq()
 
     if (CntTmrLedSec++ == 16)
     {
-        LED = !LED;
+        LED0 = !LED0;
         CntTmrLedSec = 0;
     }
 }
@@ -102,6 +105,7 @@ void __interrupt(high_priority) timer2_irq()
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void main (void)
 {
+    u8 cnt = 0;
     u8 bcd[5];
     u8 segments[11] = {
         0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10, 0x3F
@@ -116,21 +120,22 @@ void main (void)
     t.yrs = 20;
     
 //--------------------------- Initialisation du PIC ---------------------------
-    TRISA = 0x01;        
-    TRISB = 0b00011000;  
-    TRISC = 0b01110000;
+    set_port_A_input(0);
+    set_port_B_input(BIT_4 | BIT_5);
+    set_port_C_input(BIT_5 | BIT_6);
     ADCON1 = 0x0E;              // PORTA en I/O Numériques sauf RA0
 
 //----------------------------------- UART ------------------------------------
     uart_init(UART_ID_1, UART_FREQ, UART_OPT_NONE);
     
 //--------------------- i2c, bus & devices initialization ---------------------
-    // i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER);
+    i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER);
     // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 0, segments[SEG_OFF]);
     // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 1, segments[SEG_OFF]);
     // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 2, segments[SEG_OFF]);
     // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, segments[SEG_OFF]);
-    
+    delay_ms(100);
+    i2c_detect(UART_ID_1, I2C_BUS_1);
 //-------------------------- Interruption sur Timer 2 -------------------------
     // timer2_init(/*postscaler*/16, /*timer*/255);
 
@@ -143,11 +148,14 @@ void main (void)
     // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
     // ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
     
+    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574A, 0xAA);
+    LED1 = 1; LED0 = 0;
 //-----------------------------------------------------------------------------
     while (1){
-        LED = !LED;
-        delay_ms(100);
-        uart_write(UART_ID_1, 'f');
+        LED0 = !LED0;
+        LED1 = !LED1;
+        delay_ms(500);
+        pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574A, cnt++);
     }
     while (1)
     {

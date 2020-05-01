@@ -6,17 +6,20 @@
                    projectFiles="true">
       <itemPath>hardware_profile.h</itemPath>
       <itemPath>interrupts_management.h</itemPath>
-      <itemPath>../../lib_pic/i2c.h</itemPath>
-      <itemPath>../../lib_misc/delays.h</itemPath>
-      <itemPath>../../lib_misc/misc.h</itemPath>
-      <itemPath>../../lib_misc/types.h</itemPath>
-      <itemPath>../../lib_pic/timer.h</itemPath>
-      <itemPath>../../lib_pic/pwm.h</itemPath>
-      <itemPath>../../lib_misc/bcd.h</itemPath>
-      <itemPath>../../lib_comp/ds1307.h</itemPath>
-      <itemPath>../../lib_comp/pcf8574.h</itemPath>
-      <itemPath>../../lib_misc/date_time.h</itemPath>
-      <itemPath>../../lib_pic/uart.h</itemPath>
+      <itemPath>../../libraries/lib_pic/i2c.h</itemPath>
+      <itemPath>../../libraries/lib_misc/delays.h</itemPath>
+      <itemPath>../../libraries/lib_misc/misc.h</itemPath>
+      <itemPath>../../libraries/lib_misc/types.h</itemPath>
+      <itemPath>../../libraries/lib_pic/timer.h</itemPath>
+      <itemPath>../../libraries/lib_pic/pwm.h</itemPath>
+      <itemPath>../../libraries/lib_misc/bcd.h</itemPath>
+      <itemPath>../../libraries/lib_comp/ds1307.h</itemPath>
+      <itemPath>../../libraries/lib_comp/pcf8574.h</itemPath>
+      <itemPath>../../libraries/lib_misc/date_time.h</itemPath>
+      <itemPath>../../libraries/lib_pic/uart.h</itemPath>
+      <itemPath>../../libraries/lib_pic/io.h</itemPath>
+      <itemPath>../../libraries/lib_misc/console.h</itemPath>
+      <itemPath>../../libraries/lib_misc/i2c_tools.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -26,16 +29,18 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
-      <itemPath>../../lib_pic/i2c.c</itemPath>
-      <itemPath>../../lib_misc/delays.c</itemPath>
-      <itemPath>../../lib_misc/misc.c</itemPath>
-      <itemPath>../../lib_pic/timer.c</itemPath>
-      <itemPath>../../lib_pic/pwm.c</itemPath>
-      <itemPath>../../lib_misc/bcd.c</itemPath>
-      <itemPath>../../lib_comp/ds1307.c</itemPath>
-      <itemPath>../../lib_comp/pcf8574.c</itemPath>
-      <itemPath>../../lib_misc/date_time.c</itemPath>
-      <itemPath>../../lib_pic/uart.c</itemPath>
+      <itemPath>../../libraries/lib_pic/i2c.c</itemPath>
+      <itemPath>../../libraries/lib_misc/delays.c</itemPath>
+      <itemPath>../../libraries/lib_misc/misc.c</itemPath>
+      <itemPath>../../libraries/lib_pic/timer.c</itemPath>
+      <itemPath>../../libraries/lib_pic/pwm.c</itemPath>
+      <itemPath>../../libraries/lib_misc/bcd.c</itemPath>
+      <itemPath>../../libraries/lib_comp/ds1307.c</itemPath>
+      <itemPath>../../libraries/lib_comp/pcf8574.c</itemPath>
+      <itemPath>../../libraries/lib_misc/date_time.c</itemPath>
+      <itemPath>../../libraries/lib_pic/uart.c</itemPath>
+      <itemPath>../../libraries/lib_misc/console.c</itemPath>
+      <itemPath>../../libraries/lib_misc/i2c_tools.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -44,7 +49,7 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../..</Elem>
+    <Elem>../../libraries/..</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -95,7 +100,7 @@
         <property key="define-macros" value=""/>
         <property key="disable-optimizations" value="true"/>
         <property key="extra-include-directories"
-                  value="..\..\lib_pic;..\..\lib_comp;..\..\lib_misc;."/>
+                  value="..\..\libraries\lib_pic;..\..\libraries\lib_comp;..\..\libraries\lib_misc;."/>
         <property key="favor-optimization-for" value="-speed,+space"/>
         <property key="garbage-collect-data" value="true"/>
         <property key="garbage-collect-functions" value="true"/>

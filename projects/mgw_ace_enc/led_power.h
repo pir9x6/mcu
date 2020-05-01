@@ -1,0 +1,21 @@
+#ifndef _LED_POWER_H_
+#define _LED_POWER_H_
+
+#include "types.h"
+
+void toggle_power_led();
+
+typedef enum
+{
+    LED_PATTERN_OFF = 0,
+    LED_PATTERN_STARTING,
+    LED_PATTERN_UPDATING,
+    LED_PATTERN_PWR_DEFAULT,
+    LED_PATTERN_TEMP_DEFAULT,
+    LED_PATTERN_FAN_DEFAULT,
+    LED_PATTERN_PWR_IN_DEFAULT,
+    LED_PATTERN_ON,
+    LED_PATTERN_POWERING_DOWN
+}LED_PATTERN;
+
+#endif

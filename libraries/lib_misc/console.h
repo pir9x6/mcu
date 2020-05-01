@@ -1,5 +1,5 @@
-#ifndef _CONSOLE_H_
-#define _CONSOLE_H_
+#ifndef LIB_MISC_CONSOLE_H
+#define LIB_MISC_CONSOLE_H
 
 #include "i2c_tools.h"
 #include "misc.h"
@@ -35,6 +35,6 @@
 #define cons_bg_cyan    uart_write_string("\033[46m");
 #define cons_bg_white   uart_write_string("\033[47m");
 
-RESULT command_line_interpreter (u8 uart_rx_data);
+result_t command_line_interpreter (UART_ID uart_id, I2C_BUS i2c_id, u8 uart_rx_data);
 
 #endif

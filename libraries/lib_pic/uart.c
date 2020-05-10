@@ -38,8 +38,7 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
-        float UART_BRG = ceil(((float)GetSystemClock() / (16.0 * baudrate)) - 1);
-        SPBRG = (u16)UART_BRG;
+        SPBRG = GetSystemClock() / (16.0 * baudrate) - 1;
 
         //===============================================================
         if (uart_id == UART_ID_1){
@@ -265,8 +264,7 @@ result_t uart_write_string (UART_ID uart_id, ROM char *data)
         while (*data != '\0')               // scanner la chaine jusqu'au caractère nul
         {
             while (!TXSTAbits.TRMT);        // attendre que le buffer soit vide
-            TXREG=*data;                    // envoyer le caractère
-            *data++;                        // pointer sur caractère suivant
+            TXREG = *data++;                    // envoyer le caractère
         }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)

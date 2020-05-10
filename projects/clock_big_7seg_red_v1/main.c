@@ -38,7 +38,7 @@
 
 //-------------------------------- Defines ------------------------------------
 #define SEG_OFF         10
-#define LED             LATCbits.LATC0      // Seconds LED
+#define LED_SEC         LATCbits.LATC0      // Seconds LED
 #define BTN_HRS_M       PORTBbits.RB3       // Decrease Hours button
 #define BTN_HRS_P       PORTBbits.RB4       // Increase Hours button
 #define BTN_MIN_M       PORTCbits.RC6       // Decrease Minutes button
@@ -48,9 +48,8 @@
                          Nop(); Nop(); Nop(); Nop(); Nop();}
 
 //---------------------------- Global variables -------------------------------
-date_time_t t;
-bool_t time_has_changed = FALSE;
-bool_t update_7seg = FALSE;
+bool_t time_has_changed_user = FALSE;
+bool_t time_has_changed_timer = FALSE;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------------------- Timer 2 Interrupt ------------------------------
@@ -72,26 +71,19 @@ void __interrupt(high_priority) timer2_irq()
     //NOP10;
 
     T2CONbits.TMR2ON = 1;             // Timer 2 on
+    
+    CntTmrIncSec++;
+    CntTmrLedSec++;
 
-    if (CntTmrIncSec++ == 37)
+    if (CntTmrIncSec == 37)
     {
-        t.sec++;
+        time_has_changed_timer = TRUE;
         CntTmrIncSec = 0;
-
-        // update date & time
-        datetime_increase_seconds(&t);
-
-        if (time_has_changed){
-            time_has_changed = FALSE;
-            ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
-        }
-
-        update_7seg = TRUE;
     }
 
-    if (CntTmrLedSec++ == 16)
+    if (CntTmrLedSec == 16)
     {
-        LED = !LED;
+        LED_SEC = !LED_SEC;
         CntTmrLedSec = 0;
     }
 }
@@ -107,13 +99,15 @@ void main (void)
         0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10, 0x3F
     };   // 0 = On
     
-    t.hrs = 22;
-    t.min = 17;
-    t.sec =  0;
-    t.dow =  6;
-    t.day = 19;
-    t.mth = 04;
-    t.yrs = 20;
+    date_time_t t = {
+        t.hrs = 15,
+        t.min = 20,
+        t.sec =  0,
+        t.dow =  7,
+        t.day = 10,
+        t.mth =  5,
+        t.yrs = 20
+    };
     
 //--------------------------- Initialisation du PIC ---------------------------
     TRISA = 0x01;        
@@ -123,10 +117,6 @@ void main (void)
     
 //--------------------- i2c, bus & devices initialization ---------------------
     i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER);
-    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 0, segments[SEG_OFF]);
-    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 1, segments[SEG_OFF]);
-    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 2, segments[SEG_OFF]);
-    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, segments[SEG_OFF]);
     
 //-------------------------- Interruption sur Timer 2 -------------------------
     timer2_init(/*postscaler*/16, /*timer*/255);
@@ -141,20 +131,54 @@ void main (void)
     ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
     
 //-----------------------------------------------------------------------------
+    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_1, segments[SEG_OFF]);
+    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_2, segments[SEG_OFF]);
+    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_3, segments[SEG_OFF]);
+    pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_4, segments[SEG_OFF]);
 
     while (1)
     {
-        // set light intensity
-        if      (t.hrs >=  9 && t.hrs < 10)     pwm_set_duty(PWM_ID_1, 70);
-        else if (t.hrs >= 10 && t.hrs < 11)     pwm_set_duty(PWM_ID_1, 85);
-        else if (t.hrs >= 11 && t.hrs < 17)     pwm_set_duty(PWM_ID_1, 180);
-        else if (t.hrs >= 17 && t.hrs < 18)     pwm_set_duty(PWM_ID_1, 140);
-        else if (t.hrs >= 18 && t.hrs < 19)     pwm_set_duty(PWM_ID_1, 115);
-        else if (t.hrs >= 19 && t.hrs < 20)     pwm_set_duty(PWM_ID_1, 90);
-        else if (t.hrs >= 20 && t.hrs < 21)     pwm_set_duty(PWM_ID_1, 35);
-        else if (t.hrs >= 21 && t.hrs < 22)     pwm_set_duty(PWM_ID_1, 20);
-        else if (t.hrs >= 22 && t.hrs < 23)     pwm_set_duty(PWM_ID_1, 12);
-        else                                    pwm_set_duty(PWM_ID_1, 5);
+        if (time_has_changed_user || time_has_changed_timer){
+
+            if (time_has_changed_user){
+                time_has_changed_user = FALSE;
+            }
+
+            if (time_has_changed_timer){
+                time_has_changed_timer = FALSE;
+                datetime_increase_seconds(&t);
+            }
+
+            /* update light intensity */
+            if      (t.hrs >=  9 && t.hrs < 10)     pwm_set_duty(PWM_ID_1, 70);
+            else if (t.hrs >= 10 && t.hrs < 11)     pwm_set_duty(PWM_ID_1, 85);
+            else if (t.hrs >= 11 && t.hrs < 17)     pwm_set_duty(PWM_ID_1, 180);
+            else if (t.hrs >= 17 && t.hrs < 18)     pwm_set_duty(PWM_ID_1, 140);
+            else if (t.hrs >= 18 && t.hrs < 19)     pwm_set_duty(PWM_ID_1, 115);
+            else if (t.hrs >= 19 && t.hrs < 20)     pwm_set_duty(PWM_ID_1, 90);
+            else if (t.hrs >= 20 && t.hrs < 21)     pwm_set_duty(PWM_ID_1, 35);
+            else if (t.hrs >= 21 && t.hrs < 22)     pwm_set_duty(PWM_ID_1, 20);
+            else if (t.hrs >= 22 && t.hrs < 23)     pwm_set_duty(PWM_ID_1, 12);
+            else                                    pwm_set_duty(PWM_ID_1, 5);
+
+            /* update RTC */
+            ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
+
+            /* update minutes display */
+            dec_2_bcd(t.min, bcd);
+            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_1, segments[bcd[0]]);
+            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_2, segments[bcd[1]]);
+            
+            /* update hours display */
+            dec_2_bcd(t.hrs, bcd);
+            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_3, segments[bcd[0]]);
+            if (bcd[1] == 0){ /* don't display the first digit if it's 0 */
+                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_4, 0xFF);
+            }
+            else{
+                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_4, segments[bcd[1]]);
+            }
+        }
 
         if (!BTN_MIN_P)
         {
@@ -162,8 +186,7 @@ void main (void)
             if (!BTN_MIN_P)
             {
                 datetime_increase_minutes(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
+                time_has_changed_user = TRUE;
             }
         }
 
@@ -173,8 +196,7 @@ void main (void)
             if (!BTN_MIN_M)
             {
                 datetime_decrease_minutes(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
+                time_has_changed_user = TRUE;
             }
         }
 
@@ -184,8 +206,7 @@ void main (void)
             if (!BTN_HRS_P)
             {
                 datetime_increase_hours(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
+                time_has_changed_user = TRUE;
             }
         }
 
@@ -195,27 +216,7 @@ void main (void)
             if (!BTN_HRS_M)
             {
                 datetime_decrease_hours(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
-            }
-        }
-
-        if (update_7seg)
-        {
-            update_7seg = FALSE;
-            // display minutes
-            dec_2_bcd(t.min, bcd);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 0, segments[bcd[0]]);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 1, segments[bcd[1]]);
-            
-            // display hours
-            dec_2_bcd(t.hrs, bcd);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 2, segments[bcd[0]]);
-            if (bcd[1] == 0){ /* don't display the first digit if it's 0 */
-                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, 0xFF);
-            }
-            else{
-                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, segments[bcd[1]]);
+                time_has_changed_user = TRUE;
             }
         }
     }

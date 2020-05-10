@@ -57,3 +57,6 @@ pic/clock_big_7seg_red_v1/nbproject/Makefile-genesis.properties
 pic/clock_big_7seg_red_v1/nbproject/Makefile-default.mk
 pic/clock_big_7seg_red_v1/nbproject/configurations.xml
 pic/clock_big_7seg_red_v1/nbproject/private/private.xml
+*.i
+*.p1
+*.d

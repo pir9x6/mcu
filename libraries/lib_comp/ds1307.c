@@ -7,12 +7,12 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Initialization of RTC -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1307_init (I2C_BUS i2c_bus_id, u8 adr_chip)
+result_t ds1307_init (I2C_BUS i2c_bus_id, u8 dev_addr)
 {
     if (i2c_start(i2c_bus_id) != SUCCESS)
         return ERROR;
 
-    if (i2c_write(i2c_bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+    if (i2c_write(i2c_bus_id, (dev_addr<<1) & 0xFE) != SUCCESS)
         return ERROR;
 
     if (i2c_write(i2c_bus_id, DS1307_REG_CONTROL) != SUCCESS)
@@ -32,35 +32,35 @@ result_t ds1307_init (I2C_BUS i2c_bus_id, u8 adr_chip)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------- Get Time & Date from RTC ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1307_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t *t)
+result_t ds1307_get_time (I2C_BUS i2c_bus_id, u8 dev_addr, date_time_t *t)
 {
     u8 tmp;
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_SEC, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_SEC, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->sec);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_MIN, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_MIN, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->min);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_HOURS, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_HOURS, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->hrs);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_DOW, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_DOW, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->dow);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_DAY, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_DAY, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->day);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_MONTH, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_MONTH, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->mth);
 
-    if (i2c_read_reg(i2c_bus_id, adr_chip, DS1307_REG_YEAR, &tmp) != SUCCESS)
+    if (i2c_read_reg(i2c_bus_id, dev_addr, DS1307_REG_YEAR, &tmp) != SUCCESS)
         return ERROR;
     bcd_2_bin(tmp, &t->yrs);
 
@@ -71,14 +71,14 @@ result_t ds1307_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t *t)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Update Time of RTC ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1307_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t t)
+result_t ds1307_set_time (I2C_BUS i2c_bus_id, u8 dev_addr, date_time_t t)
 {
     u8 tmp;
 
     if (i2c_start(i2c_bus_id) != SUCCESS)
         return ERROR;
 
-    if (i2c_write(i2c_bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+    if (i2c_write(i2c_bus_id, (dev_addr<<1) & 0xFE) != SUCCESS)
         return ERROR;
 
     if (i2c_write(i2c_bus_id, DS1307_REG_SEC) != SUCCESS)

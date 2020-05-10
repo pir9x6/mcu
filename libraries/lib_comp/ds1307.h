@@ -21,8 +21,8 @@
 #define DS1307_REG_CONTROL      0x0E
 #define DS1307_REG_STATUS       0x0F
 
-result_t ds1307_init     (I2C_BUS i2c_bus_id, u8 adr_chip);
-result_t ds1307_get_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t *t);
-result_t ds1307_set_time (I2C_BUS i2c_bus_id, u8 adr_chip, date_time_t  t);
+result_t ds1307_init     (I2C_BUS i2c_bus_id, u8 dev_addr);
+result_t ds1307_get_time (I2C_BUS i2c_bus_id, u8 dev_addr, date_time_t *t);
+result_t ds1307_set_time (I2C_BUS i2c_bus_id, u8 dev_addr, date_time_t  t);
 
 #endif

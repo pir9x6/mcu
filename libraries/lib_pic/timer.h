@@ -46,6 +46,11 @@ typedef enum
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------------- PIC18 -----------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+result_t timer_init(TIMER_ID id, 
+                    TMR_PRESCALER prescaler, 
+                    TMR_POSTSCALER postscaler,
+                    u8 timer);
+                    
 #if defined (TMR0IF_bit)
     void timer0_init (TMR_PRESCALER prescaler);
 #endif

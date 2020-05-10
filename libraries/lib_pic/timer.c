@@ -14,10 +14,10 @@ result_t timer_init(TIMER_ID id,
                     u8 timer)
 {
     if (id == TIMER_ID_0){
-
+        return ERROR;
     }
     else if (id == TIMER_ID_1){
-
+        return ERROR;
     }
     else if (id == TIMER_ID_2){
         /* Enables the TMR2 to PR2 match interrupt */
@@ -45,7 +45,10 @@ result_t timer_init(TIMER_ID id,
         RCONbits.IPEN = 1;  
     }
     else if (id == TIMER_ID_3){
-
+        return ERROR;
+    }
+    else{
+        return ERROR;
     }
 
     return SUCCESS;

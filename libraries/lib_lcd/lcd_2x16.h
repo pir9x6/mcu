@@ -3,6 +3,7 @@
 
 #include <xc.h>
 
+#include "date_time.h"
 #include "misc.h"
 #include "types.h"
 
@@ -15,6 +16,24 @@
 
 #define LCD_DATA    1
 #define LCD_CMD     0
+
+/* set function */
+#define SET_FUNCTION    0x20
+#define NB_LINE_1       0x00
+#define NB_LINE_2       0x08
+#define NB_BITS_4       0x00
+#define NB_BITS_8       0x10
+
+typedef struct{
+    u8 nb_lines;
+    u8 nb_bits;
+}lcd_config_t;
+
+typedef enum
+{
+    LCD_DATE_LETTERS,
+    LCD_DATE_NUMBERS
+}lcd_date_format_t;
 
 typedef enum
 {
@@ -48,24 +67,25 @@ typedef enum
                         delay_us (1);\
                         LCD_E_PIN = 0;
 
-void lcd_2x16_init ();
+result_t lcd_2x16_init(lcd_config_t config);
+result_t lcd_2x16_write(u16 data, u8 rs);
+result_t lcd_2x16_write_4b(u16 data, u8 rs);
 void lcd_2x16_position(LCD_LINE ligne, u8 pos);
-void lcd_2x16_clear();
-void lcd_2x16_write (u16 data, u8 rs);
-void lcd_2x16_write_2bcd (u16 data);
-void lcd_2x16_write_2hex (u16 data);
-void lcd_2x16_write_binary (u8 data);
-void lcd_2x16_write_u8 (u8 data);
-void lcd_2x16_write_u16 (u16 data);
-void lcd_2x16_write_u32 (u32 data);
-void lcd_2x16_write_s8 (s8 data);
-void lcd_2x16_write_s16 (s16 data);
-void lcd_2x16_write_s32 (s32 data);
-void lcd_2x16_write_float (f32 data);
-void lcd_2x16_write_double (f64 data);
+result_t lcd_2x16_clear(void);
+void lcd_2x16_write_2bcd(u16 data);
+void lcd_2x16_write_2hex(u16 data);
+void lcd_2x16_write_binary(u8 data);
+void lcd_2x16_write_u8(u8 data);
+void lcd_2x16_write_u16(u16 data);
+void lcd_2x16_write_u32(u32 data);
+void lcd_2x16_write_s8(s8 data);
+void lcd_2x16_write_s16(s16 data);
+void lcd_2x16_write_s32(s32 data);
+void lcd_2x16_write_float(f32 data);
+void lcd_2x16_write_doubl (f64 data);
 void lcd_2x16_write_string(ROM char *string);
-void lcd_write_temperature (u8 temp[], LCD_LINE ligne, u8 pos);
-void lcd_write_date (t_time t, LCD_LINE ligne, u8 pos);
-void lcd_write_hour (t_time t, LCD_LINE ligne, u8 pos);
+void lcd_write_temperature(u8 temp, LCD_LINE ligne, u8 pos);
+void lcd_write_date(date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t format);
+void lcd_write_time(date_time_t t, LCD_LINE ligne, u8 pos);
 
 #endif

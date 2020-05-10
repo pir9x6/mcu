@@ -5,7 +5,7 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- Init of PWM Module ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
+result_t pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
     
@@ -16,6 +16,9 @@ void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
     }
     else if (pwm_id == PWM_ID_2){
         CCP2CONbits.CCP2M = 15;             // PWM mode
+    }
+    else{
+        return ERROR;
     }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
@@ -42,13 +45,19 @@ void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
     IEC0bits.T2IE = 1;              // Enable Timer 2 interrupt
     T2CONbits.TON = 1;              // Start Timer
     
+    #else
+
+    return ERROR;
+
     #endif
+
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------- Set Duty Cycle ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void pwm_set_duty (PWM_ID pwm_id, u16 duty)
+result_t pwm_set_duty (PWM_ID pwm_id, u16 duty)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
@@ -66,12 +75,21 @@ void pwm_set_duty (PWM_ID pwm_id, u16 duty)
         CCP2CONbits.DC2B1 = (duty >> 1) & 0x01;     // bit 1
         CCP2CONbits.DC2B0 = duty & 0x01;            // bit 0
     }
+    else{
+        return ERROR;
+    }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
     
     OC1RS = duty;                   // Load the Compare Register Value
 
+    #else
+
+    return ERROR;
+
     #endif
+
+    return SUCCESS;
 }
 
 

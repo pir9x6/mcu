@@ -1,5 +1,5 @@
-#ifndef _PWM_H_
-#define _PWM_H_
+#ifndef LIB_PIC_PWM_H
+#define LIB_PIC_PWM_H
 
 #include "pic_compiler.h"
 
@@ -16,9 +16,8 @@ typedef enum ePWM_ID
     PWM_ID_6 = 5
 }PWM_ID;
 
-void pwm_init (PWM_ID pwm_id, u16 freq, u16 duty);
-
-void pwm_set_duty (PWM_ID pwm_id, u16 duty);
+result_t pwm_init (PWM_ID pwm_id, u16 freq, u16 duty);
+result_t pwm_set_duty (PWM_ID pwm_id, u16 duty);
 
 #if defined(__PIC24F__) || defined(__dsPIC33F__)
 void __attribute__((interrupt, no_auto_psv)) _OC1Interrupt(void);

@@ -1,8 +1,7 @@
-#ifndef _DS1621_H_
-#define _DS1621_H_
+#ifndef LIB_COMP_DS1621_H
+#define LIB_COMP_DS1621_H
 
 #include "i2c.h"
-#include "misc.h"
 #include "ds1621.h"
 #include "types.h"
 
@@ -15,6 +14,6 @@
 #define DS1621_REG_LIMIT_L           0xA2
 #define DS1621_REG_CONFIG            0xAC
 
-result_t ds1621_read_temp (I2C_BUS i2c_bus_id, u8 temp[]);
+result_t ds1621_read_temp (I2C_BUS i2c_bus_id, u8 dev_addr, u8 temp[]);
 
 #endif

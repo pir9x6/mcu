@@ -18,11 +18,12 @@
       <itemPath>../../libraries/lib_misc/i2c_tools.h</itemPath>
       <itemPath>hardware_profile.h</itemPath>
       <itemPath>../../libraries/lib_comp/ds1621.h</itemPath>
-      <itemPath>../../libraries/lib_comp/ds1337.h</itemPath>
       <itemPath>../../libraries/lib_misc/delays.h</itemPath>
       <itemPath>../../libraries/lib_misc/date_time.h</itemPath>
       <itemPath>../../libraries/lib_misc/console.h</itemPath>
       <itemPath>../../libraries/lib_misc/bcd.h</itemPath>
+      <itemPath>../../libraries/lib_lcd/lcd_2x16.h</itemPath>
+      <itemPath>../../libraries/lib_comp/ds1307.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -35,7 +36,6 @@
       <itemPath>../../libraries/lib_misc/console.c</itemPath>
       <itemPath>../../libraries/lib_misc/date_time.c</itemPath>
       <itemPath>../../libraries/lib_misc/delays.c</itemPath>
-      <itemPath>../../libraries/lib_comp/ds1337.c</itemPath>
       <itemPath>../../libraries/lib_comp/ds1621.c</itemPath>
       <itemPath>../../libraries/lib_pic/i2c.c</itemPath>
       <itemPath>../../libraries/lib_misc/i2c_tools.c</itemPath>
@@ -47,6 +47,8 @@
       <itemPath>../../libraries/lib_comp/tmp75.c</itemPath>
       <itemPath>../../libraries/lib_pic/uart.c</itemPath>
       <itemPath>interrupts_management.c</itemPath>
+      <itemPath>../../libraries/lib_lcd/lcd_2x16.c</itemPath>
+      <itemPath>../../libraries/lib_comp/ds1307.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -59,6 +61,7 @@
     <Elem>../../libraries/lib_comp</Elem>
     <Elem>../../libraries/lib_misc</Elem>
     <Elem>../../libraries/lib_pic</Elem>
+    <Elem>../../libraries/lib_lcd</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -189,6 +192,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

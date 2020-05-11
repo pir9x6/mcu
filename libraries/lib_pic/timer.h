@@ -14,13 +14,25 @@ typedef enum
     TIMER_ID_5
 }TIMER_ID;
 
+#if defined(__18CXX) || defined(__XC8) || defined(_PIC18)
 typedef enum
 {
-    TMR_PRES_1 = 0,
-    TMR_PRES_8,
-    TMR_PRES_64,
-    TMR_PRES_256
+    TMR_PRESCALER_1 = 0,
+    TMR_PRESCALER_4,
+    TMR_PRESCALER_8,
+    TMR_PRESCALER_16
 }TMR_PRESCALER;
+#elif defined(__PIC24F__) || defined(__dsPIC33F__)
+typedef enum
+{
+    TMR_PRESCALER_1 = 0,
+    TMR_PRESCALER_8,
+    TMR_PRESCALER_64,
+    TMR_PRESCALER_256
+}TMR_PRESCALER;
+#else
+    #error "Unknown processor or compiler."
+#endif
 
 typedef enum
 {

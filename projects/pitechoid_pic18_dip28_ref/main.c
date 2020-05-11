@@ -1,5 +1,6 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Project     :   Clock with Big Red 7seg Display v2                  &&&
+//&&&   Project     :   Reference project for:                              &&&
+//&&&                   Pitechoid Dev Board PIC18 DIP28                     &&&
 //&&&   Author      :   Pierre Blaché                                       &&&
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //&&&   IDE         :   MPLABX v5.35                                        &&&
@@ -26,9 +27,11 @@
 #include "ds1307.h"
 #include "i2c.h"
 #include "io.h"
+#include "lcd_2x16.h"
 #include "pcf8574.h"
 #include "pwm.h"
 #include "timer.h"
+#include "tmp75.h"
 #include "types.h"
 #include "uart.h"
 
@@ -40,20 +43,18 @@
 
 //-------------------------------- Defines ------------------------------------
 #define SEG_OFF         10
-#define LED0            LATAbits.LATA0      // Seconds LED
-#define LED1            LATAbits.LATA1      // Seconds LED
-#define BTN_HRS_M       PORTBbits.RB3       // Decrease Hours button
-#define BTN_HRS_P       PORTBbits.RB4       // Increase Hours button
-#define BTN_MIN_M       PORTCbits.RC6       // Decrease Minutes button
-#define BTN_MIN_P       PORTCbits.RC5       // Increase Minutes button
+#define LED_ERROR       LATAbits.LATA0      // Error LED
+#define LED_SEC         LATAbits.LATA1
+#define SWITCH_1        PORTAbits.RA2
+#define SWITCH_2        PORTAbits.RA3
+
 #define DEBOUNCE_DELAY  100
 #define NOP10           {Nop(); Nop(); Nop(); Nop(); Nop(); \
                          Nop(); Nop(); Nop(); Nop(); Nop();}
 
 //---------------------------- Global variables -------------------------------
-date_time_t t;
-bool_t time_has_changed = FALSE;
-bool_t update_7seg = FALSE;
+bool_t time_has_changed_timer = FALSE;
+bool_t time_has_changed_user = FALSE;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------------------- Timer 2 Interrupt ------------------------------
@@ -76,25 +77,18 @@ void __interrupt(high_priority) timer2_irq()
 
     T2CONbits.TMR2ON = 1;             // Timer 2 on
 
-    if (CntTmrIncSec++ == 37)
+    CntTmrIncSec++;
+    CntTmrLedSec++;
+
+    if (CntTmrIncSec == 37)
     {
-        t.sec++;
+        time_has_changed_timer = TRUE;
         CntTmrIncSec = 0;
-
-        // update date & time
-        datetime_increase_seconds(&t);
-
-        if (time_has_changed){
-            time_has_changed = FALSE;
-            ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
-        }
-
-        update_7seg = TRUE;
     }
 
-    if (CntTmrLedSec++ == 16)
+    if (CntTmrLedSec == 16)
     {
-        LED0 = !LED0;
+        LED_SEC = !LED_SEC;
         CntTmrLedSec = 0;
     }
 }
@@ -106,41 +100,67 @@ void __interrupt(high_priority) timer2_irq()
 void main (void)
 {
     u8 cnt = 0;
+    date_time_t t = {
+            t.hrs = 22,
+            t.min = 17,
+            t.sec =  0,
+            t.dow =  6,
+            t.day = 19,
+            t.mth = 04,
+            t.yrs = 20
+    };
+    lcd_config_t lcd_config = {
+        lcd_config.nb_lines = NB_LINE_2,
+        lcd_config.nb_bits = NB_BITS_4
+    };
+
     u8 bcd[5];
+    u16 tmp75_temp;
     u8 segments[11] = {
         0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10, 0x3F
     };   // 0 = On
     
-    t.hrs = 22;
-    t.min = 17;
-    t.sec =  0;
-    t.dow =  6;
-    t.day = 19;
-    t.mth = 04;
-    t.yrs = 20;
+    unsigned *toto = TRISAbits.RA0;     /* a tester */
+    toto = 1;
     
-//--------------------------- Initialisation du PIC ---------------------------
-    set_port_A_input(0);
-    set_port_B_input(BIT_4 | BIT_5);
-    set_port_C_input(BIT_5 | BIT_6);
-    ADCON1 = 0x0E;              // PORTA en I/O Numériques sauf RA0
+//--------------------------------- GPIO init ---------------------------------
+    set_port_A_input(BIT_3 | BIT_2);
+    set_port_B_input(0);
+    set_port_C_input(BIT_6);
+
+    /* PORTA as digital IOs */
+    ADCON1 = 0x0F;
+
+    /* default values */
+    LED_ERROR = 0;
+    LED_SEC = 0;
 
 //----------------------------------- UART ------------------------------------
-    uart_init(UART_ID_1, UART_FREQ, UART_OPT_NONE);
+    if (uart_init(UART_ID_1, UART_FREQ, UART_OPT_NONE) != SUCCESS){
+        LED_ERROR = 1;
+    }
     
 //--------------------- i2c, bus & devices initialization ---------------------
-    i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER);
-    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 0, segments[SEG_OFF]);
-    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 1, segments[SEG_OFF]);
-    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 2, segments[SEG_OFF]);
-    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, segments[SEG_OFF]);
-    delay_ms(100);
-    i2c_detect(UART_ID_1, I2C_BUS_1);
-//-------------------------- Interruption sur Timer 2 -------------------------
-    // timer2_init(/*postscaler*/16, /*timer*/255);
+    if (i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER) != SUCCESS){
+        LED_ERROR = 1;
+    }
+
+    // i2c_detect(UART_ID_1, I2C_BUS_1);
+
+//------------------------------- Init Timer 2 --------------------------------
+    if (timer_init(TIMER_ID_2, TMR_PRES_256, TMR_POSTSCALER_16, /*timer*/255) != SUCCESS){
+        LED_ERROR = 1;
+    }
 
 //----------------------------- PWM Configuration------------------------------
-    // pwm_init(PWM_ID_1, 0/*freq*/, 255/*duty*/);
+    if (pwm_init(PWM_ID_1, 0/*freq*/, 255/*duty*/) != SUCCESS){
+        LED_ERROR = 1;
+    }
+
+//--------------------------------- LCD Init ----------------------------------
+    if (lcd_2x16_init(lcd_config) != SUCCESS){
+        LED_ERROR = 1;
+    }
 
 //------------------------------------ RTC ------------------------------------
     // ds1307_init(I2C_BUS_1, I2C_ADR_DS1307);
@@ -148,89 +168,33 @@ void main (void)
     // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
     // ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
     
-    // pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574A, 0xAA);
-    LED1 = 1; LED0 = 0;
+    if (tmp75_configure(I2C_BUS_1, I2C_ADR_TMP75) != SUCCESS){
+        LED_ERROR = 1;
+    }
+
 //-----------------------------------------------------------------------------
     while (1){
-        LED0 = !LED0;
-        LED1 = !LED1;
         delay_ms(500);
+        uart_write_string(UART_ID_1, "coucou ");
         pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574A, cnt++);
-    }
-    while (1)
-    {
-        // set light intensity
-        if      (t.hrs >=  9 && t.hrs < 10)     pwm_set_duty(PWM_ID_1, 70);
-        else if (t.hrs >= 10 && t.hrs < 11)     pwm_set_duty(PWM_ID_1, 85);
-        else if (t.hrs >= 11 && t.hrs < 17)     pwm_set_duty(PWM_ID_1, 180);
-        else if (t.hrs >= 17 && t.hrs < 18)     pwm_set_duty(PWM_ID_1, 140);
-        else if (t.hrs >= 18 && t.hrs < 19)     pwm_set_duty(PWM_ID_1, 115);
-        else if (t.hrs >= 19 && t.hrs < 20)     pwm_set_duty(PWM_ID_1, 90);
-        else if (t.hrs >= 20 && t.hrs < 21)     pwm_set_duty(PWM_ID_1, 35);
-        else if (t.hrs >= 21 && t.hrs < 22)     pwm_set_duty(PWM_ID_1, 20);
-        else if (t.hrs >= 22 && t.hrs < 23)     pwm_set_duty(PWM_ID_1, 12);
-        else                                    pwm_set_duty(PWM_ID_1, 5);
 
-        if (!BTN_MIN_P)
-        {
-            delay_ms (DEBOUNCE_DELAY);
-            if (!BTN_MIN_P)
-            {
+        lcd_write_time(t, LCD_LINE_1, 1/*position*/);
+        lcd_write_date(t, LCD_LINE_2, 1/*position*/, LCD_DATE_LETTERS);
+
+        tmp75_read_temp(I2C_BUS_1, I2C_ADR_TMP75, &tmp75_temp);
+        lcd_write_temperature(tmp75_temp >> 8, LCD_LINE_1, 10);
+
+        if (!SWITCH_1){
+            delay_ms(50);
+            if (!SWITCH_1){
+                datetime_increase_seconds(&t);
+            }
+        }
+
+        if (!SWITCH_2){
+            delay_ms(50);
+            if (!SWITCH_2){
                 datetime_increase_minutes(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
-            }
-        }
-
-        if (!BTN_MIN_M)
-        {
-            delay_ms (DEBOUNCE_DELAY);
-            if (!BTN_MIN_M)
-            {
-                datetime_decrease_minutes(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
-            }
-        }
-
-        if (!BTN_HRS_P)
-        {
-            delay_ms (DEBOUNCE_DELAY);
-            if (!BTN_HRS_P)
-            {
-                datetime_increase_hours(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
-            }
-        }
-
-        if (!BTN_HRS_M)
-        {
-            delay_ms (DEBOUNCE_DELAY);
-            if (!BTN_HRS_M)
-            {
-                datetime_decrease_hours(&t);
-                time_has_changed = TRUE;
-                update_7seg = TRUE;
-            }
-        }
-
-        if (update_7seg)
-        {
-            update_7seg = FALSE;
-            // display minutes
-            dec_2_bcd(t.min, bcd);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 0, segments[bcd[0]]);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 1, segments[bcd[1]]);
-            
-            // display hours
-            dec_2_bcd(t.hrs, bcd);
-            pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 2, segments[bcd[0]]);
-            if (bcd[1] == 0){ /* don't display the first digit if it's 0 */
-                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, 0xFF);
-            }
-            else{
-                pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574 + 3, segments[bcd[1]]);
             }
         }
     }

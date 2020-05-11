@@ -17,6 +17,7 @@
                 <sourceRootElem>../../libraries/lib_comp</sourceRootElem>
                 <sourceRootElem>../../libraries/lib_misc</sourceRootElem>
                 <sourceRootElem>../../libraries/lib_pic</sourceRootElem>
+                <sourceRootElem>../../libraries/lib_lcd</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

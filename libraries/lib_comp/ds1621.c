@@ -1,41 +1,65 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Title           :   Temperature Sensor DS1621                       &&&
-//&&&   Autor           :   Pierre Blaché                                   &&&
-//&&&   Date            :   November 2012                                   &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions        :   v1.0 - 11/09/10 - Creation                      &&&
-//&&&                       v2.0 - 14/05/25 - Updated                       &&&
-//&&&                       v3.0 - 14/12/14 - Returned to the old version   &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& 
-
+#include "delays.h"
 #include "ds1621.h"
+#include "i2c.h"
 #include "types.h"
 
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------ Read temperature from DS1621 -----------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t ds1621_read_temp (I2C_BUS i2c_bus_id, u8 temp[])
+result_t ds1621_read_temp (I2C_BUS i2c_bus_id, u8 dev_addr, u8 temp[])
 {
-    i2c_start (i2c_bus_id);                                 // Start Condition
-    i2c_write (i2c_bus_id, (I2C_ADR_DS1621<<1) & 0xFE);     // Adress + Write bit
-    i2c_write (i2c_bus_id, DS1621_REG_CONFIG);              // Acces au registre de config.
-    i2c_write (i2c_bus_id, 0x00);                           // Configurer le capteur
-    i2c_stop  (i2c_bus_id);                                 // Stop Condition
+    /* configure sensor */
+    if (i2c_start (i2c_bus_id) != SUCCESS)
+        return ERROR;
+                                       
+    if (i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
+        return ERROR;
 
-    i2c_start (i2c_bus_id);                                 // Start Condition
-    i2c_write (i2c_bus_id, (I2C_ADR_DS1621<<1) & 0xFE);     // Adress + Write bit
-    i2c_write (i2c_bus_id, DS1621_REG_START_CONV);          // Lancer la conversion
-    i2c_stop  (i2c_bus_id);                                 // Stop Condition
+    if (i2c_write (i2c_bus_id, DS1621_REG_CONFIG) != SUCCESS)
+        return ERROR;
 
-    i2c_start (i2c_bus_id);                                 // Start Condition
-    i2c_write (i2c_bus_id, (I2C_ADR_DS1621<<1) & 0xFE);     // Adress + Write bit
-    i2c_write (i2c_bus_id, DS1621_REG_TEMPERATURE);         // Envoyer la commande "lire la temp"
-    i2c_rstart(i2c_bus_id);                                 // Repeated Start-condition
-    i2c_write (i2c_bus_id, (I2C_ADR_DS1621<<1) | 0x01);     // Adress + Read bit
-    i2c_read  (i2c_bus_id, I2C_ACK,  &temp[0]);             // Get Msb
-    i2c_read  (i2c_bus_id, I2C_NACK, &temp[1]);             // Get LSB
-    i2c_stop  (i2c_bus_id);                                 // Stop Condition
+    if (i2c_write (i2c_bus_id, 0x00) != SUCCESS)
+        return ERROR;                        
+
+    if (i2c_stop  (i2c_bus_id) != SUCCESS)
+        return ERROR;                            
+
+    /* launch temperature acquisition */
+    if (i2c_start (i2c_bus_id) != SUCCESS)
+        return ERROR;
+
+    if (i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
+        return ERROR;
+
+    if (i2c_write (i2c_bus_id, DS1621_REG_START_CONV) != SUCCESS)
+        return ERROR;
+
+    if (i2c_stop  (i2c_bus_id) != SUCCESS)
+        return ERROR;
+
+    delay_ms(5);
+
+    /* get temperature */
+    if (i2c_start (i2c_bus_id) != SUCCESS)
+        return ERROR;
+
+    if (i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
+        return ERROR;
+
+    if (i2c_write (i2c_bus_id, DS1621_REG_TEMPERATURE) != SUCCESS)
+        return ERROR;
+
+    if (i2c_rstart(i2c_bus_id) != SUCCESS)
+        return ERROR;
+
+    if (i2c_write (i2c_bus_id, (dev_addr << 1) | 0x01) != SUCCESS)
+        return ERROR;
+
+    if (i2c_read  (i2c_bus_id, I2C_ACK,  &temp[0]) != SUCCESS)
+        return ERROR;
+
+    if (i2c_read  (i2c_bus_id, I2C_NACK, &temp[1]) != SUCCESS)
+        return ERROR;           
+
+    if (i2c_stop  (i2c_bus_id) != SUCCESS)
+        return ERROR;                                
 
     return SUCCESS;
 }

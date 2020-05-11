@@ -50,11 +50,11 @@ result_t tmp75_read_temp(I2C_BUS bus_id, u8 dev_addr, u16 *temp)
         return ERROR;
 
     /* get integer part of the temperature */
-    if (i2c_read (bus_id, &i2cbyte1, I2C_ACK) != SUCCESS)
+    if (i2c_read (bus_id, I2C_ACK, &i2cbyte1) != SUCCESS)
         return ERROR;
 
     /* get decimal part of the temperature */
-    if (i2c_read (bus_id, &i2cbyte2, I2C_NACK) != SUCCESS)
+    if (i2c_read (bus_id, I2C_NACK, &i2cbyte2) != SUCCESS)
         return ERROR;
 
     if (i2c_stop (bus_id) != SUCCESS)

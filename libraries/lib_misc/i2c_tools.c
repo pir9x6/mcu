@@ -24,7 +24,7 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
     u8 i, r, c;
 
 
-    uart_write_string (uart_id, "\n\n------ Scan of I2C Bus ------\n    ");
+    uart_write_string (uart_id, "\n\r------ Scan of I2C Bus ------\n    ");
 
     for (i = 0; i < 16; i++)
     {

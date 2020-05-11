@@ -73,20 +73,7 @@ void timer0_init (TMR_PRESCALER scaler)
 #if defined (_T1IF) || defined (TMR1IF_bit)
 void timer1_init (TMR_PRESCALER prescaler, u16 timer)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
-    
-    // ========  ToDo  ========
-    PIE1bits.TMR1IE = 1;            // enable interrupt sur timer 1
-
-    INTCONbits.GIE = 1;             // enable global interrupts
-    INTCONbits.PEIE = 1;            // enable peripheral interrupts
-    
-    T0CONbits.T08BIT = 0;           // configure as a 16-bits timer
-    T0CONbits.T0PS = prescaler;     // set prescaler
-    T0CONbits.TMR0ON = 1;           // Enable Timer
-    RCONbits.IPEN = 1;              // Interruption prioritaires activées
-    
-    #elif defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
     T1CONbits.TCKPS = scaler;       // Prescaler (0=1 - 1=8 - 2=64 - 3=256)
@@ -97,10 +84,6 @@ void timer1_init (TMR_PRESCALER prescaler, u16 timer)
     PR1 = timer;                    // Periode du Timer 1 (64ms)
     T1CONbits.TON = 1;              // Lancer le Timer 1
 
-    #else
-
-        #error -- processor ID not specified in generic header file
-
     #endif
 }
 #endif
@@ -110,33 +93,7 @@ void timer1_init (TMR_PRESCALER prescaler, u16 timer)
 #if defined (_T2IF) || defined (TMR2IF_bit)
 void timer2_init (TMR_PRESCALER scaler, u16 timer)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
-
-    /* Enables the TMR2 to PR2 match interrupt */
-    PIE1bits.TMR2IE = 1;
-
-    /* enable global interrupts */
-    INTCONbits.GIE = 1;         
-
-    /* enable peripheral interrupts */
-    INTCONbits.PEIE = 1;            
-    
-    /* Set timer period */
-    PR2 = timer;                    
-    
-    /* Prescaler */
-    T2CONbits.T2CKPS = 3;
-
-    /* postscaler */
-    T2CONbits.TOUTPS = scaler-1;  
-
-    /* enable timer */
-    T2CONbits.TMR2ON = 1;           
-    
-    // Enable priority levels on interrupts
-    RCONbits.IPEN = 1;              
-
-    #elif defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
 
@@ -148,10 +105,6 @@ void timer2_init (TMR_PRESCALER scaler, u16 timer)
     IPC1bits.T2IP = 6;              // priority level
     IEC0bits.T2IE = 1;              // Enable Timer 1 interrupt
     T2CONbits.TON = 1;              // Lancer le Timer 1
-
-    #else
-
-        #error -- processor ID not specified in generic header file
 
     #endif
 }
@@ -176,10 +129,6 @@ void timer3_init (TMR_PRESCALER scaler, u16 timer)
     IPC2bits.T3IP = 6;              // priority level
     IEC0bits.T3IE = 1;              // Enable Timer 1 interrupt
     T3CONbits.TON = 1;              // Lancer le Timer 1
-
-    #else
-
-        #error -- processor ID not specified in generic header file
 
     #endif
 }
@@ -211,10 +160,6 @@ void timer23_init (TMR_PRESCALER scaler, u32 timer)
     IEC0bits.T3IE = 1;              // Enable Timer3 interrupt
     T2CONbits.TON = 1;              // Start 32-bit Timer
 
-    #else
-
-        #error -- processor ID not specified in generic header file
-
     #endif
 }
 #endif
@@ -241,10 +186,6 @@ void timer45_init (TMR_PRESCALER scaler, u32 timer)
     IFS1bits.T5IF = 0;              // Clear Timer3 Interrupt Flag
     IEC1bits.T5IE = 1;              // Enable Timer3 interrupt
     T4CONbits.TON = 1;              // Start 32-bit Timer
-
-    #else
-
-        #error -- processor ID not specified in generic header file
 
     #endif
 }

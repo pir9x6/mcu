@@ -25,6 +25,7 @@
 #include "delays.h"
 #include "ds1307.h"
 #include "i2c.h"
+#include "io.h"
 #include "pcf8574.h"
 #include "pwm.h"
 #include "timer.h"
@@ -56,35 +57,25 @@ bool_t time_has_changed_timer = FALSE;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void __interrupt(high_priority) timer2_irq()
 {
-    static u32 CntTmrLedSec = 0;
-    static u32 CntTmrIncSec = 0;
+    static u16 CntTmrIncSec = 0;
 
     T2CONbits.TMR2ON = 0;               // Disable Timer 2
     PIR1bits.TMR2IF = 0;                // Clear Timer interrupt
 
-    NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10;
-    NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; 
-    NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10;
-    NOP10; NOP10;
-
-    /* modif du 19 avril - avant c'était trop rapide */
-    //NOP10;
+    // NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10;
 
     T2CONbits.TMR2ON = 1;             // Timer 2 on
     
     CntTmrIncSec++;
-    CntTmrLedSec++;
 
-    if (CntTmrIncSec == 37)
+    if (CntTmrIncSec == 499){
+        LED_SEC = !LED_SEC;
+    }
+    else if (CntTmrIncSec == 999)
     {
         time_has_changed_timer = TRUE;
-        CntTmrIncSec = 0;
-    }
-
-    if (CntTmrLedSec == 16)
-    {
         LED_SEC = !LED_SEC;
-        CntTmrLedSec = 0;
+        CntTmrIncSec = 0;
     }
 }
 
@@ -100,8 +91,8 @@ void main (void)
     };   // 0 = On
     
     date_time_t t = {
-        t.hrs = 15,
-        t.min = 20,
+        t.hrs = 23,
+        t.min =  3,
         t.sec =  0,
         t.dow =  7,
         t.day = 10,
@@ -110,25 +101,24 @@ void main (void)
     };
     
 //--------------------------- Initialisation du PIC ---------------------------
-    TRISA = 0x01;        
-    TRISB = 0b00011000;  
-    TRISC = 0b01110000;
+    TRISCbits.RC0 = IO_OUT;     // LED sec
+    TRISCbits.RC2 = IO_OUT;     // PWM
     ADCON1 = 0x0E;              // PORTA en I/O Numériques sauf RA0
     
 //--------------------- i2c, bus & devices initialization ---------------------
     i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER);
     
 //-------------------------- Interruption sur Timer 2 -------------------------
-    timer2_init(/*postscaler*/16, /*timer*/255);
+    /* Timer period = Fosc(10M) / 4 /  Prescaler(1) / Postscaler(10) / Timer(250) / Cnt(1000) = 1s */
+    timer_init(TIMER_ID_2, TMR_PRESCALER_1, TMR_POSTSCALER_10, 249/*timer*/);
 
 //----------------------------- PWM Configuration------------------------------
-    pwm_init(PWM_ID_1, 0/*freq*/, 255/*duty*/);
+    pwm_init(PWM_ID_1, 0/*freq*/, 180/*duty*/);
 
 //------------------------------------ RTC ------------------------------------
-    ds1307_init(I2C_BUS_1, I2C_ADR_DS1307);
-    // delay_ms(100);
+    // ds1307_init(I2C_BUS_1, I2C_ADR_DS1307);
     // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
-    ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
+    // ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
     
 //-----------------------------------------------------------------------------
     pcf8574_write_port(I2C_BUS_1, I2C_ADR_PCF8574_1, segments[SEG_OFF]);
@@ -150,16 +140,16 @@ void main (void)
             }
 
             /* update light intensity */
-            if      (t.hrs >=  9 && t.hrs < 10)     pwm_set_duty(PWM_ID_1, 70);
+            if      (t.hrs >=  9 && t.hrs < 10)     pwm_set_duty(PWM_ID_1, 50);
             else if (t.hrs >= 10 && t.hrs < 11)     pwm_set_duty(PWM_ID_1, 85);
             else if (t.hrs >= 11 && t.hrs < 17)     pwm_set_duty(PWM_ID_1, 180);
             else if (t.hrs >= 17 && t.hrs < 18)     pwm_set_duty(PWM_ID_1, 140);
             else if (t.hrs >= 18 && t.hrs < 19)     pwm_set_duty(PWM_ID_1, 115);
             else if (t.hrs >= 19 && t.hrs < 20)     pwm_set_duty(PWM_ID_1, 90);
-            else if (t.hrs >= 20 && t.hrs < 21)     pwm_set_duty(PWM_ID_1, 35);
-            else if (t.hrs >= 21 && t.hrs < 22)     pwm_set_duty(PWM_ID_1, 20);
-            else if (t.hrs >= 22 && t.hrs < 23)     pwm_set_duty(PWM_ID_1, 12);
-            else                                    pwm_set_duty(PWM_ID_1, 5);
+            else if (t.hrs >= 20 && t.hrs < 21)     pwm_set_duty(PWM_ID_1, 40);
+            else if (t.hrs >= 21 && t.hrs < 22)     pwm_set_duty(PWM_ID_1, 30);
+            else if (t.hrs >= 22 && t.hrs < 23)     pwm_set_duty(PWM_ID_1, 13);
+            else                                    pwm_set_duty(PWM_ID_1, 13);
 
             /* update RTC */
             ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);

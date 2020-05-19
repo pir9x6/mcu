@@ -25,22 +25,6 @@ typedef struct
 }t_lm63_data;
 
 
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------------- Prototypes ---------------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t lm63_init();
-
-result_t lm63_read_temp (I2C_BUS i2c_bus_id, u8 *temp);
-
-result_t lm63_read_speed (I2C_BUS i2c_bus_id, u16 *speed);
-
-result_t lm63_set_fan_speed (I2C_BUS i2c_bus_id, u8 speed);
-
-result_t lm63_update_data (I2C_BUS i2c_bus_id, t_lm63_data *data);
-
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ LM63 Registers address -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -102,3 +86,12 @@ result_t lm63_update_data (I2C_BUS i2c_bus_id, t_lm63_data *data);
 #define HYST_TO_REG(val)        ((val) <= 0 ? 0 : \
                                  (val) >= 127000 ? 127 : \
                                  ((val) + 500) / 1000)
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//-------------------------------- Prototypes ---------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+result_t lm63_init (I2C_BUS i2c_bus_id, u8 dev_addr);
+result_t lm63_read_temp (I2C_BUS i2c_bus_id, u8 dev_addr, u8 *temp);
+result_t lm63_read_speed (I2C_BUS i2c_bus_id, u8 dev_addr, u16 *speed);
+result_t lm63_set_fan_speed (I2C_BUS i2c_bus_id, u8 dev_addr, u8 speed);
+result_t lm63_update_data (I2C_BUS i2c_bus_id, u8 dev_addr, t_lm63_data *data);

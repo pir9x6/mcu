@@ -4,7 +4,7 @@
 #include "i2c.h"
 #include "types.h"
 
-result_t pcf8574_write_port(I2C_BUS i2c_bus_id, u8 adr_chip, u8  data);
-result_t pcf8574_read_port (I2C_BUS i2c_bus_id, u8 adr_chip, u8 *data);
+result_t pcf8574_write_port(I2C_BUS i2c_bus_id, u8 dev_addr, u8  data);
+result_t pcf8574_read_port (I2C_BUS i2c_bus_id, u8 dev_addr, u8 *data);
 
 #endif

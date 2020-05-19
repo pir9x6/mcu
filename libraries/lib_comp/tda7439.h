@@ -1,5 +1,5 @@
-#ifndef _TDA7439_H_
-#define _TDA7439_H_
+#ifndef LIB_COMP_TDA7439_H
+#define LIB_COMP_TDA7439_H
 
 #include "i2c.h"
 #include "types.h"
@@ -23,12 +23,9 @@ typedef enum eTDA7439_INPUT{
 }TDA7439_INPUT;
 
 // prototypes ==========================
-RESULT tda7439_init(I2C_BUS i2c_bus_id, TDA7439_INPUT input, u8 volume);
-
-RESULT tda7439_input(I2C_BUS i2c_bus_id, TDA7439_INPUT input);
-
-RESULT tda7439_volume(I2C_BUS i2c_bus_id, u8 volume);
-
-RESULT tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 att_r, u8 att_l);
+result_t tda7439_init(I2C_BUS i2c_bus_id, u8 dev_addr, TDA7439_INPUT input, u8 volume);
+result_t tda7439_input(I2C_BUS i2c_bus_id, u8 dev_addr, TDA7439_INPUT input);
+result_t tda7439_volume(I2C_BUS i2c_bus_id, u8 dev_addr, u8 volume);
+result_t tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 dev_addr, u8 att_r, u8 att_l);
 
 #endif

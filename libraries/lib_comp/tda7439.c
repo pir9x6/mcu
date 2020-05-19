@@ -1,32 +1,24 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Title           :   Audio Processor TDA7439                         &&&
-//&&&   Autor           :   Pierre Blaché                                   &&&
-//&&&   Date            :   June 2015                                       &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions        :   v1.0 - 14/06/2015 - Creation                    &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& 
-
 #include "tda7439.h"
-
+#include "types.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- initialisation --------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7439_init(I2C_BUS i2c_bus_id, TDA7439_INPUT input, u8 volume)
+result_t tda7439_init(I2C_BUS i2c_bus_id, u8 dev_addr, TDA7439_INPUT input, u8 volume)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // select input
     if (result == SUCCESS)
-        result = tda7439_input(i2c_bus_id, input);
+        result = tda7439_input(i2c_bus_id, dev_addr, input);
 
     // set volume
     if (result == SUCCESS)
-        result = tda7439_volume(i2c_bus_id, volume);
+        result = tda7439_volume(i2c_bus_id, dev_addr, volume);
 
     // speaker attenuation (right and left)
     if (result == SUCCESS)
-        result = tda7439_speaker_att(i2c_bus_id, 0x00, 0x00);
+        result = tda7439_speaker_att(i2c_bus_id, dev_addr, 0x00, 0x00);
 
     return result;
 }
@@ -35,16 +27,16 @@ RESULT tda7439_init(I2C_BUS i2c_bus_id, TDA7439_INPUT input, u8 volume)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------ input selection ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7439_input(I2C_BUS i2c_bus_id, TDA7439_INPUT input)
+result_t tda7439_input(I2C_BUS i2c_bus_id, u8 dev_addr, TDA7439_INPUT input)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);
 
     // address of the chip
     if (result == SUCCESS)
-        result = i2c_write (i2c_bus_id, (I2C_ADR_TDA7439<<1) & 0xFE);
+        result = i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE);
 
     // data to write
     if (result == SUCCESS)
@@ -61,16 +53,16 @@ RESULT tda7439_input(I2C_BUS i2c_bus_id, TDA7439_INPUT input)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------- Set Volume Level from +0dB to -40dB ---------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7439_volume(I2C_BUS i2c_bus_id, u8 volume)
+result_t tda7439_volume(I2C_BUS i2c_bus_id, u8 dev_addr, u8 volume)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
     // send start condition
     result = i2c_start (i2c_bus_id);
 
     // address of the chip
     if (result == SUCCESS)
-        result = i2c_write (i2c_bus_id, (I2C_ADR_TDA7439<<1) & 0xFE);
+        result = i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE);
 
     // data to write
     if (result == SUCCESS)
@@ -87,9 +79,9 @@ RESULT tda7439_volume(I2C_BUS i2c_bus_id, u8 volume)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------- Set Volume Level from +0dB to -40dB ---------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-RESULT tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 att_r, u8 att_l)
+result_t tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 dev_addr, u8 att_r, u8 att_l)
 {
-    RESULT result = SUCCESS;
+    result_t result = SUCCESS;
 
 
     // send start condition
@@ -97,7 +89,7 @@ RESULT tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 att_r, u8 att_l)
 
     // address of the chip
     if (result == SUCCESS)
-        result = i2c_write (i2c_bus_id, (I2C_ADR_TDA7439<<1) & 0xFE);
+        result = i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE);
 
     // data to write
     if (result == SUCCESS)
@@ -115,7 +107,7 @@ RESULT tda7439_speaker_att(I2C_BUS i2c_bus_id, u8 att_r, u8 att_l)
 
     // address of the chip
     if (result == SUCCESS)
-        result = i2c_write (i2c_bus_id, (I2C_ADR_TDA7439<<1) & 0xFE);
+        result = i2c_write (i2c_bus_id, (dev_addr << 1) & 0xFE);
 
     // data to write
     if (result == SUCCESS)

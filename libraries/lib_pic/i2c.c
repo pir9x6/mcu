@@ -518,12 +518,10 @@ static result_t i2c_wait_for_idle(I2C_BUS bus_id)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------- Read a register of a chip -------------------------
+//------------------------ Read a register of a device ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_read_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 *data)
 {
-    result_t result = SUCCESS;
-
     /* send start condition */
     if (i2c_start(bus_id) != SUCCESS)
         return ERROR;
@@ -547,6 +545,54 @@ result_t i2c_read_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 *data)
     /* get data */
     if (i2c_read(bus_id, I2C_NACK, data) != SUCCESS)
         return ERROR;
+
+    /* send stop condition */
+    if (i2c_stop(bus_id) != SUCCESS)
+        return ERROR;
+
+    return SUCCESS;
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//------------------------ Read N registers of a device -----------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+result_t i2c_read_n_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 size, u8 *data)
+{
+    u8 i;
+
+    /* send start condition */
+    if (i2c_start(bus_id) != SUCCESS)
+        return ERROR;
+
+    /* address of the chip + W */
+    if (i2c_write(bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
+        return ERROR;
+
+    /* address of the register */
+    if (i2c_write(bus_id, reg_addr) != SUCCESS)
+        return ERROR;
+
+    /* send restart condition */
+    if (i2c_rstart(bus_id) != SUCCESS)
+        return ERROR;
+
+    /* next operation is a reading */
+    if (i2c_write(bus_id, (dev_addr << 1) | 0x01) != SUCCESS)
+        return ERROR;
+
+    /* get data */
+    for (i = 0; i < size; i++){
+        if (i == size - 1){   /* last reading */
+            if (i2c_read(bus_id, I2C_NACK, data + i) != SUCCESS){
+                return ERROR;
+            }
+        }
+        else{
+            if (i2c_read(bus_id, I2C_NACK, data + i) != SUCCESS){
+                return ERROR;
+            }
+        }
+    }
 
     /* send stop condition */
     if (i2c_stop(bus_id) != SUCCESS)

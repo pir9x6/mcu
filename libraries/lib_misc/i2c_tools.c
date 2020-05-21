@@ -1,20 +1,8 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Version     :   v1.1                                                &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - i2c detect                                        &&&
-//&&&                   - i2c dump any chip                                 &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Dependencies:   - i2c                                               &&&
-//&&&                   - uart                                              &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions    :                                                       &&&
-//&&&   v1.0    29/05/2014    Creation                                      &&&
-//&&&   v1.1    13/12/2016    Added UART id                                 &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
+#include "i2c.h"
 #include "i2c_tools.h"
-
+#include "misc.h"
+#include "types.h"
+#include "uart.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- Scan I2C Bus ----------------------------------
@@ -23,15 +11,13 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
 {
     u8 i, r, c;
 
-
     uart_write_string (uart_id, "\n\r------ Scan of I2C Bus ------\n    ");
 
     /* print '0' to 'F' */
     for (i = 0; i < 16; i++)
     {
         uart_write(uart_id, ' ');
-        if (i < 10) uart_write(uart_id, i + 0x30);         // 0 = 0x30
-        else        uart_write(uart_id, i + 0x37);         // A = 0x41
+        uart_write(uart_id, TO_ASCII(i));
         uart_write_string(uart_id, " ");
     }
 
@@ -80,18 +66,17 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Dump I2C Device ---------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_dump (UART_ID uart_id, I2C_BUS i2c_id, u8 adr_chip)
+result_t i2c_dump (UART_ID uart_id, I2C_BUS i2c_id, u8 dev_addr)
 {
     u8 i, r, c;
-    u8 i2c_rx = 0;
+    u8 read_data = 0;
 
     uart_write_string (uart_id, "\n\n------ Dump of I2C Chip ------\n    ");
 
     for (i = 0; i < 16; i++)
     {
         uart_write_string(uart_id, " ");
-        if (i < 10) uart_write(uart_id, i+0x30);             // 0 = 0x30
-        else        uart_write(uart_id, i+0x37);             // A = 0x41
+        uart_write(uart_id, TO_ASCII(i));
         uart_write_string(uart_id, " ");
     }
 
@@ -99,19 +84,12 @@ result_t i2c_dump (UART_ID uart_id, I2C_BUS i2c_id, u8 adr_chip)
 
     for (r = 0; r < 16; r++)
     {
-        if (r < 10) uart_write(uart_id, r+0x30);             // 0 = 0x30
-        else        uart_write(uart_id, r+0x37);             // A = 0x41
+        uart_write(uart_id, TO_ASCII(i));
         uart_write_string(uart_id, "0: ");
         for (c = 0; c < 16; c++)
         {
-            i2c_start (i2c_id);
-            i2c_write (i2c_id, (adr_chip<<1) & 0xFE);   // address of the chip
-            i2c_write (i2c_id, r*16+c);                 // address of the register
-            i2c_rstart(i2c_id);
-            i2c_write (i2c_id, (adr_chip<<1) | 0x01);   // next operation is a reading
-            i2c_read  (i2c_id, I2C_NACK, &i2c_rx);
-            i2c_stop  (i2c_id);
-            uart_write_hexa_u8(uart_id, i2c_rx, UART_OPT_NONE);
+            i2c_read_reg(i2c_id, dev_addr, r * 16 + c, &read_data);
+            uart_write_hexa_u8(uart_id, read_data, UART_OPT_NONE);
         }
         uart_write(uart_id, '\n');
     }

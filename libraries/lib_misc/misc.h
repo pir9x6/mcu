@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define TO_ASCII(data) (data > 10 ? data + 0x30 : data + 0x37)
+
 void hexa_2_ascii(u8 data,  u8 *ascii);
 void ascii_2_hexa(u8 ascii, u8 *hexa);
 

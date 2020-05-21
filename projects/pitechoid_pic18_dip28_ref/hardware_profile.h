@@ -12,12 +12,12 @@
 #define I2C_ADR_TMP75           0x48
 
 //--------------------------------- GPIOs -------------------------------------
-#define LCD_RS_TRIS             TRISBbits.TRISB5
-#define LCD_E_TRIS              TRISBbits.TRISB4
-#define LCD_D4_TRIS             TRISBbits.TRISB0
-#define LCD_D5_TRIS             TRISBbits.TRISB1
-#define LCD_D6_TRIS             TRISBbits.TRISB2
-#define LCD_D7_TRIS             TRISBbits.TRISB3
+#define LCD_RS_DIR              TRISBbits.TRISB5
+#define LCD_E_DIR               TRISBbits.TRISB4
+#define LCD_D4_DIR              TRISBbits.TRISB0
+#define LCD_D5_DIR              TRISBbits.TRISB1
+#define LCD_D6_DIR              TRISBbits.TRISB2
+#define LCD_D7_DIR              TRISBbits.TRISB3
 
 #define LCD_RS_PIN              LATBbits.LATB5
 #define LCD_E_PIN               LATBbits.LATB4

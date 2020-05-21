@@ -82,3 +82,7 @@ projects/pitechoid_pic18_dip28_ref/dist/default/production/pitechoid_pic18_dip28
 projects/pitechoid_pic18_dip28_ref/nbproject/configurations.xml
 projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-default.mk
 projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-genesis.properties
+*.json
+*.json
+*.json
+*.xml

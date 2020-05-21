@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>clock_big_7seg_red_v1</name>
+            <name>clock_big_7seg_red_v2</name>
             <creation-uuid>5065b3a9-4231-4c48-86c0-dd7d034661c4</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

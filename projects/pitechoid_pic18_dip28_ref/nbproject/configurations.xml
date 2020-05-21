@@ -55,6 +55,8 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../../libraries/lib_misc/log.c</itemPath>
+    <itemPath>../../libraries/lib_misc/log.h</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>

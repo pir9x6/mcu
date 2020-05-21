@@ -67,11 +67,11 @@ typedef enum
                         delay_us (1);\
                         LCD_E_PIN = 0;
 
-result_t lcd_2x16_init(lcd_config_t config);
-result_t lcd_2x16_write(u16 data, u8 rs);
-result_t lcd_2x16_write_4b(u16 data, u8 rs);
+void lcd_2x16_init(lcd_config_t config);
+void lcd_2x16_write(u8 data, u8 rs);
+void lcd_2x16_write_4b(u8 data, u8 rs);
 void lcd_2x16_position(LCD_LINE line, u8 pos);
-result_t lcd_2x16_clear(void);
+void lcd_2x16_clear(void);
 void lcd_2x16_write_2bcd(u16 data);
 void lcd_2x16_write_2hex(u16 data);
 void lcd_2x16_write_binary(u8 data);

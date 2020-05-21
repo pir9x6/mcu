@@ -1,4 +1,5 @@
 #include "bcd.h"
+#include "misc.h"
 #include "date_time.h"
 #include "lcd_2x16.h"
 #include "hardware_profile.h"
@@ -8,17 +9,17 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------------- Initialization of LCD ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t lcd_2x16_init(lcd_config_t config)
+void lcd_2x16_init(lcd_config_t config)
 {
     
-// #if defined (LCD_4_BITS)
+#if defined (LCD_4_BITS)
 
-    LCD_RS_TRIS = 0;
-    LCD_E_TRIS  = 0;
-    LCD_D4_TRIS = 0;
-    LCD_D5_TRIS = 0;
-    LCD_D6_TRIS = 0;
-    LCD_D7_TRIS = 0;
+    LCD_RS_DIR = 0;
+    LCD_E_DIR  = 0;
+    LCD_D4_DIR = 0;
+    LCD_D5_DIR = 0;
+    LCD_D6_DIR = 0;
+    LCD_D7_DIR = 0;
 
     /* wait > 15 ms @ 5V, > 40 ms @ 3.3V */
     delay_ms(60);                      
@@ -63,51 +64,69 @@ result_t lcd_2x16_init(lcd_config_t config)
 
     delay_ms(1);
     
-// #elif defined (LCD_8_BITS)
+#elif defined (LCD_8_BITS)
 
-//     LCD_RS_TRIS = 0;
-//     LCD_E_TRIS  = 0;
-//     LCD_D0_TRIS = 0;
-//     LCD_D1_TRIS = 0;
-//     LCD_D2_TRIS = 0;
-//     LCD_D3_TRIS = 0;
-//     LCD_D4_TRIS = 0;
-//     LCD_D5_TRIS = 0;
-//     LCD_D6_TRIS = 0;
-//     LCD_D7_TRIS = 0;
-//     delay_ms (60);                      // > 15 ms @ 5V, > 40 ms @ 3.3V
-//     lcd_2x16_write (0x30, LCD_CMD);     // Valeur d'initialisation
-//     delay_ms (20);                      // > 4.1 ms
-//     lcd_2x16_write (0x30, LCD_CMD);     // a repeter 3 fois
-//     delay_ms(1);                        // > 100 µs
-//     lcd_2x16_write (0x30, LCD_CMD);     // 3e fois
-//     lcd_2x16_write (0x38, LCD_CMD);     // Données en 8 Bits sur 2 lines en 5x8
-//     lcd_2x16_write (0x14, LCD_CMD);     // $14, Deplacement vers la droite
-//     lcd_2x16_write (0x0C, LCD_CMD);     // $0C, Display ON, Cursor OFF, Blink OFF
-//     lcd_2x16_write (0x06, LCD_CMD);     // $06, Increment, no display shift
+    LCD_RS_DIR = 0;
+    LCD_E_DIR  = 0;
+    LCD_D0_DIR = 0;
+    LCD_D1_DIR = 0;
+    LCD_D2_DIR = 0;
+    LCD_D3_DIR = 0;
+    LCD_D4_DIR = 0;
+    LCD_D5_DIR = 0;
+    LCD_D6_DIR = 0;
+    LCD_D7_DIR = 0;
 
-    // delay_ms (1);
+    /* wait > 15 ms @ 5V, > 40 ms @ 3.3V */
+    delay_ms (60);                     
+
+    /* init value */
+    lcd_2x16_write (0x30, LCD_CMD); 
+
+    /* wait > 4.1 ms */
+    delay_ms (20);             
+
+    /* init value, second time */
+    lcd_2x16_write (0x30, LCD_CMD);   
+
+     /* wait > 100 µs */
+    delay_ms(1);                  
+
+    /* init value, third time */
+    lcd_2x16_write (0x30, LCD_CMD);  
+
+    /* Set interface to be 8 bits long */
+    lcd_2x16_write (0x38, LCD_CMD); 
+
+    /* right shift */
+    lcd_2x16_write (0x14, LCD_CMD); 
+
+    /* Display ON, Cursor OFF, Blink OFF */
+    lcd_2x16_write (0x0C, LCD_CMD);
+
+    /* Increment, no display shift */
+    lcd_2x16_write (0x06, LCD_CMD);
+
+    delay_ms (1);
 
     /* clear */
-    // lcd_2x16_write (0x01, LCD_CMD);
+    lcd_2x16_write (0x01, LCD_CMD);
 
     /* first line, first charactere */
-    // lcd_2x16_write (0x80, LCD_CMD);
+    lcd_2x16_write (0x80, LCD_CMD);
 
-// #else
+#else
 
-//     return ERROR;
+    #error - LCD width not defined
 
-// #endif
-
-    return SUCCESS;
+#endif
 }
 
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//----------------------- Write data to the LCD -----------------------
+//---------------- Write data to the LCD (4 bits mode) ----------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t lcd_2x16_write_4b(u16 data, u8 rs)
+void lcd_2x16_write_4b(u8 data, u8 rs)
 {
     LCD_RS_PIN = rs;
     LCD_D7_PIN = (data >> 3) & 0x01;
@@ -115,26 +134,31 @@ result_t lcd_2x16_write_4b(u16 data, u8 rs)
     LCD_D5_PIN = (data >> 1) & 0x01;
     LCD_D4_PIN = (data >> 0) & 0x01;
     LCD_Pulse;
-
-    return SUCCESS;
 }
 
-result_t lcd_2x16_write (u16 data, u8 rs)
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//----------------------- Write data to the LCD -----------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+void lcd_2x16_write (u8 data, u8 rs)
 {
 #if defined (LCD_4_BITS)
 
     LCD_RS_PIN = rs; 
+
     // Send MSB First
     LCD_D7_PIN = (data >> 7) & 0x01;
     LCD_D6_PIN = (data >> 6) & 0x01;
     LCD_D5_PIN = (data >> 5) & 0x01;
     LCD_D4_PIN = (data >> 4) & 0x01;
     LCD_Pulse;
+
     // Send LSB Last
     LCD_D7_PIN = (data >> 3) & 0x01;
     LCD_D6_PIN = (data >> 2) & 0x01;
     LCD_D5_PIN = (data >> 1) & 0x01;
     LCD_D4_PIN = (data >> 0) & 0x01;
+
     LCD_Pulse;
     delay_us (50);
 
@@ -156,16 +180,15 @@ result_t lcd_2x16_write (u16 data, u8 rs)
 
 #else
 
-    return ERROR;
+    #error - LCD width not defined
 
 #endif
 
-    return SUCCESS;
 }
 
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------- Positionner l'affichage -----------------------
+//--------------------------- Set position ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void lcd_2x16_position(LCD_LINE line, u8 pos)
 {
@@ -178,17 +201,18 @@ void lcd_2x16_position(LCD_LINE line, u8 pos)
     }
 }
 
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------ Effacer l'affichage ------------------------
+//----------------------------- Clear LCD -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t lcd_2x16_clear(void)
+void lcd_2x16_clear(void)
 {
-    return lcd_2x16_write (0x01, LCD_CMD);
+    lcd_2x16_write (0x01, LCD_CMD);
 }
 
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------- Afficher une chaone de caractère sur l'afficheur ----------
+//------------------------ Send string to LCD -------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void lcd_2x16_write_string(ROM char *string)
 {
@@ -411,18 +435,18 @@ void lcd_2x16_write_u32 (u32 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Display temperature on LCD ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void lcd_write_temperature (u8 temp, LCD_LINE line, u8 pos)
+void lcd_write_temperature (float temp, LCD_LINE line, u8 pos)
 {
     /* set position */
     lcd_2x16_position (line, pos);
 
 
     lcd_2x16_write_2bcd (temp);
-    // lcd_2x16_write (',', 1);
-    // if (temp[1] == 0)
-    //     lcd_2x16_write (0x30, LCD_DATA);
-    // else
-    //     lcd_2x16_write (0x35, LCD_DATA);
+    lcd_2x16_write (',', 1);
+    if (temp == 0)
+        lcd_2x16_write (0x30, LCD_DATA);
+    else
+        lcd_2x16_write (0x35, LCD_DATA);
 
     /* ° */
     lcd_2x16_write (0xdf, LCD_DATA);

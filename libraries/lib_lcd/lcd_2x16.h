@@ -72,6 +72,7 @@ void lcd_2x16_write(u8 data, u8 rs);
 void lcd_2x16_write_4b(u8 data, u8 rs);
 void lcd_2x16_position(LCD_LINE line, u8 pos);
 void lcd_2x16_clear(void);
+void lcd_2x16_write_1bcd(u16 data);
 void lcd_2x16_write_2bcd(u16 data);
 void lcd_2x16_write_2hex(u16 data);
 void lcd_2x16_write_binary(u8 data);
@@ -84,7 +85,7 @@ void lcd_2x16_write_s32(s32 data);
 void lcd_2x16_write_float(f32 data);
 void lcd_2x16_write_doubl (f64 data);
 void lcd_2x16_write_string(ROM char *string);
-void lcd_write_temperature(u8 temp, LCD_LINE line, u8 pos);
+void lcd_write_temperature(float temp, LCD_LINE line, u8 pos);
 void lcd_write_date(date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t format);
 void lcd_write_time(date_time_t t, LCD_LINE line, u8 pos);
 

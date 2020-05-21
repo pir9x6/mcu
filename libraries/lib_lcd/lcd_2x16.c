@@ -226,6 +226,13 @@ void lcd_2x16_write_string(ROM char *string)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------- Afficher deux nombre en BCD à partir d'un char 8 bits -------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+void lcd_2x16_write_1bcd (u16 data)
+{
+    u8 bcd[5];
+    dec_2_bcd (data, bcd);
+    lcd_2x16_write (bcd[0] + 0x30, LCD_DATA);
+}
+
 void lcd_2x16_write_2bcd (u16 data)
 {
     u8 bcd[5];
@@ -437,16 +444,14 @@ void lcd_2x16_write_u32 (u32 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void lcd_write_temperature (float temp, LCD_LINE line, u8 pos)
 {
+    u8 decimal = 10 * (temp - (u8)temp);
+
     /* set position */
     lcd_2x16_position (line, pos);
 
-
-    lcd_2x16_write_2bcd (temp);
+    lcd_2x16_write_2bcd ((u8)temp);
     lcd_2x16_write (',', 1);
-    if (temp == 0)
-        lcd_2x16_write (0x30, LCD_DATA);
-    else
-        lcd_2x16_write (0x35, LCD_DATA);
+    lcd_2x16_write_1bcd (decimal);
 
     /* ° */
     lcd_2x16_write (0xdf, LCD_DATA);

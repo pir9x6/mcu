@@ -81,7 +81,7 @@ result_t lcd_2x16_init(lcd_config_t config)
 //     lcd_2x16_write (0x30, LCD_CMD);     // a repeter 3 fois
 //     delay_ms(1);                        // > 100 µs
 //     lcd_2x16_write (0x30, LCD_CMD);     // 3e fois
-//     lcd_2x16_write (0x38, LCD_CMD);     // Données en 8 Bits sur 2 lignes en 5x8
+//     lcd_2x16_write (0x38, LCD_CMD);     // Données en 8 Bits sur 2 lines en 5x8
 //     lcd_2x16_write (0x14, LCD_CMD);     // $14, Deplacement vers la droite
 //     lcd_2x16_write (0x0C, LCD_CMD);     // $0C, Display ON, Cursor OFF, Blink OFF
 //     lcd_2x16_write (0x06, LCD_CMD);     // $06, Increment, no display shift
@@ -167,9 +167,9 @@ result_t lcd_2x16_write (u16 data, u8 rs)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------- Positionner l'affichage -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void lcd_2x16_position(LCD_LINE ligne, u8 pos)
+void lcd_2x16_position(LCD_LINE line, u8 pos)
 {
-    switch (ligne)
+    switch (line)
     {
         case LCD_LINE_1 : { lcd_2x16_write(0x80 + pos - 1, LCD_CMD); break; }
         case LCD_LINE_2 : { lcd_2x16_write(0xC0 + pos - 1, LCD_CMD); break; }
@@ -411,10 +411,10 @@ void lcd_2x16_write_u32 (u32 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Display temperature on LCD ------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void lcd_write_temperature (u8 temp, LCD_LINE ligne, u8 pos)
+void lcd_write_temperature (u8 temp, LCD_LINE line, u8 pos)
 {
     /* set position */
-    lcd_2x16_position (ligne, pos);
+    lcd_2x16_position (line, pos);
 
 
     lcd_2x16_write_2bcd (temp);
@@ -435,7 +435,7 @@ void lcd_write_temperature (u8 temp, LCD_LINE ligne, u8 pos)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------------------- Display Date on LCD ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void lcd_write_date (date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t format)
+void lcd_write_date (date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t format)
 {
     u8 bcd[5];
 
@@ -444,7 +444,7 @@ void lcd_write_date (date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t fo
                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     
     if (format == LCD_DATE_LETTERS){
-        lcd_2x16_position (ligne, pos);
+        lcd_2x16_position (line, pos);
         dec_2_bcd (t.dow, bcd);
         if (bcd[0] > 7 || bcd[0] < 1){
             bcd[0] = 1;
@@ -457,7 +457,7 @@ void lcd_write_date (date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t fo
         lcd_2x16_write_string(month[bcd[0]-1]); 
     }
     else{
-        lcd_2x16_position (ligne, pos);
+        lcd_2x16_position (line, pos);
         lcd_2x16_write_2bcd (t.day);
         lcd_2x16_write_string ("/");
         lcd_2x16_write_2bcd (t.mth);
@@ -471,9 +471,9 @@ void lcd_write_date (date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t fo
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- Display Hour on LCD ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void lcd_write_time (date_time_t t, LCD_LINE ligne, u8 pos)
+void lcd_write_time (date_time_t t, LCD_LINE line, u8 pos)
 {
-    lcd_2x16_position (ligne, pos);
+    lcd_2x16_position (line, pos);
 
     lcd_2x16_write_2bcd (t.hrs);
     lcd_2x16_write_string (":");

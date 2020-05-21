@@ -19,8 +19,8 @@
 
 /* set function */
 #define SET_FUNCTION    0x20
-#define NB_LINE_1       0x00
-#define NB_LINE_2       0x08
+#define NB_LINES_1      0x00
+#define NB_LINES_2      0x08
 #define NB_BITS_4       0x00
 #define NB_BITS_8       0x10
 
@@ -70,7 +70,7 @@ typedef enum
 result_t lcd_2x16_init(lcd_config_t config);
 result_t lcd_2x16_write(u16 data, u8 rs);
 result_t lcd_2x16_write_4b(u16 data, u8 rs);
-void lcd_2x16_position(LCD_LINE ligne, u8 pos);
+void lcd_2x16_position(LCD_LINE line, u8 pos);
 result_t lcd_2x16_clear(void);
 void lcd_2x16_write_2bcd(u16 data);
 void lcd_2x16_write_2hex(u16 data);
@@ -84,8 +84,8 @@ void lcd_2x16_write_s32(s32 data);
 void lcd_2x16_write_float(f32 data);
 void lcd_2x16_write_doubl (f64 data);
 void lcd_2x16_write_string(ROM char *string);
-void lcd_write_temperature(u8 temp, LCD_LINE ligne, u8 pos);
-void lcd_write_date(date_time_t t, LCD_LINE ligne, u8 pos, lcd_date_format_t format);
-void lcd_write_time(date_time_t t, LCD_LINE ligne, u8 pos);
+void lcd_write_temperature(u8 temp, LCD_LINE line, u8 pos);
+void lcd_write_date(date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t format);
+void lcd_write_time(date_time_t t, LCD_LINE line, u8 pos);
 
 #endif

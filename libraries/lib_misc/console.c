@@ -1,4 +1,5 @@
 #include "console.h"
+#include "log.h"
 #include "stdlib.h"
 #include "hardware_profile.h"
      

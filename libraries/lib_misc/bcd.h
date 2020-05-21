@@ -12,7 +12,7 @@ void hex_2_bcd  (u8  hex, u8 bcd[]);
 void hex16_2_bcd(u16 hex, u8 bcd[]);
 void hex32_2_bcd(u32 hex, u8 bcd[]);
 
-void bin_2_bcd(u8 bin, u8 *bcd);
-void bcd_2_bin(u8 bcd, u8 *bin);
+u8 bin_2_bcd(u8 bin);
+u8 bcd_2_bin(u8 bcd);
 
 #endif

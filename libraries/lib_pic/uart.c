@@ -567,7 +567,7 @@ result_t uart_write_temperature (UART_ID uart_id, u8 temp[])
     uart_write (uart_id, ',');
     if (temp[1] == 0)   uart_write(uart_id, '0');
     else                uart_write(uart_id, '5');
-    uart_write (uart_id, '°');
+    uart_write (uart_id, 0xdf);     /* ° */
     uart_write (uart_id, 'C');
     uart_write (uart_id, ' ');
 

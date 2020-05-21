@@ -26,23 +26,25 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
 
     uart_write_string (uart_id, "\n\r------ Scan of I2C Bus ------\n    ");
 
+    /* print '0' to 'F' */
     for (i = 0; i < 16; i++)
     {
         uart_write(uart_id, ' ');
-        if (i < 10) uart_write(uart_id, i+0x30);         // 0 = 0x30
-        else        uart_write(uart_id, i+0x37);         // A = 0x41
+        if (i < 10) uart_write(uart_id, i + 0x30);         // 0 = 0x30
+        else        uart_write(uart_id, i + 0x37);         // A = 0x41
         uart_write_string(uart_id, " ");
     }
 
     uart_write(uart_id, '\n');
     for (r = 0; r < 8; r++)
     {
-        uart_write(uart_id, r+0x30);
+        uart_write(uart_id, r + 0x30);
         uart_write(uart_id, '0');
         uart_write_string(uart_id, ": ");
+
         for (c = 0; c < 16; c++)
         {
-            if ((r == 0 && (c < 3)) || (r == 7 && (c > 8)))
+            if ((r == 0 && (c < 3)) || (r == 7 && (c > 7)))
             {
                 uart_write_string(uart_id, "   ");
             }
@@ -52,12 +54,12 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
                 i2c_start(i2c_id);
 
                 // send address
-                i2c_write (i2c_id, ((r*16+c)<<1)&0xFE);
+                i2c_write (i2c_id, ((r * 16 + c) << 1) & 0xFE);
 
                 // wait for ack
-                if (i2c_wait_ack(i2c_id) == I2C_ACK){
+                if (i2c_wait_ack(i2c_id) == SUCCESS){
                     // si reception du Ack du slave
-                    uart_write_hexa_u8(uart_id, r*16+c, UART_OPT_NONE);
+                    uart_write_hexa_u8(uart_id, r * 16 + c, UART_OPT_NONE);
                 }else{
                     uart_write_string(uart_id, "-- ");
                 }

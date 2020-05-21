@@ -7,10 +7,6 @@
 #include "hardware_profile.h"
 #include "types.h"
 
-#if defined UART_VERBOSE
-    #include "uart.h"
-#endif
-
 typedef enum{
     I2C_BUS_1 = 0,
     I2C_BUS_2,
@@ -36,10 +32,8 @@ result_t i2c_read     (I2C_BUS bus_id, u8 ack, u8 *data);
 result_t i2c_write    (I2C_BUS bus_id, u8 data);
 result_t i2c_send_ack (I2C_BUS bus_id, u8 ack);
 result_t i2c_wait_ack (I2C_BUS bus_id);
-result_t i2c_read_reg (I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data);
-result_t i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data);
-result_t i2c_idle     (I2C_BUS bus_id);
-
+result_t i2c_read_reg (I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 *data);
+result_t i2c_write_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 data);
 
 #if defined (__dsPIC33F__)
 

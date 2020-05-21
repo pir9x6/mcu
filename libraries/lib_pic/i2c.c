@@ -8,6 +8,8 @@ u8 addr_flag = 0;  // Initlize AddFlag
 u8 data_flag = 0;  // Initlize DataFlag
 u8 addr_ptr = 0;
 
+static result_t i2c_wait_for_idle(I2C_BUS bus_id);
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Configuration du bus I2C --------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -136,23 +138,26 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_start(I2C_BUS bus_id)
 {
-    result_t result = SUCCESS;
+    /* wait for the bus to be free */
+    if (i2c_wait_for_idle(bus_id) != SUCCESS){
+        return ERROR;
+    }
 
     #if defined (__18CXX) || defined(_PIC18)
 
         SSPCON2bits.SEN = 1;
-        while(SSPCON2bits.SEN);
+        while (SSPCON2bits.SEN);
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            result = i2c_idle (bus_id);
+            
             I2C1CONbits.SEN = 1;        // Send the start condition
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            result = i2c_idle (bus_id);
+
             I2C2CONbits.SEN = 1;        // Send the start condition
         }
         #endif
@@ -170,7 +175,7 @@ result_t i2c_start(I2C_BUS bus_id)
 
     #endif
 
-    return result;
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -178,23 +183,24 @@ result_t i2c_start(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_rstart(I2C_BUS bus_id)
 {
-    result_t result = SUCCESS;
+    /* wait for the bus to be free */
+    if (i2c_wait_for_idle(bus_id) != SUCCESS){
+        return ERROR;
+    }
 
     #if defined (__18CXX) || defined(_PIC18)
 
         SSPCON2bits.RSEN = 1;
-        while(SSPCON2bits.RSEN);
+        while (SSPCON2bits.RSEN);
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            result = i2c_idle (bus_id);
             I2C1CONbits.RSEN = 1;        // Envoyer un Repeated Start Condition
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            result = i2c_idle (bus_id);
             I2C2CONbits.RSEN = 1;        // Envoyer un Repeated Start Condition
         }
         #endif
@@ -210,7 +216,7 @@ result_t i2c_rstart(I2C_BUS bus_id)
 
     #endif
 
-    return result;
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -218,7 +224,10 @@ result_t i2c_rstart(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
 {
-    result_t result = SUCCESS;
+    /* wait for the bus to be free */
+    if (i2c_wait_for_idle(bus_id) != SUCCESS){
+        return ERROR;
+    }
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -229,14 +238,12 @@ result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            result = i2c_idle (bus_id);
             I2C1CONbits.ACKDT = Ack;
             I2C1CONbits.ACKEN = 1;
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            result = i2c_idle (bus_id);
             I2C2CONbits.ACKDT = Ack;
             I2C2CONbits.ACKEN = 1;
         }
@@ -250,7 +257,7 @@ result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
 
     #endif
 
-    return result;
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -261,39 +268,38 @@ result_t i2c_wait_ack(I2C_BUS bus_id)
     u8 i;
     #if defined (__18CXX) || defined(_PIC18)
 
-        while (SSPSTATbits.R_W);        // fin de la transmission
-        //while (SSPCON2bits.ACKSTAT);    // boucler jusqu'à reception du ACK
-        for (i=0; i<100; i++)
+        /* wait for end of transaction */
+        while (SSPSTATbits.R_W);
+
+        /* wait for ack reception */
+        for (i = 0; i < 100; i++)
         {
-            if (!SSPCON2bits.ACKSTAT)    // attendre reception du Ack du slave
+            if (!SSPCON2bits.ACKSTAT)
             {
                 return SUCCESS;
             }
         }
-        PIR1bits.SSPIF = 0;         // WTF !!! ToDo before return
-        return SUCCESS; // @@@@@@@@@@@@@@@@@@@@@@ TODO @@@@@@@@@@@@@@@@@
+        PIR1bits.SSPIF = 0;
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
-        i2c_idle (bus_id);
-
         if (bus_id == I2C_BUS_1){
-            for (i=0; i<100; i++)
+            for (i = 0; i < 100; i++)
             {
                 if (!I2C1STATbits.ACKSTAT)    // attendre reception du Ack du slave
                 {
-                    return I2C_ACK;
+                    return SUCCESS;
                 }
             }
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            for (i=0; i<100; i++)
+            for (i = 0; i < 100; i++)
             {
                 if (!I2C2STATbits.ACKSTAT)    // attendre reception du Ack du slave
                 {
-                    return I2C_ACK;
+                    return SUCCESS;
                 }
             }
         }
@@ -315,7 +321,10 @@ result_t i2c_wait_ack(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 {
-    result_t result = SUCCESS;
+    /* wait for the bus to be free */
+    if (i2c_wait_for_idle(bus_id) != SUCCESS){
+        return ERROR;
+    }
 
     #if defined (__18CXX) || defined(_PIC18)
 
@@ -328,22 +337,18 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            result = i2c_idle (bus_id);     // wait for idle
             I2C1CONbits.RCEN = 1;           // enable receive
             I2C1STATbits.I2COV = 0;         // clear overflow flag
             i2c_send_ack(bus_id, ack);      // ack if it's not the last read, nack if it's the last
             *data = I2C1RCV;                // return received data
-            return result;
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            result = i2c_idle (bus_id);     // wait for idle
             I2C2CONbits.RCEN = 1;           // enable receive
             I2C2STATbits.I2COV = 0;         // clear overflow flag
             i2c_send_ack(bus_id, ack);      // ack if it's not the last read, nack if it's the last
             *data = I2C2RCV;                // return received data
-            return result;
         }
         #endif
 
@@ -355,7 +360,7 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 
     #endif
     
-    return ERROR;
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -363,33 +368,29 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_write(I2C_BUS bus_id, u8 data)
 {
-    result_t result = SUCCESS;
+    /* wait for the bus to be free */
+    if (i2c_wait_for_idle(bus_id) != SUCCESS){
+        return ERROR;
+    }
 
     #if defined (__18CXX) || defined(_PIC18)
 
+        /* send data */     
         SSPBUF = data;
         PIR1bits.SSPIF = 0;
-
-        // wait for the reception of Ack
-        result = i2c_wait_ack(bus_id);
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            // wait for the bus to be free
-            result = i2c_idle (bus_id);                             
+            /* send data */                          
             I2C1TRN = data;
-            // wait for the reception of Ack
-            result = i2c_wait_ack(bus_id);
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            // wait for the bus to be free
-            result = i2c_idle (bus_id);                     
+            /* send data */                       
             I2C2TRN = data;
-            // wait for the reception of Ack
-            result = i2c_wait_ack(bus_id);
+
         }
         #endif
 
@@ -403,7 +404,12 @@ result_t i2c_write(I2C_BUS bus_id, u8 data)
 
     #endif
     
-    return result;
+    /* wait for the reception of Ack */
+    if (i2c_wait_ack(bus_id) != SUCCESS){
+        return ERROR;
+    }
+
+    return SUCCESS;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -419,13 +425,13 @@ result_t i2c_stop(I2C_BUS bus_id)
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
-            i2c_idle (bus_id);
+            i2c_wait_for_idle (bus_id);
             I2C1CONbits.PEN = 1;
         }
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            i2c_idle (bus_id);
+            i2c_wait_for_idle (bus_id);
             I2C2CONbits.PEN = 1;
         }
         #endif
@@ -447,13 +453,17 @@ result_t i2c_stop(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------------- Idle --------------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_idle(I2C_BUS bus_id)
+static result_t i2c_wait_for_idle(I2C_BUS bus_id)
 {
     #if defined (__18CXX) || defined(_PIC18)
 
         u16 timeout = 0;
 
-        while (( SSPCON2 & 0x1F ) | SSPSTATbits.R_W){
+        while (SSPCON2bits.RSEN || 
+               SSPCON2bits.SEN || 
+               SSPCON2bits.PEN || 
+               SSPCON2bits.RCEN ||
+               SSPSTATbits.R_W){
             timeout++;
             delay_us(1);
             if (timeout >= 500)
@@ -465,12 +475,12 @@ result_t i2c_idle(I2C_BUS bus_id)
         u16 timeout = 0;
 
         if (bus_id == I2C_BUS_1){
-            while(I2C1CONbits.SEN || 
-                  I2C1CONbits.PEN || 
-                  I2C1CONbits.RCEN || 
-                  I2C1CONbits.RSEN || 
-                  I2C1CONbits.ACKEN || 
-                  I2C1STATbits.TRSTAT){
+            while (I2C1CONbits.SEN || 
+                   I2C1CONbits.PEN || 
+                   I2C1CONbits.RCEN || 
+                   I2C1CONbits.RSEN || 
+                   I2C1CONbits.ACKEN || 
+                   I2C1STATbits.TRSTAT){
                 timeout++;
                 delay_us(1);
                 if (timeout >= 500)
@@ -480,11 +490,11 @@ result_t i2c_idle(I2C_BUS bus_id)
 
         #ifdef _MI2C2IF
         else if (bus_id == I2C_BUS_2){
-            while(I2C2CONbits.SEN || 
-                  I2C2CONbits.PEN || 
-                  I2C2CONbits.RCEN || 
-                  I2C2CONbits.RSEN || 
-                  I2C2CONbits.ACKEN ||
+            while (I2C2CONbits.SEN || 
+                   I2C2CONbits.PEN || 
+                   I2C2CONbits.RCEN || 
+                   I2C2CONbits.RSEN || 
+                   I2C2CONbits.ACKEN ||
                    I2C2STATbits.TRSTAT){
                 timeout++;
                 delay_us(1);
@@ -510,35 +520,35 @@ result_t i2c_idle(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Read a register of a chip -------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
+result_t i2c_read_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 *data)
 {
     result_t result = SUCCESS;
 
-    // send start condition
+    /* send start condition */
     if (i2c_start(bus_id) != SUCCESS)
         return ERROR;
 
-    // address of the chip + W
-    if (i2c_write(bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+    /* address of the chip + W */
+    if (i2c_write(bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
         return ERROR;
 
-    // address of the register
-    if (i2c_write(bus_id, adr_reg) != SUCCESS)
+    /* address of the register */
+    if (i2c_write(bus_id, reg_addr) != SUCCESS)
         return ERROR;
 
-    // send restart condition
+    /* send restart condition */
     if (i2c_rstart(bus_id) != SUCCESS)
         return ERROR;
 
-    // next operation is a reading
-    if (i2c_write(bus_id, (adr_chip<<1) | 0x01) != SUCCESS)
+    /* next operation is a reading */
+    if (i2c_write(bus_id, (dev_addr << 1) | 0x01) != SUCCESS)
         return ERROR;
 
-    // get data
+    /* get data */
     if (i2c_read(bus_id, I2C_NACK, data) != SUCCESS)
         return ERROR;
 
-    // send stop condition
+    /* send stop condition */
     if (i2c_stop(bus_id) != SUCCESS)
         return ERROR;
 
@@ -548,25 +558,25 @@ result_t i2c_read_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 *data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------- Write in a register of a chip -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_write_reg(I2C_BUS bus_id, u8 adr_chip, u8 adr_reg, u8 data)
+result_t i2c_write_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 data)
 {
-    // send start condition
+    /* send start condition */
     if (i2c_start(bus_id) != SUCCESS)
         return ERROR;
 
-    // address of the chip + W
-    if (i2c_write(bus_id, (adr_chip<<1) & 0xFE) != SUCCESS)
+    /* address of the chip + W */
+    if (i2c_write(bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
         return ERROR;
 
-    // address of the register
-    if (i2c_write(bus_id, adr_reg) != SUCCESS)
+    /* address of the register */
+    if (i2c_write(bus_id, reg_addr) != SUCCESS)
         return ERROR;
 
-    // data to write
+    /* data to write */
     if (i2c_write(bus_id, data) != SUCCESS)
         return ERROR;
 
-    // send stop condition
+    /* send stop condition */
     if (i2c_stop(bus_id) != SUCCESS)
         return ERROR;
 

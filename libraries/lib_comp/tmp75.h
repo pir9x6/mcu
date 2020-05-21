@@ -9,7 +9,7 @@
 #define TMP75_REG_LIMIT_LOW         0x02
 #define TMP75_REG_LIMIT_HIGH        0x03
 
-result_t tmp75_read_temp(I2C_BUS bus_id, u8 dev_addr, u16 *temp);
+result_t tmp75_read_temp(I2C_BUS bus_id, u8 dev_addr, float *temp);
 result_t tmp75_configure(I2C_BUS bus_id, u8 dev_addr);
 
 #endif

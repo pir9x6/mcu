@@ -28,6 +28,8 @@ typedef enum
     UART_ID_6 = 5
 }UART_ID;
 
+void putch(char txData);
+
 result_t uart_init              (UART_ID uart_id, u32 baudrate, u16 opt);
 result_t uart_write             (UART_ID uart_id, u8 data);
 result_t uart_write_string      (UART_ID uart_id, ROM char *data);
@@ -41,11 +43,9 @@ result_t uart_write_u32         (UART_ID uart_id, u32 data, u8 opt);
 result_t uart_write_float       (UART_ID uart_id, f32 data);
 result_t uart_write_double      (UART_ID uart_id, f64 data);
 result_t uart_write_date        (UART_ID uart_id, date_time_t t);
-result_t uart_write_temperature (UART_ID uart_id, u8 temp[]);
+result_t uart_write_temperature (UART_ID uart_id, float temp);
 
-#if defined (__18CXX)
-    u8 uart_read (void);
-#elif defined(__PIC24F__) || defined(__dsPIC33F__)
+#if defined(__PIC24F__) || defined(__dsPIC33F__)
     void __attribute__ ((interrupt, no_auto_psv))_U1RXInterrupt(void) ;
 #endif
 

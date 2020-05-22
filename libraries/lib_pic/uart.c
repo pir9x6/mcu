@@ -1,23 +1,3 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Version     :   v3.1                                                &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - Misceallenous functions                           &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Dependencies:   - delay                                             &&&
-//&&&                   - interrupts_management                             &&&
-//&&&                   - io                                                &&&
-//&&&                   - math                                              &&&
-//&&&                   - hardware_profile                                  &&&
-//&&&                   - pic_compiler                                      &&&
-//&&&                   - misc                                              &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions    :                                                       &&&
-//&&&   v1.0    01/10/2013    Creation                                      &&&
-//&&&   v2.0    28/05/2016    Reworked some functions                       &&&
-//&&&   v3.0    13/12/2016    Added bus id                                  &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #if defined(__PIC24F__) || defined(__dsPIC33F__)
 #include "interrupts_management.h"
 #endif
@@ -31,33 +11,71 @@
 #include "math.h"
 #include "uart.h"
 
+extern UART_ID UART_LOG;
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------- Configuration de l'UART ---------------------------
+//--------------------------- UART Configuration ------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
-        SPBRG = GetSystemClock() / (16.0 * baudrate) - 1;
+        #if defined (_18F252)
+            SPBRG = GetSystemClock() / (16.0 * baudrate) - 1;
 
-        //===============================================================
-        if (uart_id == UART_ID_1){
-            // high speed mode
-            TXSTAbits.BRGH = 1;
+            if (uart_id == UART_ID_1){
+                // high speed mode
+                TXSTAbits.BRGH = 1;
 
-            // enable transmittion
-            TXSTAbits.TXEN = 1;
+                // enable transmittion
+                TXSTAbits.TXEN = 1;
 
-            // Enable port
-            RCSTAbits.SPEN = 1;
+                // Enable port
+                RCSTAbits.SPEN = 1;
 
-            // continuous reception
-            RCSTAbits.CREN = 1;
+                // continuous reception
+                RCSTAbits.CREN = 1;
+            }
+            else{
+                return ERROR;
+            }
+        #elif defined (_18F26K42)
 
-            // set pin direction
-            TRISCbits.TRISC7 = IO_IN;    // RX
-            TRISCbits.TRISC6 = IO_OUT;   // TX
-        }
+            if (uart_id == UART_ID_1){
+                /* set baudrate */
+                U1BRGH = 0;
+                U1BRGL = GetSystemClock() / (4.0 * baudrate) - 1;
+
+                /* 8 bits, async mode, high speed mode */
+                U1CON0 = 0;
+                U1CON0bits.BRGS = 1;
+
+                /* enable serial port */
+                U1CON1 = 0;
+                U1CON1bits.ON = 1;
+
+                /* 1 stop bit, normal polarity */
+                U1CON2 = 0;
+
+                U1FIFO = 0;
+
+                /* Auto-baud not enabled */
+                U1UIR = 0x00; 
+                
+                U1ERRIR = 0x00;
+                U1ERRIE = 0x00;
+
+                /* enable transmittion & reception */
+                U1CON0bits.TXEN = 1;
+                U1CON0bits.RXEN = 1;
+            }
+            else{
+                return ERROR;
+            }
+
+        #else
+            #error -- processor ID not specified in generic header file
+        #endif
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -166,27 +184,14 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
         #error -- processor ID not specified in generic header file
     #endif
 
-    delay_ms(30);
-
-    #if defined UART_VERBOSE
-        uart_write_string("\nuart bus 1 initialized \n");
-    #endif
-
     return SUCCESS;
 }
 
-
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------ Interruption sur Reception de l'UART ---------------------
+//--------------------------- Reception Interrupt -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
-u8 uart_read (void)
-{
-    PIR1bits.RCIF = 0;          // reset flag ISR
-    return RCREG;               // retourne le caractere recu
-}
+
 
 #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -203,41 +208,73 @@ void __attribute__ ((interrupt, no_auto_psv))_U1RXInterrupt(void)
     #error -- processor ID not specified in generic header file
 #endif
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//---------------------------- Transmit one byte ------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+void putch(char txData)
+{
+    uart_write(UART_LOG, txData);
+}
 
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------- Envoi d'un caractère -----------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_write (UART_ID uart_id, u8 data)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
-        if (uart_id == UART_ID_1){
-            while(!TXSTAbits.TRMT);         // wait for the buffer to be empty
-            TXREG = data;                   // send data
-        }
+        #if defined (_18F252)
+
+            if (uart_id == UART_ID_1){
+                /* wait for the buffer to be empty */
+                while(!TXSTAbits.TRMT);         
+
+                /* send data */
+                TXREG = data;                   
+            }
+
+        #elif defined (_18F26K42)
+
+            if (uart_id == UART_ID_1){
+                /* wait for the buffer to be empty */
+                while(0 == PIR3bits.U1TXIF);         
+
+                /* send data */
+                U1TXB = data;    
+            }
+
+        #else
+            #error -- processor ID not specified in generic header file
+        #endif
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         //===============================================================
         #ifdef _U1TXIF
         if (uart_id == UART_ID_1){
-            while (!U1STAbits.TRMT);        // wait for the buffer to be empty
-            U1TXREG = data;                 // send data
+            /* wait for the buffer to be empty */
+            while (!U1STAbits.TRMT);
+
+            /* send data */
+            U1TXREG = data;       
         #endif
         
         //===============================================================
         #ifdef _U2TXIF
         }else if (uart_id == UART_ID_2){
-            while (!U2STAbits.TRMT);        // wait for the buffer to be empty
-            U2TXREG = data;                 // send data
+            /* wait for the buffer to be empty */
+            while (!U2STAbits.TRMT);
+
+            /* send data */
+            U2TXREG = data;        
         #endif
     
         //===============================================================
         #ifdef _U3TXIF
         }else if (uart_id == UART_ID_3){
-            while (!U3STAbits.TRMT);        // wait for the buffer to be empty
-            U3TXREG = data;                 // send data
+            /* wait for the buffer to be empty */
+            while (!U3STAbits.TRMT);
+
+            /* send data */
+            U3TXREG = data;   
         #endif
 
         //===============================================================
@@ -255,48 +292,76 @@ result_t uart_write (UART_ID uart_id, u8 data)
 
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------- Envoi d'une string de caractères ----------------------
+//------------------------------ Receive one byte -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_write_string (UART_ID uart_id, ROM char *data)
 {
     #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
 
-        while (*data != '\0')               // scanner la chaine jusqu'au caractère nul
-        {
-            while (!TXSTAbits.TRMT);        // attendre que le buffer soit vide
-            TXREG = *data++;                    // envoyer le caractère
-        }
+        #if defined (_18F252)
+
+            while (*data != '\0')   
+            {
+                /* wait for the buffer to be empty */
+                while (!TXSTAbits.TRMT); 
+
+                /* send data */
+                TXREG = *data++;     
+            }
+
+        #elif defined (_18F26K42)
+
+            while (*data != '\0')          
+            {
+                /* wait for the buffer to be empty */
+                while (U1FIFObits.TXBF); 
+
+                /* send data */
+                U1TXB = *data++;              
+            }
+
+        #else
+            #error -- processor ID not specified in generic header file
+        #endif
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         //===============================================================
         #ifdef _U1TXIF
         if (uart_id == UART_ID_1){
-            while (*data != '\0')               // scanner la chaine jusqu'au caractère nul
+            while (*data != '\0')
             {
-                while (!U1STAbits.TRMT);        // attendre que le buffer soit vide
-                U1TXREG = *data++;              // envoyer le caractère
+                /* wait for the buffer to be empty */
+                while (!U1STAbits.TRMT);
+
+                /* send data */
+                U1TXREG = *data++;  
             }
         #endif
         
         //===============================================================
         #ifdef _U2TXIF
         }else if (uart_id == UART_ID_2){
-            while (*data != '\0')               // scanner la chaine jusqu'au caractère nul
+            while (*data != '\0')
             {
-                while (!U1STAbits.TRMT);        // attendre que le buffer soit vide
-                U1TXREG = *data++;              // envoyer le caractère
+                /* wait for the buffer to be empty */
+                while (!U1STAbits.TRMT);
+
+                /* send data */
+                U1TXREG = *data++;    
             }
         #endif
     
         //===============================================================
         #ifdef _U3TXIF
         }else if (uart_id == UART_ID_3){
-            while (*data != '\0')               // scanner la chaine jusqu'au caractère nul
+            while (*data != '\0')
             {
-                while (!U1STAbits.TRMT);        // attendre que le buffer soit vide
-                U1TXREG = *data;                // envoyer le caractère
-                *data++;                        // pointer sur caractère suivant
+                /* wait for the buffer to be empty */
+                while (!U1STAbits.TRMT);
+
+                /* send data */
+                U1TXREG = *data++; 
             }
         #endif
 
@@ -308,10 +373,9 @@ result_t uart_write_string (UART_ID uart_id, ROM char *data)
     #else
         #error -- processor ID not specified in generic header file
     #endif
+
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Envoi d'un registre 8 bits ------------------------
@@ -327,8 +391,6 @@ result_t uart_write_char (UART_ID uart_id, u8 data)
     uart_write (uart_id, ' ');
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------- Envoi d'un registre 8 bits ------------------------
@@ -377,8 +439,6 @@ result_t uart_write_u8 (UART_ID uart_id, u8 data, u8 opt)
 
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Envoi d'un registre 16 bits ------------------------
@@ -432,8 +492,6 @@ result_t uart_write_u16 (UART_ID uart_id, u16 data, u8 opt)
 
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------ Envoi d'un registre 32 bits ------------------------
@@ -503,8 +561,6 @@ result_t uart_write_u32 (UART_ID uart_id, u32 data, u8 opt)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- send date and hour ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -512,7 +568,15 @@ result_t uart_write_date (UART_ID uart_id, date_time_t t)
 {
     u8 bcd[5];
 
-    ROM char *day_of_week[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+    ROM char *day_of_week[] = {
+        "Monday", 
+        "Tuesday", 
+        "Wednesday", 
+        "Thursday", 
+        "Friday", 
+        "Saturday", 
+        "Sunday" 
+    };
 
     dec_2_bcd (t.dow, bcd);
     if (bcd[0]>7 || bcd[0]<1) bcd[0] = 1;
@@ -552,25 +616,29 @@ result_t uart_write_date (UART_ID uart_id, date_time_t t)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //-------------------------- Envoi de la temperature --------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_temperature (UART_ID uart_id, u8 temp[])
+result_t uart_write_temperature (UART_ID uart_id, float temp)
 {
+    u8 decimal = 10 * (temp - (u8)temp);
     u8 bcd[5];
 
-    dec_2_bcd (temp[0], bcd);
-    uart_write (uart_id, bcd[1]+0x30);
-    uart_write (uart_id, bcd[0]+0x30);
+    /* integer part */
+    dec_2_bcd ((u8)temp, bcd);
+    uart_write (uart_id, bcd[1] + 0x30);
+    uart_write (uart_id, bcd[0] + 0x30);
     uart_write (uart_id, ',');
-    if (temp[1] == 0)   uart_write(uart_id, '0');
-    else                uart_write(uart_id, '5');
-    uart_write (uart_id, 0xdf);     /* ° */
+
+    /* decimal part */
+    dec_2_bcd (decimal, bcd);
+    uart_write(uart_id, bcd[0] + 0x30);
+
+    /* ° */
+    uart_write (uart_id, 0xdf);
+
+    /* Celsius */
     uart_write (uart_id, 'C');
-    uart_write (uart_id, ' ');
 
     return SUCCESS;
 }
-

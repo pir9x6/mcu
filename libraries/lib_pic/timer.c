@@ -20,29 +20,41 @@ result_t timer_init(TIMER_ID id,
         return ERROR;
     }
     else if (id == TIMER_ID_2){
+        #if defined (_18F252)
+
         /* Enables the TMR2 to PR2 match interrupt */
         PIE1bits.TMR2IE = 1;
 
-        /* enable global interrupts */
-        INTCONbits.GIE = 1;         
+        /* Set Prescaler */
+        T2CONbits.T2CKPS = prescaler;
 
-        /* enable peripheral interrupts */
-        INTCONbits.PEIE = 1;            
-        
+        /* set postscaler */
+        T2CONbits.TOUTPS = postscaler;  
+
+        #elif defined (_18F26K42)
+
+        /* Enables the TMR2 to PR2 match interrupt */
+        PIE4bits.TMR2IE = 1;
+
+        /* Set Prescaler */
+        T2CONbits.CKPS = prescaler;
+
+        /* set postscaler */
+        T2CONbits.OUTPS = postscaler;
+
+        /* set Fosc/4 as clock source */
+        T2CLKbits.CS = 1;
+
+        #else
+            #error -- processor ID not specified in generic header file
+        #endif
+
         /* Set timer period */
         PR2 = timer;                    
         
-        /* Prescaler */
-        T2CONbits.T2CKPS = prescaler;
-
-        /* postscaler */
-        T2CONbits.TOUTPS = postscaler;  
-
         /* enable timer */
-        T2CONbits.TMR2ON = 1;           
-        
-        // Enable priority levels on interrupts
-        RCONbits.IPEN = 1;  
+        T2CONbits.TMR2ON = 1;        
+
     }
     else if (id == TIMER_ID_3){
         return ERROR;
@@ -54,18 +66,18 @@ result_t timer_init(TIMER_ID id,
     return SUCCESS;
 }
 //=============================================================================
-#if defined (TMR0IF_bit)
-void timer0_init (TMR_PRESCALER scaler)
-{
-    // ========  ToDo  ========
-    PIE1  = 0x02;                   // enable interrupt sur timer 2
-    INTCON = 0xC0;                  // enable global et periph interrupt
-    T0CONbits.T08BIT = 0;           // configure as a 16-bits timer
-    T0CONbits.T0PS = scaler;        // set prescaler
-    T0CONbits.TMR0ON = 1;           // Enable Timer
-    RCONbits.IPEN = 1;              // Interruption prioritaires activées
-}
-#endif
+// #if defined (TMR0IF_bit)
+// void timer0_init (TMR_PRESCALER scaler)
+// {
+//     // ========  ToDo  ========
+//     PIE1  = 0x02;                   // enable interrupt sur timer 2
+//     INTCON = 0xC0;                  // enable global et periph interrupt
+//     T0CONbits.T08BIT = 0;           // configure as a 16-bits timer
+//     T0CONbits.T0PS = scaler;        // set prescaler
+//     T0CONbits.TMR0ON = 1;           // Enable Timer
+//     RCONbits.IPEN = 1;              // Interruption prioritaires activées
+// }
+// #endif
 
 
 

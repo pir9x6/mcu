@@ -11,31 +11,60 @@ typedef enum
     TIMER_ID_2,
     TIMER_ID_3,
     TIMER_ID_4,
-    TIMER_ID_5
+    TIMER_ID_5,
+    TIMER_ID_6
 }TIMER_ID;
 
-#if defined(__18CXX) || defined(__XC8) || defined(_PIC18)
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//-------------------------------- Prescaler ----------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 typedef enum
 {
+#if defined (_18F252)
+
     TMR_PRESCALER_1 = 0,
     TMR_PRESCALER_4,
     TMR_PRESCALER_8,
     TMR_PRESCALER_16
-}TMR_PRESCALER;
+
+#elif defined (_18F26K42)
+
+    TMR_PRESCALER_1 = 0,
+    TMR_PRESCALER_2,
+    TMR_PRESCALER_4,
+    TMR_PRESCALER_8,
+    TMR_PRESCALER_16,
+    TMR_PRESCALER_32,
+    TMR_PRESCALER_64,
+    TMR_PRESCALER_128,
+    TMR_PRESCALER_256,
+    TMR_PRESCALER_512,
+    TMR_PRESCALER_1024,
+    TMR_PRESCALER_2048,
+    TMR_PRESCALER_4096,
+    TMR_PRESCALER_8192,
+    TMR_PRESCALER_16384,
+    TMR_PRESCALER_32768,
+
 #elif defined(__PIC24F__) || defined(__dsPIC33F__)
-typedef enum
-{
+
     TMR_PRESCALER_1 = 0,
     TMR_PRESCALER_8,
     TMR_PRESCALER_64,
     TMR_PRESCALER_256
-}TMR_PRESCALER;
+
 #else
     #error "Unknown processor or compiler."
 #endif
+}TMR_PRESCALER;
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//-------------------------------- Postscaler ---------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 typedef enum
 {
+#if defined (_18F252) || defined (_18F26K42)
+
     TMR_POSTSCALER_1 = 0,
     TMR_POSTSCALER_2,
     TMR_POSTSCALER_3,
@@ -52,6 +81,10 @@ typedef enum
     TMR_POSTSCALER_14,
     TMR_POSTSCALER_15,
     TMR_POSTSCALER_16,
+
+#else
+    #error "Unknown processor or compiler."
+#endif
 }TMR_POSTSCALER;
 
 

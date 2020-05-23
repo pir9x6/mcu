@@ -18,64 +18,60 @@ extern UART_ID UART_LOG;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
+    #if defined (_18F252)
 
-        #if defined (_18F252)
-            SPBRG = GetSystemClock() / (16.0 * baudrate) - 1;
+        SPBRG = GetSystemClock() / (16.0 * baudrate) - 1;
 
-            if (uart_id == UART_ID_1){
-                // high speed mode
-                TXSTAbits.BRGH = 1;
+        if (uart_id == UART_ID_1){
+            // high speed mode
+            TXSTAbits.BRGH = 1;
 
-                // enable transmittion
-                TXSTAbits.TXEN = 1;
+            // enable transmittion
+            TXSTAbits.TXEN = 1;
 
-                // Enable port
-                RCSTAbits.SPEN = 1;
+            // Enable port
+            RCSTAbits.SPEN = 1;
 
-                // continuous reception
-                RCSTAbits.CREN = 1;
-            }
-            else{
-                return ERROR;
-            }
-        #elif defined (_18F26K42)
+            // continuous reception
+            RCSTAbits.CREN = 1;
+        }
+        else{
+            return ERROR;
+        }
+        
+    #elif defined (_18F26K42) || defined (_18F57Q43)
 
-            if (uart_id == UART_ID_1){
-                /* set baudrate */
-                U1BRGH = 0;
-                U1BRGL = GetSystemClock() / (4.0 * baudrate) - 1;
+        if (uart_id == UART_ID_1){
+            /* set baudrate */
+            U1BRGH = 0;
+            U1BRGL = GetSystemClock() / (4.0 * baudrate) - 1;
 
-                /* 8 bits, async mode, high speed mode */
-                U1CON0 = 0;
-                U1CON0bits.BRGS = 1;
+            /* 8 bits, async mode, high speed mode */
+            U1CON0 = 0;
+            U1CON0bits.BRGS = 1;
 
-                /* enable serial port */
-                U1CON1 = 0;
-                U1CON1bits.ON = 1;
+            /* enable serial port */
+            U1CON1 = 0;
+            U1CON1bits.ON = 1;
 
-                /* 1 stop bit, normal polarity */
-                U1CON2 = 0;
+            /* 1 stop bit, normal polarity */
+            U1CON2 = 0;
 
-                U1FIFO = 0;
+            U1FIFO = 0;
 
-                /* Auto-baud not enabled */
-                U1UIR = 0x00; 
-                
-                U1ERRIR = 0x00;
-                U1ERRIE = 0x00;
+            /* Auto-baud not enabled */
+            U1UIR = 0x00; 
+            
+            U1ERRIR = 0x00;
+            U1ERRIE = 0x00;
 
-                /* enable transmittion & reception */
-                U1CON0bits.TXEN = 1;
-                U1CON0bits.RXEN = 1;
-            }
-            else{
-                return ERROR;
-            }
-
-        #else
-            #error -- processor ID not specified in generic header file
-        #endif
+            /* enable transmittion & reception */
+            U1CON0bits.TXEN = 1;
+            U1CON0bits.RXEN = 1;
+        }
+        else{
+            return ERROR;
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -216,34 +212,46 @@ void putch(char txData)
     uart_write(UART_LOG, txData);
 }
 
-
 result_t uart_write (UART_ID uart_id, u8 data)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
+    #if defined (_18F252)
 
-        #if defined (_18F252)
+        if (uart_id == UART_ID_1){
+            /* wait for the buffer to be empty */
+            while(!TXSTAbits.TRMT);         
 
-            if (uart_id == UART_ID_1){
-                /* wait for the buffer to be empty */
-                while(!TXSTAbits.TRMT);         
+            /* send data */
+            TXREG = data;                   
+        }
+        else{
+            return ERROR;
+        }
 
-                /* send data */
-                TXREG = data;                   
-            }
+    #elif defined (_18F26K42)
 
-        #elif defined (_18F26K42)
+        if (uart_id == UART_ID_1){
+            /* wait for the buffer to be empty */
+            while(0 == PIR3bits.U1TXIF);         
 
-            if (uart_id == UART_ID_1){
-                /* wait for the buffer to be empty */
-                while(0 == PIR3bits.U1TXIF);         
+            /* send data */
+            U1TXB = data;    
+        }
+        else{
+            return ERROR;
+        }
 
-                /* send data */
-                U1TXB = data;    
-            }
+    #elif defined (_18F57Q43)
 
-        #else
-            #error -- processor ID not specified in generic header file
-        #endif
+        if (uart_id == UART_ID_1){
+            /* wait for the buffer to be empty */
+            while(0 == PIR4bits.U1TXIF);         
+
+            /* send data */
+            U1TXB = data;    
+        }
+        else{
+            return ERROR;
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -282,47 +290,40 @@ result_t uart_write (UART_ID uart_id, u8 data)
             return ERROR;
         }
         
-        
     #else
+
         #error -- processor ID not specified in generic header file
+
     #endif
+
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //------------------------------ Receive one byte -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_write_string (UART_ID uart_id, ROM char *data)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
+    #if defined (_18F252)
+        while (*data != '\0')   
+        {
+            /* wait for the buffer to be empty */
+            while (!TXSTAbits.TRMT); 
 
-        #if defined (_18F252)
+            /* send data */
+            TXREG = *data++;     
+        }
 
-            while (*data != '\0')   
-            {
-                /* wait for the buffer to be empty */
-                while (!TXSTAbits.TRMT); 
+    #elif defined (_18F26K42) || defined (_18F57Q43)
 
-                /* send data */
-                TXREG = *data++;     
-            }
+        while (*data != '\0')          
+        {
+            /* wait for the buffer to be empty */
+            while (U1FIFObits.TXBF); 
 
-        #elif defined (_18F26K42)
-
-            while (*data != '\0')          
-            {
-                /* wait for the buffer to be empty */
-                while (U1FIFObits.TXBF); 
-
-                /* send data */
-                U1TXB = *data++;              
-            }
-
-        #else
-            #error -- processor ID not specified in generic header file
-        #endif
+            /* send data */
+            U1TXB = *data++;              
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -371,7 +372,9 @@ result_t uart_write_string (UART_ID uart_id, ROM char *data)
         }
         
     #else
+
         #error -- processor ID not specified in generic header file
+        
     #endif
 
     return SUCCESS;

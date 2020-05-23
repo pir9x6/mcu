@@ -14,7 +14,7 @@ result_t ccp_init (CCP_ID ccp_id, TIMER_ID timer_id, u16 freq, u16 duty)
         if (ccp_id == CCP_ID_1){
             CCP1CONbits.CCP1M = 15;              /* PWM mode */
         }
-        else if (pwm_id == CCP_ID_2){
+        else if (ccp_id == CCP_ID_2){
             CCP2CONbits.CCP2M = 15;              /* PWM mode */
         }
         else{

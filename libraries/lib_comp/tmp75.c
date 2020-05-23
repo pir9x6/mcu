@@ -32,7 +32,7 @@ result_t tmp75_read_temp(I2C_BUS bus_id, u8 dev_addr, float *temp)
     u16 tmp = 0;
     u8 data[2];
     
-    if (i2c_read_n_reg(bus_id, dev_addr, TMP75_REG_TEMPERATURE, 2/*size*/, data) != SUCCESS){
+    if (i2c_read_n_reg(bus_id, dev_addr, TMP75_REG_TEMPERATURE, sizeof(data), data) != SUCCESS){
         return ERROR;
     }
 

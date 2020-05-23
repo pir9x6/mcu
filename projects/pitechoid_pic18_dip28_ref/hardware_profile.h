@@ -26,8 +26,18 @@
 #define LCD_D6_PIN              LATBbits.LATB2
 #define LCD_D7_PIN              LATBbits.LATB3
 
+#define LED_ERROR               LATAbits.LATA0
+#define LED_SEC                 LATAbits.LATA1
+
+#define SWITCH_1                PORTAbits.RA2
+#define SWITCH_2                PORTAbits.RA3
+
+#define LED_R                   LATBbits.LATB0
+#define LED_G                   LATBbits.LATB1
+#define LED_B                   LATBbits.LATB2
+
 //--------------------------- Peripherals speed -------------------------------
-#define UART_FREQ               115200  /* actual birate is 125k */
+#define UART_FREQ               115200  /* actual bitrate is 125k for 18F252, 119k for 18F26K42*/
 #define I2C_FREQ                100000
 #define GetSystemClock()        10000000L
 #define GetPeripheralClock()    GetSystemClock()

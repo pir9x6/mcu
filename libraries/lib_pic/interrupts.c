@@ -9,7 +9,7 @@ void enable_global_interrutps(void)
     INTCONbits.PEIE = 1;
     RCONbits.IPEN = 1; 
 
-#elif defined (_18F26K42)
+#elif defined (_18F26K42) || defined (_18F57Q43)
 
     INTCON0bits.GIEH = 1;   
     INTCON0bits.GIEL = 1;   
@@ -31,7 +31,7 @@ void disable_global_interrutps(void)
     INTCONbits.PEIE = 0;
     RCONbits.IPEN = 0; 
 
-#elif defined (_18F26K42)
+#elif defined (_18F26K42) || defined (_18F57Q43)
 
     INTCON0bits.GIEH = 0;   
     INTCON0bits.GIEL = 0;   

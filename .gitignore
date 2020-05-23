@@ -86,3 +86,8 @@ projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-genesis.properties
 *.json
 *.json
 *.xml
+projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-local-default.mk
+projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-genesis.properties
+projects/pitechoid_pic18_dip28_ref/nbproject/Makefile-default.mk
+projects/pitechoid_pic18_dip28_ref/nbproject/configurations.xml
+projects/pitechoid_pic18_dip28_ref/disassembly/listing.disasm

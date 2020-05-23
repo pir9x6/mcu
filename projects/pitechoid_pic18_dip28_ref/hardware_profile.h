@@ -7,7 +7,6 @@
 
 //-------------------------- I2C device addresses -----------------------------
 #define I2C_ADR_DS1307          0x68
-#define I2C_ADR_PCF8574         0x20
 #define I2C_ADR_PCF8574A        0x38
 #define I2C_ADR_TMP75           0x48
 

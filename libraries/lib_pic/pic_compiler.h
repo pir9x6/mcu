@@ -31,21 +31,6 @@
     #define COMPILER_MPLAB_C30
     #include <p33Exxxx.h>
     #include <Libpic30.h>
-#elif defined(__dsPIC30F__) && defined(__C30__) // Microchip C30 compiler
-    #define COMPILER_MPLAB_C30
-    #include <p30fxxxx.h>
-    #include <Libpic30.h>
-#elif defined(__C30__)      // Microchip C30 compiler, but targeting "generic-16bit" processor.
-    #define COMPILER_MPLAB_C30
-    #include <p30sim.h>
-    #if !defined(Nop)
-        #define Nop()    __builtin_nop()
-        #define ClrWdt() {__asm__ volatile ("clrwdt");}
-        #define Sleep()  {__asm__ volatile ("pwrsav #0");}
-        #define Idle()   {__asm__ volatile ("pwrsav #1");}
-    #endif
-// #elif defined (__18CXX)
-//     #include <p18CXXX.h>
 #elif defined (__XC8)
     #include <xc.h>
 #else

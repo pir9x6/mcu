@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIB_COMP_LM63_H
+#define LIB_COMP_LM63_H
 
 #include "i2c.h"
 #include "types.h"
@@ -95,3 +96,5 @@ result_t lm63_read_temp (I2C_BUS i2c_bus_id, u8 dev_addr, u8 *temp);
 result_t lm63_read_speed (I2C_BUS i2c_bus_id, u8 dev_addr, u16 *speed);
 result_t lm63_set_fan_speed (I2C_BUS i2c_bus_id, u8 dev_addr, u8 speed);
 result_t lm63_update_data (I2C_BUS i2c_bus_id, u8 dev_addr, t_lm63_data *data);
+
+#endif

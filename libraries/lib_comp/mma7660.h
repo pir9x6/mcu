@@ -16,8 +16,7 @@
 #define MMA7660_REG_TAP         0x09
 #define MMA7660_REG_TAP_CNT     0x0A
 
-result_t mma7660_init(I2C_BUS i2c_bus_id);
-result_t mma7660_read_axis (I2C_BUS i2c_bus_id, s8 *x, s8 *y, s8 *z);
-result_t mma7660_display_uart (I2C_BUS i2c_bus_id);
+result_t mma7660_init     (I2C_BUS i2c_bus_id);
+result_t mma7660_read_axis(I2C_BUS i2c_bus_id, s8 *x, s8 *y, s8 *z);
 
 #endif

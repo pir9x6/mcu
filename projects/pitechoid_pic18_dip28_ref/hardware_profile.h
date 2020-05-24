@@ -6,9 +6,15 @@
 #define VERSION_MIN             0x00
 
 //-------------------------- I2C device addresses -----------------------------
-#define I2C_ADR_DS1307          0x68
+#define I2C_ADR_BH1750          0x23
 #define I2C_ADR_PCF8574A        0x38
 #define I2C_ADR_TMP75           0x48
+#define I2C_ADR_DS1631          0x49
+#define I2C_ADR_LM63            0x4C
+#define I2C_ADR_MMA7660         0x4C
+#define I2C_ADR_EEPROM          0x50
+#define I2C_ADR_DS1307          0x68
+#define I2C_ADR_BMP180          0x77
 
 //--------------------------------- GPIOs -------------------------------------
 #define LCD_RS_DIR              TRISBbits.TRISB5

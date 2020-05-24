@@ -45,6 +45,20 @@ result_t timer_init(TIMER_ID id,
         /* set Fosc/4 as clock source */
         T2CLKbits.CS = 1;
 
+        #elif defined (_18F57Q43)
+
+        /* Enables the TMR2 to PR2 match interrupt */
+        PIE3bits.TMR2IE = 1;
+
+        /* Set Prescaler */
+        T2CONbits.CKPS = prescaler;
+
+        /* set postscaler */
+        T2CONbits.OUTPS = postscaler;
+
+        /* set Fosc/4 as clock source */
+        T2CLKbits.CS = 1;
+
         #else
             #error -- processor ID not specified in generic header file
         #endif

@@ -27,7 +27,7 @@ typedef enum
     TMR_PRESCALER_8,
     TMR_PRESCALER_16
 
-#elif defined (_18F26K42)
+#elif defined (_18F26K42) || defined (_18F57Q43)
 
     TMR_PRESCALER_1 = 0,
     TMR_PRESCALER_2,
@@ -54,7 +54,9 @@ typedef enum
     TMR_PRESCALER_256
 
 #else
+
     #error "Unknown processor or compiler."
+
 #endif
 }TMR_PRESCALER;
 
@@ -63,7 +65,7 @@ typedef enum
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 typedef enum
 {
-#if defined (_18F252) || defined (_18F26K42)
+#if defined (_18F252) || defined (_18F26K42) || defined (_18F57Q43)
 
     TMR_POSTSCALER_1 = 0,
     TMR_POSTSCALER_2,
@@ -83,7 +85,9 @@ typedef enum
     TMR_POSTSCALER_16,
 
 #else
+
     #error "Unknown processor or compiler."
+    
 #endif
 }TMR_POSTSCALER;
 

@@ -2,7 +2,6 @@
 #define LIB_COMP_DS1621_H
 
 #include "i2c.h"
-#include "ds1621.h"
 #include "types.h"
 
 #define DS1621_REG_TEMPERATURE       0xAA

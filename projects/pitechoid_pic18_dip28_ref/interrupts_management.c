@@ -1,5 +1,9 @@
 #include "interrupts_management.h"
 #include "hardware_profile.h"
+#include "types.h"
+#include "xc.h"
+
+extern bool_t time_has_changed_timer;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------- Timer 1 Interrupt Sub Routine -------------------------
@@ -86,3 +90,45 @@ void uart_isr (void)
     #endif
 }
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//----------------------------- Timer Interrupt -------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#if defined (_18F252)
+void __interrupt(high_priority) timer2_irq()
+#elif defined (_18F26K42) || defined (_18F57Q43)
+void __interrupt(irq(TMR2),high_priority) timer2_irq(void)
+#endif
+{
+    static u16 CntTmrIncSec = 0;
+
+    /* Disable Timer 2 */
+    T2CONbits.TMR2ON = 0;               
+
+    /* clear timer interrupt */
+    #if defined (_18F252)
+    PIR1bits.TMR2IF = 0;
+    #elif defined (_18F26K42)
+    PIR4bits.TMR2IF = 0;
+    #elif defined (_18F57Q43)
+    PIR3bits.TMR2IF = 0;
+    #else
+        #error -- processor ID not specified in generic header file
+    #endif
+
+    // NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10; NOP10;
+
+    /* enable timer 2 */
+    T2CONbits.TMR2ON = 1;
+
+    CntTmrIncSec++;
+
+    if (CntTmrIncSec == 499){
+        LED_SEC = !LED_SEC;
+    }
+    else if (CntTmrIncSec == 999)
+    {
+        time_has_changed_timer = TRUE;
+        LED_SEC = !LED_SEC;
+        CntTmrIncSec = 0;
+    }
+}

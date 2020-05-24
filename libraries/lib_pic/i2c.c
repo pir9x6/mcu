@@ -15,11 +15,11 @@ static result_t i2c_wait_for_idle(I2C_BUS bus_id);
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 {
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
+
+        u32 I2C_BRG = (GetSystemClock() / freq) - 1;
 
         if (bus_id == I2C_BUS_1){
-            u32 I2C_BRG = (GetSystemClock() / freq) - 1;
-
             // set module in i2c master mode
             SSPCON1bits.SSPM = 8;
 
@@ -31,6 +31,39 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 
             // Standard Speed mode (100 kHz)
             SSPSTATbits.SMP = 1;
+        }
+        else{
+            return ERROR;
+        }
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        if (bus_id == I2C_BUS_1){
+
+            /* 7 bits, master mode */
+            I2C1CON0 = 0x04;
+
+            /* ACKDT = ACK, ACKCNT = NACK */
+            I2C1CON1 = 0x80;
+
+            /* clock source selection (MFINTOSC = 500kHz) */
+            I2C1CLK = 3;
+
+            I2C1CON2bits.FME = 1;   /* Fast mode */
+            I2C1CON2bits.SDAHT = 0; /* SDA hold time of 300 ns */
+            I2C1CON2bits.BFRET = 1; /* bus free time of 16 clock cycles */
+
+            // Clear all interrupt flags
+            I2C1PIR = 0; 
+
+            // Clear all error flags
+            I2C1ERR = 0; 
+
+            // Enable I2C module
+            I2C1CON0bits.EN = 1;
+        }
+        else{
+            return ERROR;
         }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
@@ -128,8 +161,6 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
         #error -- processor ID not specified in generic header file
     #endif
 
-    delay_ms(10);
-
     return SUCCESS;
 }
 
@@ -139,14 +170,33 @@ result_t i2c_init(I2C_BUS bus_id, u32 freq, u16 opt)
 result_t i2c_start(I2C_BUS bus_id)
 {
     /* wait for the bus to be free */
-    if (i2c_wait_for_idle(bus_id) != SUCCESS){
-        return ERROR;
-    }
+    // if (i2c_wait_for_idle(bus_id) != SUCCESS){
+    //     return ERROR;
+    // }
 
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
-        SSPCON2bits.SEN = 1;
-        while (SSPCON2bits.SEN);
+        if (bus_id == I2C_BUS_1){
+            SSPCON2bits.SEN = 1;
+            while (SSPCON2bits.SEN);
+        }
+        else{
+            return ERROR;
+        }
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        if (bus_id == I2C_BUS_1){
+            I2C1CON0bits.S = 1;
+            while (I2C1CON0bits.S);
+        }
+        else if (bus_id == I2C_BUS_2){
+            I2C2CON0bits.S = 1;
+            while (I2C2CON0bits.S);
+        }
+        else{
+            return ERROR;
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -188,10 +238,29 @@ result_t i2c_rstart(I2C_BUS bus_id)
         return ERROR;
     }
 
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
-        SSPCON2bits.RSEN = 1;
-        while (SSPCON2bits.RSEN);
+        if (bus_id == I2C_BUS_1){
+            SSPCON2bits.RSEN = 1;
+            while (SSPCON2bits.RSEN);
+        }
+        else{
+            return ERROR;
+        }
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        if (bus_id == I2C_BUS_1){
+            I2C1CON0bits.RSEN = 1;
+            while (I2C1CON0bits.RSEN);
+        }
+        else if (bus_id == I2C_BUS_2){
+            I2C2CON0bits.RSEN = 1;
+            while (I2C2CON0bits.RSEN);
+        }
+        else{
+            return ERROR;
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -229,11 +298,15 @@ result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
         return ERROR;
     }
 
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         SSPCON2bits.ACKDT = Ack;
         SSPCON2bits.ACKEN = 1;
         while(SSPCON2bits.ACKEN);
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        I2C1CON1bits.ACKDT = Ack;   /* usefull ?? */
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -266,10 +339,10 @@ result_t i2c_send_ack(I2C_BUS bus_id, u8 Ack)
 result_t i2c_wait_ack(I2C_BUS bus_id)
 {
     u8 i;
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         /* wait for end of transaction */
-        while (SSPSTATbits.R_W);
+        while (SSPSTATbits.R_W);            /* usefull ? */
 
         /* wait for ack reception */
         for (i = 0; i < 100; i++)
@@ -279,7 +352,18 @@ result_t i2c_wait_ack(I2C_BUS bus_id)
                 return SUCCESS;
             }
         }
-        PIR1bits.SSPIF = 0;
+        PIR1bits.SSPIF = 0;   /* usefull ? */
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        /* wait for ack reception */
+        for (i = 0; i < 100; i++)
+        {
+            if (!I2C1CON1bits.ACKSTAT)
+            {
+                return SUCCESS;
+            }
+        }
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -326,13 +410,15 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
         return ERROR;
     }
 
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         SSPCON2bits.RCEN = 1;
         while (!PIR1bits.SSPIF);
         PIR1bits.SSPIF = 0;
         i2c_send_ack(bus_id, ack);
         *data = SSPBUF;
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -369,16 +455,21 @@ result_t i2c_read(I2C_BUS bus_id, u8 ack, u8 *data)
 result_t i2c_write(I2C_BUS bus_id, u8 data)
 {
     /* wait for the bus to be free */
-    if (i2c_wait_for_idle(bus_id) != SUCCESS){
-        return ERROR;
-    }
+    // if (i2c_wait_for_idle(bus_id) != SUCCESS){
+    //     return ERROR;
+    // }
 
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         /* send data */     
         SSPBUF = data;
         PIR1bits.SSPIF = 0;
 
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        I2C1CNT = 1;
+        I2C1TXB = data;
+    
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
         if (bus_id == I2C_BUS_1){
@@ -417,10 +508,14 @@ result_t i2c_write(I2C_BUS bus_id, u8 data)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_stop(I2C_BUS bus_id)
 {
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         SSPCON2bits.PEN = 1;
         while(SSPCON2bits.PEN);
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        /* nothing to do */
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -455,7 +550,7 @@ result_t i2c_stop(I2C_BUS bus_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 static result_t i2c_wait_for_idle(I2C_BUS bus_id)
 {
-    #if defined (__18CXX) || defined(_PIC18)
+    #if defined (_18F252)
 
         u16 timeout = 0;
 
@@ -469,6 +564,10 @@ static result_t i2c_wait_for_idle(I2C_BUS bus_id)
             if (timeout >= 500)
                 return ERROR;
         }
+
+    #elif defined (_18F26K42) || defined (_18F57Q43)
+
+        while (!I2C1STAT0bits.BFRE);
 
     #elif defined(__PIC24F__) || defined(__dsPIC33F__)
 
@@ -583,12 +682,13 @@ result_t i2c_read_n_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 size, u8 *d
     /* get data */
     for (i = 0; i < size; i++){
         if (i == size - 1){   /* last reading */
+        // if (i < size){   /* last reading */
             if (i2c_read(bus_id, I2C_NACK, data + i) != SUCCESS){
                 return ERROR;
             }
         }
         else{
-            if (i2c_read(bus_id, I2C_NACK, data + i) != SUCCESS){
+            if (i2c_read(bus_id, I2C_ACK, data + i) != SUCCESS){
                 return ERROR;
             }
         }
@@ -602,7 +702,7 @@ result_t i2c_read_n_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 size, u8 *d
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//----------------------- Write in a register of a chip -----------------------
+//--------------------- Write in a register of a device -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t i2c_write_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 data)
 {
@@ -610,7 +710,7 @@ result_t i2c_write_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 data)
     if (i2c_start(bus_id) != SUCCESS)
         return ERROR;
 
-    /* address of the chip + W */
+    /* address of the device + Write */
     if (i2c_write(bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
         return ERROR;
 
@@ -618,9 +718,41 @@ result_t i2c_write_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 data)
     if (i2c_write(bus_id, reg_addr) != SUCCESS)
         return ERROR;
 
-    /* data to write */
+    /* write data*/
     if (i2c_write(bus_id, data) != SUCCESS)
         return ERROR;
+
+    /* send stop condition */
+    if (i2c_stop(bus_id) != SUCCESS)
+        return ERROR;
+
+    return SUCCESS;
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//---------------- Write N values in N registers of a device ------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+result_t i2c_write_n_reg(I2C_BUS bus_id, u8 dev_addr, u8 reg_addr, u8 size, u8 *data)
+{
+    u8 i;
+
+    /* send start condition */
+    if (i2c_start(bus_id) != SUCCESS)
+        return ERROR;
+
+    /* address of the device + Write */
+    if (i2c_write(bus_id, (dev_addr << 1) & 0xFE) != SUCCESS)
+        return ERROR;
+
+    /* address of the register */
+    if (i2c_write(bus_id, reg_addr) != SUCCESS)
+        return ERROR;
+
+    /* write data*/
+    for (i = 0; i < size; i++){
+        if (i2c_write(bus_id, data[i]) != SUCCESS)
+            return ERROR;
+    }
 
     /* send stop condition */
     if (i2c_stop(bus_id) != SUCCESS)

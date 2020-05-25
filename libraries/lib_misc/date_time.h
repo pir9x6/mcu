@@ -18,9 +18,13 @@ void datetime_decrease_seconds(date_time_t *t);
 void datetime_increase_seconds(date_time_t *t);
 void datetime_decrease_minutes(date_time_t *t);
 void datetime_increase_minutes(date_time_t *t);
-void datetime_decrease_hours(date_time_t *t);
-void datetime_increase_hours(date_time_t *t);
-void datetime_decrease_days(date_time_t *t);
-void datetime_increase_days(date_time_t *t);
+void datetime_decrease_hours  (date_time_t *t);
+void datetime_increase_hours  (date_time_t *t);
+void datetime_decrease_days   (date_time_t *t);
+void datetime_increase_days   (date_time_t *t);
+void datetime_decrease_mounths(date_time_t *t);
+void datetime_increase_mounths(date_time_t *t);
+void datetime_decrease_years  (date_time_t *t);
+void datetime_increase_years  (date_time_t *t);
 
 #endif

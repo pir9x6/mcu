@@ -7,13 +7,13 @@ void enable_global_interrutps(void)
 
     INTCONbits.GIE = 1;       
     INTCONbits.PEIE = 1;
-    RCONbits.IPEN = 1; 
+    RCONbits.IPEN = 1;      /* Enable priority levels on interrupts */
 
 #elif defined (_18F26K42) || defined (_18F57Q43)
 
     INTCON0bits.GIEH = 1;   
     INTCON0bits.GIEL = 1;   
-    INTCON0bits.IPEN = 1;   
+    INTCON0bits.IPEN = 1;   /* Enable priority levels on interrupts */
 
 #else
 

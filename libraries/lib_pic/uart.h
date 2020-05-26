@@ -27,6 +27,5 @@ void putch(char txData);
 result_t uart_init        (UART_ID uart_id, u32 baudrate, u16 opt);
 result_t uart_write       (UART_ID uart_id, u8 data);
 result_t uart_write_string(UART_ID uart_id, const char *data);
-result_t uart_write_date  (UART_ID uart_id, date_time_t t);
 
 #endif

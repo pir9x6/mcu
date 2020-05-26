@@ -1,21 +1,6 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Author      :   Pierre BLACHÉ                                       &&&
-//&&&   Date        :   27 May 2014                                         &&&
-//&&&   Version     :   v1.0                                                &&&
-//&&&   File        :   bmp085.c                                            &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Description :   - init Sensor                                       &&&
-//&&&                   - get temperature & pressure                        &&&
-//&&&                   - calculates altitude                               &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Infos       :   i2c frequency : up to 3.4 MHz                       &&&
-//&&&                   i2c slave address : 0x77                            &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Versions    :   v1.0    27/05/14    Creation                        &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 #include "bmp085.h"
-
+#include "i2c.h"
+#include "types.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------------- Initialization of the sensor -------------------------
@@ -26,104 +11,96 @@ result_t bmp085_init (bmp085_t *data)
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //---------------- Get uncompensated temperature from sensor ------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t bmp085_get_uncompensated_temperature (I2C_BUS i2c_bus_id, bmp085_t *data)
+result_t bmp085_get_uncompensated_temperature (I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data)
 {
     u8 tmp1, tmp2;
 
-    i2c_write_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_CONFIG, 0x2E);
+    i2c_write_reg(i2c_bus_id, dev_addr, BMP085_REG_CONFIG, 0x2E);
     delay_ms(5);
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_UT_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_UT_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_UT_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_UT_LSB, &tmp2);
     data->ut = tmp1<<8 | tmp2;
 
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------- Get uncompensated pressure from sensor --------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t bmp085_get_uncompensated_pressure (I2C_BUS i2c_bus_id, bmp085_t *data)
+result_t bmp085_get_uncompensated_pressure (I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data)
 {
     u8 tmp1, tmp2, tmp3;
     u8 cfg=0;
 
     cfg = 0x34 + (data->oss<<6);
-    i2c_write_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_CONFIG, cfg);
+    i2c_write_reg(i2c_bus_id, dev_addr, BMP085_REG_CONFIG, cfg);
     delay_ms(5);
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_UP_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_UP_NSB, &tmp2);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_UP_LSB, &tmp3);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_UP_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_UP_NSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_UP_LSB, &tmp3);
     data->ut = (((s32)tmp1<<16) + (tmp2<<8) + tmp3) >> (8 - data->oss);
 
     return SUCCESS;
 }
 
-
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------- Get Calibration coefficient from sensor -------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t bmp085_get_calibration_coef (I2C_BUS i2c_bus_id, bmp085_t *data)
+result_t bmp085_get_calibration_coef (I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data)
 {
     u8 tmp1, tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC1_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC1_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC1_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC1_LSB, &tmp2);
     data->ac1 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC2_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC2_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC2_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC2_LSB, &tmp2);
     data->ac2 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC3_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC3_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC3_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC3_LSB, &tmp2);
     data->ac3 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC4_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC4_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC4_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC4_LSB, &tmp2);
     data->ac4 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC5_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC5_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC5_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC5_LSB, &tmp2);
     data->ac5 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC6_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_AC6_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC6_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_AC6_LSB, &tmp2);
     data->ac6 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_B1_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_B1_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_B1_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_B1_LSB, &tmp2);
     data->b1 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_B2_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_B2_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_B2_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_B2_LSB, &tmp2);
     data->b2 = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MB_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MB_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MB_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MB_LSB, &tmp2);
     data->mb = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MC_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MC_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MC_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MC_LSB, &tmp2);
     data->mc = tmp1<<8 | tmp2;
 
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MD_MSB, &tmp1);
-    i2c_read_reg(i2c_bus_id, I2C_ADR_BMP085, BMP085_REG_MD_LSB, &tmp2);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MD_MSB, &tmp1);
+    i2c_read_reg(i2c_bus_id, dev_addr, BMP085_REG_MD_LSB, &tmp2);
     data->md = tmp1<<8 | tmp2;
 
     return SUCCESS;
 }
-
-
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //-------------------- Calculate Temperature & Pressure -----------------------

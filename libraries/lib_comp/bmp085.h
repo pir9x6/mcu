@@ -54,8 +54,10 @@ typedef struct
     s32 altitude;
 }bmp085_t;
 
-result_t bmp085_init (bmp085_t *data);
-result_t bmp085_get_calibration_coef (I2C_BUS i2c_bus_id, bmp085_t *data);
-result_t bmp085_get_uncompensated_temperature (I2C_BUS i2c_bus_id, bmp085_t *data);
-result_t bmp085_get_uncompensated_pressure (I2C_BUS i2c_bus_id, bmp085_t *data);
-result_t bmp085_calculate_temp_pressure(bmp085_t *data);
+result_t bmp085_init                         (bmp085_t *data);
+result_t bmp085_calculate_temp_pressure      (bmp085_t *data);
+result_t bmp085_get_calibration_coef         (I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data);
+result_t bmp085_get_uncompensated_temperature(I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data);
+result_t bmp085_get_uncompensated_pressure   (I2C_BUS i2c_bus_id, u8 dev_addr, bmp085_t *data);
+
+#endif

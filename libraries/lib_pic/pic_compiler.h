@@ -60,12 +60,7 @@
     #define strcatpgm2ram(a,b)      strcat(a,b)
 #endif
 
-
-#if defined (__18CXX)
-#define ROM     const rom
-#else
 #define ROM     const
-#endif
 
 // 16-bit specific defines (PIC24F, PIC24H, dsPIC30F, dsPIC33F)
 #if defined(__C30__)

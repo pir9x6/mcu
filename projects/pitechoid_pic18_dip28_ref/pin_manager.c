@@ -22,7 +22,7 @@ void pin_manager_init(void)
 
     //-----------------------------------------------------------------------------
     /* select analog / digital GPIO */
-    ADCON1 = 0x0F;
+    ADCON1 = 0x07;
 
 #endif
 

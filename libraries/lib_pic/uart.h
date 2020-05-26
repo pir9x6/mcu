@@ -1,7 +1,7 @@
-#ifndef UART_H
-#define UART_H
+#ifndef LIB_PIC_UART_H
+#define LIB_PIC_UART_H
 
-#include <xc.h>
+#include <pic_compiler.h>
 
 #include "date_time.h"
 #include "misc.h"
@@ -11,12 +11,6 @@
 
 #define UART_EN_IT_RX   0x0001
 #define UART_EN_IT_DMA  0x0002
-
-#define UART_0x         1<<0
-#define UART_LF         1<<1
-#define UART_SPACE      1<<2
-#define UART_ZEROS_PAD  1<<3
-#define UART_SPACES_PAD 1<<4
 
 typedef enum
 {
@@ -30,23 +24,9 @@ typedef enum
 
 void putch(char txData);
 
-result_t uart_init              (UART_ID uart_id, u32 baudrate, u16 opt);
-result_t uart_write             (UART_ID uart_id, u8 data);
-result_t uart_write_string      (UART_ID uart_id, ROM char *data);
-result_t uart_write_char        (UART_ID uart_id, u8 data);
-result_t uart_write_hexa_u8     (UART_ID uart_id, u8 data, u8 opt);
-result_t uart_write_u8          (UART_ID uart_id, u8 data, u8 opt);
-result_t uart_write_hexa_u16    (UART_ID uart_id, u16 data, u8 opt);
-result_t uart_write_u16         (UART_ID uart_id, u16 data, u8 opt);
-result_t uart_write_hexa_u32    (UART_ID uart_id, u32 data, u8 opt);
-result_t uart_write_u32         (UART_ID uart_id, u32 data, u8 opt);
-result_t uart_write_float       (UART_ID uart_id, f32 data);
-result_t uart_write_double      (UART_ID uart_id, f64 data);
-result_t uart_write_date        (UART_ID uart_id, date_time_t t);
-result_t uart_write_temperature (UART_ID uart_id, float temp);
-
-#if defined(__PIC24F__) || defined(__dsPIC33F__)
-    void __attribute__ ((interrupt, no_auto_psv))_U1RXInterrupt(void) ;
-#endif
+result_t uart_init        (UART_ID uart_id, u32 baudrate, u16 opt);
+result_t uart_write       (UART_ID uart_id, u8 data);
+result_t uart_write_string(UART_ID uart_id, const char *data);
+result_t uart_write_date  (UART_ID uart_id, date_time_t t);
 
 #endif

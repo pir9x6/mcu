@@ -1,20 +1,14 @@
-#if defined(__PIC24F__) || defined(__dsPIC33F__)
-#include "interrupts_management.h"
-#endif
-        
-#include "hardware_profile.h"
-
 #include "bcd.h"
 #include "date_time.h"
 #include "delays.h"
-#include "io.h"
+#include "hardware_profile.h"
 #include "math.h"
 #include "uart.h"
 
-extern UART_ID UART_LOG;
+extern UART_ID UART_ID_LOG;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------------- UART Configuration ------------------------------
+//----------------------------- UART Configuration ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 {
@@ -34,6 +28,12 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 
             // continuous reception
             RCSTAbits.CREN = 1;
+
+            // Enable Recieve Interrupts
+            if ((opt & UART_EN_IT_RX) == UART_EN_IT_RX){
+                PIR1bits.RCIF = 0;
+                PIE1bits.RCIE = 1;
+            }
         }
         else{
             return ERROR;
@@ -184,34 +184,16 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------------- Reception Interrupt -----------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-#if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
-
-
-#elif defined(__PIC24F__) || defined(__dsPIC33F__)
-
-void __attribute__ ((interrupt, no_auto_psv))_U1RXInterrupt(void)
-{
-    if (U1STAbits.URXDA)        // si donnée dans buffer RX alors :
-    {
-        uart_isr();
-    }
-    IFS0bits.U1RXIF=0;          // Reset du flag d'interruption
-}
-
-#else
-    #error -- processor ID not specified in generic header file
-#endif
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//---------------------------- Transmit one byte ------------------------------
+//--------------------- Transmit one byte (used by printf) --------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void putch(char txData)
 {
-    uart_write(UART_LOG, txData);
+    uart_write(UART_ID_LOG, txData);
 }
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//----------------------------- Transmit one byte -----------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_write (UART_ID uart_id, u8 data)
 {
     #if defined (_18F252)
@@ -300,9 +282,9 @@ result_t uart_write (UART_ID uart_id, u8 data)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------------ Receive one byte -----------------------------
+//----------------------------- Transmit a string -----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_string (UART_ID uart_id, ROM char *data)
+result_t uart_write_string (UART_ID uart_id, const char *data)
 {
     #if defined (_18F252)
         while (*data != '\0')   
@@ -381,205 +363,13 @@ result_t uart_write_string (UART_ID uart_id, ROM char *data)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------- Envoi d'un registre 8 bits ------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_char (UART_ID uart_id, u8 data)
-{
-    u8 bcd[5];
-
-    dec_2_bcd (data, bcd);
-    uart_write (uart_id, bcd[2]+0x30);
-    uart_write (uart_id, bcd[1]+0x30);
-    uart_write (uart_id, bcd[0]+0x30);
-    uart_write (uart_id, ' ');
-    return SUCCESS;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------- Envoi d'un registre 8 bits ------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_hexa_u8 (UART_ID uart_id, u8 data, u8 opt)
-{
-    u8 bcd[2];
-
-    hex_2_bcd (data, bcd);
-
-    if ((opt&UART_0x) == UART_0x){
-        uart_write(uart_id, '0');
-        uart_write(uart_id, 'x');
-    }
-
-    if (bcd[1] < 10) uart_write (uart_id, bcd[1]+0x30);
-    else             uart_write (uart_id, bcd[1]+0x37);
-    if (bcd[0] < 10) uart_write (uart_id, bcd[0]+0x30);
-    else             uart_write (uart_id, bcd[0]+0x37);
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-result_t uart_write_u8 (UART_ID uart_id, u8 data, u8 opt)
-{
-    u8 bcd[5];
-
-    dec_2_bcd (data, bcd);
-
-    if (data >=        100) uart_write (uart_id, bcd[2]+0x30);
-    if (data >=         10) uart_write (uart_id, bcd[1]+0x30);
-                            uart_write (uart_id, bcd[0]+0x30);
-    uart_write (uart_id, ' ');
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------ Envoi d'un registre 16 bits ------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_hexa_u16 (UART_ID uart_id, u16 data, u8 opt)
-{
-    u8 bcd[4];
-
-    hex16_2_bcd (data, bcd);
-
-    if ((opt&UART_0x) == UART_0x){
-        uart_write(uart_id, '0');
-        uart_write(uart_id, 'x');
-    }
-
-    if (bcd[3] < 10) uart_write (uart_id, bcd[3]+0x30);
-    else             uart_write (uart_id, bcd[3]+0x37);
-    if (bcd[2] < 10) uart_write (uart_id, bcd[2]+0x30);
-    else             uart_write (uart_id, bcd[2]+0x37);
-    if (bcd[1] < 10) uart_write (uart_id, bcd[1]+0x30);
-    else             uart_write (uart_id, bcd[1]+0x37);
-    if (bcd[0] < 10) uart_write (uart_id, bcd[0]+0x30);
-    else             uart_write (uart_id, bcd[0]+0x37);
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-result_t uart_write_u16 (UART_ID uart_id, u16 data, u8 opt)
-{
-    u8 bcd[5];
-    dec_2_bcd (data, bcd);
-
-    if (data >=      10000) uart_write (uart_id, bcd[4]+0x30);
-    if (data >=       1000) uart_write (uart_id, bcd[3]+0x30);
-    if (data >=        100) uart_write (uart_id, bcd[2]+0x30);
-    if (data >=         10) uart_write (uart_id, bcd[1]+0x30);
-                            uart_write (uart_id, bcd[0]+0x30);
-    uart_write (uart_id, ' ');
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------------ Envoi d'un registre 32 bits ------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_hexa_u32 (UART_ID uart_id, u32 data, u8 opt)
-{
-    u8 bcd[8];
-
-    hex32_2_bcd (data, bcd);
-
-    if ((opt&UART_0x) == UART_0x){
-        uart_write(uart_id, '0');
-        uart_write(uart_id, 'x');
-    }
-
-    if (bcd[7] < 10) uart_write (uart_id, bcd[7]+0x30);
-    else             uart_write (uart_id, bcd[7]+0x37);
-    if (bcd[6] < 10) uart_write (uart_id, bcd[6]+0x30);
-    else             uart_write (uart_id, bcd[6]+0x37);
-    if (bcd[5] < 10) uart_write (uart_id, bcd[5]+0x30);
-    else             uart_write (uart_id, bcd[5]+0x37);
-    if (bcd[4] < 10) uart_write (uart_id, bcd[4]+0x30);
-    else             uart_write (uart_id, bcd[4]+0x37);
-    if (bcd[3] < 10) uart_write (uart_id, bcd[3]+0x30);
-    else             uart_write (uart_id, bcd[3]+0x37);
-    if (bcd[2] < 10) uart_write (uart_id, bcd[2]+0x30);
-    else             uart_write (uart_id, bcd[2]+0x37);
-    if (bcd[1] < 10) uart_write (uart_id, bcd[1]+0x30);
-    else             uart_write (uart_id, bcd[1]+0x37);
-    if (bcd[0] < 10) uart_write (uart_id, bcd[0]+0x30);
-    else             uart_write (uart_id, bcd[0]+0x37);
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else if ((opt&UART_SPACE) == UART_SPACE){
-        uart_write(uart_id, ' ');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-result_t uart_write_u32 (UART_ID uart_id, u32 data, u8 opt)
-{
-    u8 bcd[10];
-    dec_2_bcd32 (data, bcd);
-
-    if (data >= 1000000000) uart_write (uart_id, bcd[9]+0x30);
-    if (data >=  100000000) uart_write (uart_id, bcd[8]+0x30);
-    if (data >=   10000000) uart_write (uart_id, bcd[7]+0x30);
-    if (data >=    1000000) uart_write (uart_id, bcd[6]+0x30);
-    if (data >=     100000) uart_write (uart_id, bcd[5]+0x30);
-    if (data >=      10000) uart_write (uart_id, bcd[4]+0x30);
-    if (data >=       1000) uart_write (uart_id, bcd[3]+0x30);
-    if (data >=        100) uart_write (uart_id, bcd[2]+0x30);
-    if (data >=         10) uart_write (uart_id, bcd[1]+0x30);
-                            uart_write (uart_id, bcd[0]+0x30);
-    uart_write (uart_id, ' ');
-
-    if ((opt&UART_LF) == UART_LF){
-        uart_write(uart_id, '\n');
-    }else{
-        uart_write(uart_id, ' ');
-    }
-
-    return SUCCESS;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- send date and hour ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 result_t uart_write_date (UART_ID uart_id, date_time_t t)
 {
     u8 bcd[5];
 
-    ROM char *day_of_week[] = {
-        "Monday", 
-        "Tuesday", 
-        "Wednesday", 
-        "Thursday", 
-        "Friday", 
-        "Saturday", 
-        "Sunday" 
-    };
+
 
     dec_2_bcd (t.dow, bcd);
     if (bcd[0]>7 || bcd[0]<1) bcd[0] = 1;
@@ -615,33 +405,6 @@ result_t uart_write_date (UART_ID uart_id, date_time_t t)
     uart_write (uart_id, bcd[1]+0x30);
     uart_write (uart_id, bcd[0]+0x30);
     uart_write (uart_id, '\n');
-
-    return SUCCESS;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------- Envoi de la temperature --------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_write_temperature (UART_ID uart_id, float temp)
-{
-    u8 decimal = 10 * (temp - (u8)temp);
-    u8 bcd[5];
-
-    /* integer part */
-    dec_2_bcd ((u8)temp, bcd);
-    uart_write (uart_id, bcd[1] + 0x30);
-    uart_write (uart_id, bcd[0] + 0x30);
-    uart_write (uart_id, ',');
-
-    /* decimal part */
-    dec_2_bcd (decimal, bcd);
-    uart_write(uart_id, bcd[0] + 0x30);
-
-    /* ° */
-    uart_write (uart_id, 0xdf);
-
-    /* Celsius */
-    uart_write (uart_id, 'C');
 
     return SUCCESS;
 }

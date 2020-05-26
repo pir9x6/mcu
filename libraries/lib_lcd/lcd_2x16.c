@@ -468,9 +468,9 @@ void lcd_write_date (date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t for
 {
     u8 bcd[5];
 
-    ROM char *day_of_week[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-    ROM char *month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    const char *day_of_week[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    const char *month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     
     if (format == LCD_DATE_LETTERS){
         lcd_2x16_position (line, pos);

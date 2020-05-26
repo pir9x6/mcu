@@ -1,6 +1,7 @@
 #ifndef LIB_COMP_DS1307_H
 #define LIB_COMP_DS1307_H
 
+#include "date_time.h"
 #include "i2c.h"
 #include "types.h"
 

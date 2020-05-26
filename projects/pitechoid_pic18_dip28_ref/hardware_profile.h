@@ -5,6 +5,10 @@
 #define VERSION_MAJ             0x01
 #define VERSION_MIN             0x00
 
+//-----------------------------------------------------------------------------
+#define DS1307_IS_PRESENT
+#define DS1631_IS_PRESENT
+
 //-------------------------- I2C device addresses -----------------------------
 #define I2C_ADR_BH1750          0x23
 #define I2C_ADR_PCF8574A        0x38
@@ -14,6 +18,7 @@
 #define I2C_ADR_MMA7660         0x4C
 #define I2C_ADR_EEPROM          0x50
 #define I2C_ADR_DS1307          0x68
+#define I2C_ADR_BMP280          0x76
 #define I2C_ADR_BMP180          0x77
 
 //--------------------------------- GPIOs -------------------------------------
@@ -40,6 +45,12 @@
 #define LED_R                   LATBbits.LATB0
 #define LED_G                   LATBbits.LATB1
 #define LED_B                   LATBbits.LATB2
+
+#define LCD_5110_SCE            LATBbits.LATB0
+#define LCD_5110_RST            LATBbits.LATB1
+#define LCD_5110_RS             LATBbits.LATB3
+#define LCD_5110_DATA           LATBbits.LATB4
+#define LCD_5110_CLK            LATBbits.LATB5
 
 //--------------------------- Peripherals speed -------------------------------
 #define UART_FREQ               115200  /* actual bitrate is 125k for 18F252, 119k for 18F26K42*/

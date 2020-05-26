@@ -2,37 +2,34 @@
 #include "i2c_tools.h"
 #include "misc.h"
 #include "types.h"
-#include "uart.h"
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- Scan I2C Bus ----------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
+result_t i2c_detect (I2C_BUS i2c_id)
 {
     u8 i, r, c;
 
-    uart_write_string (uart_id, "\n\r------ Scan of I2C Bus ------\n    ");
+    printf("\n\r------ Scan of I2C Bus ------\n    ");
 
     /* print '0' to 'F' */
     for (i = 0; i < 16; i++)
     {
-        uart_write(uart_id, ' ');
-        uart_write(uart_id, TO_ASCII(i));
-        uart_write_string(uart_id, " ");
+        printf(" ");
+        printf("%u", i);
+        printf(" ");
     }
 
-    uart_write(uart_id, '\n');
+    printf("\n");
     for (r = 0; r < 8; r++)
     {
-        uart_write(uart_id, r + 0x30);
-        uart_write(uart_id, '0');
-        uart_write_string(uart_id, ": ");
+        printf("%01u0:", r + 0x30);
 
         for (c = 0; c < 16; c++)
         {
             if ((r == 0 && (c < 3)) || (r == 7 && (c > 7)))
             {
-                uart_write_string(uart_id, "   ");
+                printf("   ");
             }
             else
             {
@@ -45,19 +42,19 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
                 // wait for ack
                 if (i2c_wait_ack(i2c_id) == SUCCESS){
                     // si reception du Ack du slave
-                    uart_write_hexa_u8(uart_id, r * 16 + c, UART_OPT_NONE);
+                    printf("%02u ", r * 16 + c);
                 }else{
-                    uart_write_string(uart_id, "-- ");
+                    printf("-- ");
                 }
 
                 // send stop condition
                 i2c_stop(i2c_id);
             }
         }
-        uart_write(uart_id, '\n');
+        printf("\n");
     }
 
-    uart_write_string (uart_id, "\n\n");
+    printf ("\n\n");
 
     return SUCCESS;
 }
@@ -66,32 +63,29 @@ result_t i2c_detect (UART_ID uart_id, I2C_BUS i2c_id)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------------- Dump I2C Device ---------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t i2c_dump (UART_ID uart_id, I2C_BUS i2c_id, u8 dev_addr)
+result_t i2c_dump (I2C_BUS i2c_id, u8 dev_addr)
 {
     u8 i, r, c;
     u8 read_data = 0;
 
-    uart_write_string (uart_id, "\n\n------ Dump of I2C Chip ------\n    ");
+    printf("\n\n------ Dump of I2C Chip ------\n    ");
 
     for (i = 0; i < 16; i++)
     {
-        uart_write_string(uart_id, " ");
-        uart_write(uart_id, TO_ASCII(i));
-        uart_write_string(uart_id, " ");
+        printf(" %02u ", i);
     }
 
-    uart_write(uart_id, '\n');
+    printf("\n");
 
     for (r = 0; r < 16; r++)
     {
-        uart_write(uart_id, TO_ASCII(i));
-        uart_write_string(uart_id, "0: ");
+        printf("%02u0: ", r);
         for (c = 0; c < 16; c++)
         {
             i2c_read_reg(i2c_id, dev_addr, r * 16 + c, &read_data);
-            uart_write_hexa_u8(uart_id, read_data, UART_OPT_NONE);
+            printf("%02u", read_data);
         }
-        uart_write(uart_id, '\n');
+        printf("\n");
     }
 
     return SUCCESS;

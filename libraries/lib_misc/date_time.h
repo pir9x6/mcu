@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+extern const char *day_of_week_long[];
+extern const char *day_of_week_short[];
+
 typedef struct
 {
     u8 hrs;

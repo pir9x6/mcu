@@ -1,6 +1,26 @@
 #include "date_time.h"
 #include "types.h"
 
+const char *day_of_week_long[] = {
+    "Monday", 
+    "Tuesday", 
+    "Wednesday", 
+    "Thursday", 
+    "Friday", 
+    "Saturday", 
+    "Sunday" 
+};
+
+const char *day_of_week_short[] = {
+    "Mon", 
+    "Tue", 
+    "Wed", 
+    "Thu", 
+    "Fri", 
+    "Sat", 
+    "Sun" 
+};
+
 void datetime_decrease_seconds(date_time_t *t)
 {
     if (t->sec == 0){

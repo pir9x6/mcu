@@ -21,6 +21,11 @@ const char *day_of_week_short[] = {
     "Sun" 
 };
 
+const char *month_short[] = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+
 void datetime_decrease_seconds(date_time_t *t)
 {
     if (t->sec == 0){

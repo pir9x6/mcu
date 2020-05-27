@@ -5,6 +5,7 @@
 
 extern const char *day_of_week_long[];
 extern const char *day_of_week_short[];
+extern const char *month_short[];
 
 typedef struct
 {

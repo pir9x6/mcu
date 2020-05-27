@@ -467,10 +467,6 @@ void lcd_write_temperature (float temp, LCD_LINE line, u8 pos)
 void lcd_write_date (date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t format)
 {
     u8 bcd[5];
-
-    const char *day_of_week[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-    const char *month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     
     if (format == LCD_DATE_LETTERS){
         lcd_2x16_position (line, pos);
@@ -478,12 +474,12 @@ void lcd_write_date (date_time_t t, LCD_LINE line, u8 pos, lcd_date_format_t for
         if (bcd[0] > 7 || bcd[0] < 1){
             bcd[0] = 1;
         }
-        lcd_2x16_write_string(day_of_week[bcd[0]-1]);
+        lcd_2x16_write_string(day_of_week_short[bcd[0]-1]);
         lcd_2x16_write_string (" ");
         lcd_2x16_write_2bcd (t.day);
         lcd_2x16_write_string (" ");
         dec_2_bcd (t.mth, bcd);
-        lcd_2x16_write_string(month[bcd[0]-1]); 
+        lcd_2x16_write_string(month_short[bcd[0]-1]); 
     }
     else{
         lcd_2x16_position (line, pos);

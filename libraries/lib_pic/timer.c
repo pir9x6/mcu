@@ -87,7 +87,7 @@ result_t timer_init(TIMER_ID id,
     else if (id == TIMER_ID_4){
         #if defined (_18F26K42)
 
-        /* Enables the TMR2 to PR2 match interrupt */
+        /* Enables the TMR4 to PR4 match interrupt */
         TMR4IE = 1;
 
         /* Set Prescaler */

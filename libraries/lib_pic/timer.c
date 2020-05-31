@@ -40,7 +40,7 @@ result_t timer_init(TIMER_ID id,
         #elif defined (_18F26K42)
 
         /* Enables the TMR2 to PR2 match interrupt */
-        PIE4bits.TMR2IE = 1;
+        TMR2IE = 1;
 
         /* Set Prescaler */
         T2CONbits.CKPS = prescaler;
@@ -78,11 +78,64 @@ result_t timer_init(TIMER_ID id,
         T2CONbits.TMR2ON = 1;   
 
         #else
-            #error -- processor ID not specified in generic header file
+            return ERROR;
         #endif
     }
     else if (id == TIMER_ID_3){
         return ERROR;
+    }
+    else if (id == TIMER_ID_4){
+        #if defined (_18F26K42)
+
+        /* Enables the TMR2 to PR2 match interrupt */
+        TMR4IE = 1;
+
+        /* Set Prescaler */
+        T4CONbits.CKPS = prescaler;
+
+        /* set postscaler */
+        T4CONbits.OUTPS = postscaler;
+
+        /* set Fosc/4 as clock source */
+        T4CLKbits.CS = 1;
+
+        /* Set timer period */
+        PR4 = period - 1;                    
+
+        /* enable timer */
+        T4CONbits.TMR4ON = 1;  
+
+        #else
+            return ERROR;
+        #endif
+    }
+    else if (id == TIMER_ID_5){
+        return ERROR;
+    }
+    else if (id == TIMER_ID_6){
+        #if defined (_18F26K42)
+
+        /* Enables the TMR2 to PR2 match interrupt */
+        TMR6IE = 1;
+
+        /* Set Prescaler */
+        T6CONbits.CKPS = prescaler;
+
+        /* set postscaler */
+        T6CONbits.OUTPS = postscaler;
+
+        /* set Fosc/4 as clock source */
+        T6CLKbits.CS = 1;
+
+        /* Set timer period */
+        PR6 = period - 1;                    
+
+        /* enable timer */
+        T6CONbits.TMR6ON = 1;  
+
+        #else
+            return ERROR;
+        #endif
     }
     else{
         return ERROR;

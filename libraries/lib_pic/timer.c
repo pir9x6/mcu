@@ -11,7 +11,7 @@
 result_t timer_init(TIMER_ID id, 
                     TMR_PRESCALER prescaler, 
                     TMR_POSTSCALER postscaler,
-                    u8 timer)
+                    u8 period)
 {
     if (id == TIMER_ID_0){
         return ERROR;
@@ -31,6 +31,12 @@ result_t timer_init(TIMER_ID id,
         /* set postscaler */
         T2CONbits.TOUTPS = postscaler;  
 
+        /* Set timer period */
+        PR2 = period - 1;                    
+        
+        /* enable timer */
+        T2CONbits.TMR2ON = 1;  
+
         #elif defined (_18F26K42)
 
         /* Enables the TMR2 to PR2 match interrupt */
@@ -44,6 +50,12 @@ result_t timer_init(TIMER_ID id,
 
         /* set Fosc/4 as clock source */
         T2CLKbits.CS = 1;
+
+        /* Set timer period */
+        PR2 = period - 1;                    
+
+        /* enable timer */
+        T2CONbits.TMR2ON = 1;  
 
         #elif defined (_18F57Q43)
 
@@ -59,16 +71,15 @@ result_t timer_init(TIMER_ID id,
         /* set Fosc/4 as clock source */
         T2CLKbits.CS = 1;
 
+        /* Set timer period */
+        PR2 = period - 1;                    
+        
+        /* enable timer */
+        T2CONbits.TMR2ON = 1;   
+
         #else
             #error -- processor ID not specified in generic header file
         #endif
-
-        /* Set timer period */
-        PR2 = timer;                    
-        
-        /* enable timer */
-        T2CONbits.TMR2ON = 1;        
-
     }
     else if (id == TIMER_ID_3){
         return ERROR;

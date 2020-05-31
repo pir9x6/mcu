@@ -98,7 +98,7 @@ typedef enum
 result_t timer_init(TIMER_ID id, 
                     TMR_PRESCALER prescaler, 
                     TMR_POSTSCALER postscaler,
-                    u8 timer);
+                    u8 period);
                     
 #if defined (TMR0IF_bit)
     void timer0_init (TMR_PRESCALER prescaler);

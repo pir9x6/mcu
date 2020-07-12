@@ -4,7 +4,7 @@
 #include "types.h"
 #include <xc.h>
 
-void enable_global_interrutps(void);
-void disable_global_interrutps(void);
+void enable_global_interrupts(void);
+void disable_global_interrupts(void);
     
 #endif

@@ -1,19 +1,20 @@
-#include "xc.h"
+#include "pic_compiler.h"
 
-void enable_global_interrutps(void)
+void enable_global_interrupts(void)
 {
     /* enable interrupts (global, peripheral, high priority) */
 #if defined (_18F252)
 
-    INTCONbits.GIE = 1;       
-    INTCONbits.PEIE = 1;
-    RCONbits.IPEN = 1;      /* Enable priority levels on interrupts */
+    INTCONbits.GIE = 1;     /* Enable global interrupts */
+    INTCONbits.PEIE = 1;    /* Enable peripheral interrupts */
+    RCONbits.IPEN = 0;      /* Disable Interrupt Priority Vectors */
 
-#elif defined (_18F26K42) || defined (_18F57Q43)
+#elif defined (_18F26K42) || \
+      defined (_18F57K42) || \
+      defined (_18F57Q43)
 
-    INTCON0bits.GIEH = 1;   
-    INTCON0bits.GIEL = 1;   
-    INTCON0bits.IPEN = 1;   /* Enable priority levels on interrupts */
+    INTCON0bits.GIE = 1;    /* Enable global interrupts */
+    INTCON0bits.IPEN = 0;   /* Disable Interrupt Priority Vectors */
 
 #else
 
@@ -22,7 +23,7 @@ void enable_global_interrutps(void)
 #endif
 }
 
-void disable_global_interrutps(void)
+void disable_global_interrupts(void)
 {
     /* disnable interrupts (global, peripheral, high priority) */
 #if defined (_18F252)
@@ -31,7 +32,9 @@ void disable_global_interrutps(void)
     INTCONbits.PEIE = 0;
     RCONbits.IPEN = 0; 
 
-#elif defined (_18F26K42) || defined (_18F57Q43)
+#elif defined (_18F26K42) || \
+      defined (_18F57K42) || \
+      defined (_18F57Q43)
 
     INTCON0bits.GIEH = 0;   
     INTCON0bits.GIEL = 0;   

@@ -10,7 +10,7 @@ extern UART_ID UART_ID_LOG;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------- UART Configuration ----------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
+result_t uart_init (UART_ID uart_id, u32 baudrate)
 {
     #if defined (_18F252)
 
@@ -30,16 +30,14 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
             RCSTAbits.CREN = 1;
 
             // Enable Recieve Interrupts
-            if ((opt & UART_EN_IT_RX) == UART_EN_IT_RX){
-                PIR1bits.RCIF = 0;
-                PIE1bits.RCIE = 1;
-            }
+            PIR1bits.RCIF = 0;
+            PIE1bits.RCIE = 1;
         }
         else{
             return ERROR;
         }
         
-    #elif defined (_18F26K42) || defined (_18F57Q43)
+    #elif defined (_18F26K42) || defined (_18F57K42) || defined (_18F57Q43)
 
         if (uart_id == UART_ID_1){
             /* set baudrate */
@@ -68,6 +66,9 @@ result_t uart_init (UART_ID uart_id, u32 baudrate, u16 opt)
             /* enable transmittion & reception */
             U1CON0bits.TXEN = 1;
             U1CON0bits.RXEN = 1;
+
+            /* enable receive interrupt */
+            U1RXIE = 1;
         }
         else{
             return ERROR;
@@ -209,7 +210,7 @@ result_t uart_write (UART_ID uart_id, u8 data)
             return ERROR;
         }
 
-    #elif defined (_18F26K42)
+    #elif defined (_18F26K42) || defined (_18F57K42)
 
         if (uart_id == UART_ID_1){
             /* wait for the buffer to be empty */
@@ -296,7 +297,7 @@ result_t uart_write_string (UART_ID uart_id, const char *data)
             TXREG = *data++;     
         }
 
-    #elif defined (_18F26K42) || defined (_18F57Q43)
+    #elif defined (_18F26K42) || defined (_18F57K42) || defined (_18F57Q43)
 
         while (*data != '\0')          
         {

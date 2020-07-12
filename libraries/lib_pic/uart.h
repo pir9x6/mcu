@@ -7,11 +7,6 @@
 #include "misc.h"
 #include "types.h"
 
-#define UART_OPT_NONE   0
-
-#define UART_EN_IT_RX   0x0001
-#define UART_EN_IT_DMA  0x0002
-
 typedef enum
 {
     UART_ID_1 = 0,
@@ -22,9 +17,8 @@ typedef enum
     UART_ID_6 = 5
 }UART_ID;
 
-void putch(char txData);
-
-result_t uart_init        (UART_ID uart_id, u32 baudrate, u16 opt);
+void     putch            (char txData);
+result_t uart_init        (UART_ID uart_id, u32 baudrate);
 result_t uart_write       (UART_ID uart_id, u8 data);
 result_t uart_write_string(UART_ID uart_id, const char *data);
 

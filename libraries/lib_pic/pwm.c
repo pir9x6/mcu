@@ -21,7 +21,7 @@ result_t pwm_init (PWM_ID pwm_id, u16 freq, u16 duty)
             return ERROR;
         }
 
-    #elif defined (_18F26K42) || defined (_18F57Q43)
+    #elif defined (_18F26K42) || defined (_18F57K42) || defined (_18F57Q43)
 
         (void)freq;
         if (pwm_id == PWM_ID_1){
@@ -94,7 +94,7 @@ result_t pwm_set_duty (PWM_ID pwm_id, u16 duty)
             return ERROR;
         }
 
-    #elif defined (_18F26K42) || defined (_18F57Q43)
+    #elif defined (_18F26K42) || defined (_18F57K42) || defined (_18F57Q43)
 
         return ERROR;
 

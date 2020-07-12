@@ -27,7 +27,8 @@ typedef enum
     TMR_PRESCALER_8,
     TMR_PRESCALER_16
 
-#elif defined (_18F26K42) || defined (_18F57Q43)
+#elif defined (_18F26K42) || \
+      defined (_18F57K42)
 
     TMR_PRESCALER_1 = 0,
     TMR_PRESCALER_2,
@@ -46,7 +47,8 @@ typedef enum
     TMR_PRESCALER_16384,
     TMR_PRESCALER_32768,
 
-#elif defined(__PIC24F__) || defined(__dsPIC33F__)
+#elif defined(__PIC24F__) || \
+      defined(__dsPIC33F__)
 
     TMR_PRESCALER_1 = 0,
     TMR_PRESCALER_8,
@@ -55,7 +57,7 @@ typedef enum
 
 #else
 
-    #error "Unknown processor or compiler."
+    #error "TMR_PRESCALER: Unknown processor."
 
 #endif
 }TMR_PRESCALER;
@@ -65,7 +67,7 @@ typedef enum
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 typedef enum
 {
-#if defined (_18F252) || defined (_18F26K42) || defined (_18F57Q43)
+#if defined (_18F252) || defined (_18F26K42) || defined (_18F57K42)
 
     TMR_POSTSCALER_1 = 0,
     TMR_POSTSCALER_2,
@@ -86,7 +88,7 @@ typedef enum
 
 #else
 
-    #error "Unknown processor or compiler."
+    #error "TMR_POSTSCALER: Unknown processor."
     
 #endif
 }TMR_POSTSCALER;
@@ -95,10 +97,12 @@ typedef enum
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //----------------------------------- PIC18 -----------------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t timer_init(TIMER_ID id, 
-                    TMR_PRESCALER prescaler, 
-                    TMR_POSTSCALER postscaler,
-                    u8 period);
+result_t timer_init(
+    TIMER_ID id, 
+    TMR_PRESCALER prescaler, 
+    TMR_POSTSCALER postscaler,
+    u8 period
+);
                     
 #if defined (TMR0IF_bit)
     void timer0_init (TMR_PRESCALER prescaler);

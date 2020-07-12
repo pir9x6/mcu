@@ -8,10 +8,12 @@
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //--------------------- Configuration of 16 bits Timers -----------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-result_t timer_init(TIMER_ID id, 
-                    TMR_PRESCALER prescaler, 
-                    TMR_POSTSCALER postscaler,
-                    u8 period)
+result_t timer_init(
+    TIMER_ID id, 
+    TMR_PRESCALER prescaler, 
+    TMR_POSTSCALER postscaler,
+    u8 period
+)
 {
     if (id == TIMER_ID_0){
         return ERROR;
@@ -37,7 +39,8 @@ result_t timer_init(TIMER_ID id,
         /* enable timer */
         T2CONbits.TMR2ON = 1;  
 
-        #elif defined (_18F26K42)
+        #elif defined (_18F26K42) || \
+              defined (_18F57K42)
 
         /* Enables the TMR2 to PR2 match interrupt */
         TMR2IE = 1;
@@ -57,26 +60,6 @@ result_t timer_init(TIMER_ID id,
         /* enable timer */
         T2CONbits.TMR2ON = 1;  
 
-        #elif defined (_18F57Q43)
-
-        /* Enables the TMR2 to PR2 match interrupt */
-        PIE3bits.TMR2IE = 1;
-
-        /* Set Prescaler */
-        T2CONbits.CKPS = prescaler;
-
-        /* set postscaler */
-        T2CONbits.OUTPS = postscaler;
-
-        /* set Fosc/4 as clock source */
-        T2CLKbits.CS = 1;
-
-        /* Set timer period */
-        PR2 = period - 1;                    
-        
-        /* enable timer */
-        T2CONbits.TMR2ON = 1;   
-
         #else
             return ERROR;
         #endif
@@ -85,7 +68,8 @@ result_t timer_init(TIMER_ID id,
         return ERROR;
     }
     else if (id == TIMER_ID_4){
-        #if defined (_18F26K42)
+        #if defined (_18F26K42) || \
+            defined (_18F57K42)
 
         /* Enables the TMR4 to PR4 match interrupt */
         TMR4IE = 1;
@@ -113,7 +97,8 @@ result_t timer_init(TIMER_ID id,
         return ERROR;
     }
     else if (id == TIMER_ID_6){
-        #if defined (_18F26K42)
+        #if defined (_18F26K42) || \
+            defined (_18F57K42)
 
         /* Enables the TMR2 to PR2 match interrupt */
         TMR6IE = 1;
@@ -163,7 +148,8 @@ result_t timer_init(TIMER_ID id,
 #if defined (_T1IF) || defined (TMR1IF_bit)
 void timer1_init (TMR_PRESCALER prescaler, u16 timer)
 {
-    #if defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || \
+        defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
     T1CONbits.TCKPS = scaler;       // Prescaler (0=1 - 1=8 - 2=64 - 3=256)
@@ -183,7 +169,8 @@ void timer1_init (TMR_PRESCALER prescaler, u16 timer)
 #if defined (_T2IF) || defined (TMR2IF_bit)
 void timer2_init (TMR_PRESCALER scaler, u16 timer)
 {
-    #if defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || \
+        defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
 
@@ -205,10 +192,13 @@ void timer2_init (TMR_PRESCALER scaler, u16 timer)
 #if defined (_T3IF) || defined (TMR3IF_bit)
 void timer3_init (TMR_PRESCALER scaler, u16 timer)
 {
-    #if defined (__18CXX) || defined (__XC8) || defined(_PIC18)
+    #if defined (__18CXX) || \
+        defined (__XC8) || \
+        defined(_PIC18)
     
     
-    #elif defined(__PIC24F__) || defined(__dsPIC33F__)
+    #elif defined(__PIC24F__) || \
+          defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
 
@@ -231,7 +221,8 @@ void timer3_init (TMR_PRESCALER scaler, u16 timer)
 #ifdef _T3IF
 void timer23_init (TMR_PRESCALER scaler, u32 timer)
 {
-    #if defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || \
+        defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
 
@@ -258,7 +249,8 @@ void timer23_init (TMR_PRESCALER scaler, u32 timer)
 #ifdef _T5IF
 void timer45_init (TMR_PRESCALER scaler, u32 timer)
 {
-    #if defined(__PIC24F__) || defined(__dsPIC33F__)
+    #if defined(__PIC24F__) || \
+        defined(__dsPIC33F__)
 
     // Freq Timer = Fosc / Prescaler / TMR
 

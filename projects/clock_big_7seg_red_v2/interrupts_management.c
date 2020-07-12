@@ -1,88 +1,54 @@
 #include "interrupts_management.h"
 #include "hardware_profile.h"
+#include "types.h"
+#include "pic_compiler.h"
+
+extern bool_t time_has_changed_timer;
+
+#define TIMER_COUNTER   10000
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------- Timer 1 Interrupt Sub Routine -------------------------
+//--------------------------- Interrupts management ---------------------------
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void timer1_isr (void)
+// void __interrupt(irq(TMR2),high_priority) interrupt()
+void __interrupt() INTERRUPT_InterruptManager (void)
 {
+    static u16 CntTmrIncSec = 0;
 
-}
+    /*******************************************************/
+    /* UART interrupt                                      */
+    /*******************************************************/
+    if (PIE3bits.U1RXIE == 1 && PIR3bits.U1RXIF == 1){
 
-void timer2_isr (void)
-{
+    }
 
-}
+    /*******************************************************/
+    /* Timer 2 interrupt                                   */
+    /*******************************************************/
+    else if (TMR2IE == 1 && TMR2IF == 1){
 
-void timer3_isr (void)
-{
+        /* clear timer interrupt */
+        TMR2IF = 0;
 
-}
+        CntTmrIncSec++;
 
-void timer4_isr (void)
-{
-
-}
-
-void timer5_isr (void)
-{
-
-}
-
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------- External Interrupt Sub Routine ------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void ext_int0_isr()
-{
-    
-}
-    
-void ext_int1_isr()
-{
-    
-}
-
-void ext_int2_isr()
-{
-    
-}
-
-void ext_int3_isr()
-{
-
-}
-
-void ext_int4_isr()
-{
-
-}
-
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//------------------- Output Compare Interrupt Sub Routine --------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void output_compare0_isr()
-{
-
-}
-
-
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//--------------------- Uart 1 Interrupt Sub Routine --------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-void uart_isr (void)
-{
-    #if defined (__18CXX)
-
-    #elif defined(__PIC24F__) || defined(__dsPIC33F__)
-
-        if (U1STAbits.URXDA)                // si donn�e dans buffer RX alors :
-        {
-
+        if (CntTmrIncSec == ((TIMER_COUNTER / 2) - 1)){
+            LED_SEC = !LED_SEC;
+            LED_ERROR = !LED_ERROR;
         }
+        else if (CntTmrIncSec == (TIMER_COUNTER - 1))
+        {
+            time_has_changed_timer = TRUE;
+            LED_SEC = !LED_SEC;
+            LED_ERROR = !LED_ERROR;
+            CntTmrIncSec = 0;
+        }
+    }
 
-    #endif
+    /*******************************************************/
+    /* I2C Error                                           */
+    /*******************************************************/
+    else if (PIE3bits.I2C1EIE == 1 && PIR3bits.I2C1EIF == 1){
+
+    }
 }
-

@@ -20,6 +20,9 @@
       <itemPath>../../libraries/lib_pic/io.h</itemPath>
       <itemPath>../../libraries/lib_misc/console.h</itemPath>
       <itemPath>../../libraries/lib_misc/i2c_tools.h</itemPath>
+      <itemPath>../../libraries/lib_misc/log.h</itemPath>
+      <itemPath>../../libraries/lib_pic/interrupts.h</itemPath>
+      <itemPath>config.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -41,6 +44,9 @@
       <itemPath>../../libraries/lib_pic/uart.c</itemPath>
       <itemPath>../../libraries/lib_misc/console.c</itemPath>
       <itemPath>../../libraries/lib_misc/i2c_tools.c</itemPath>
+      <itemPath>../../libraries/lib_misc/log.c</itemPath>
+      <itemPath>interrupts_management.c</itemPath>
+      <itemPath>../../libraries/lib_pic/interrupts.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -56,10 +62,10 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC18F26K42</targetDevice>
+        <targetDevice>PIC18F57K42</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
@@ -76,7 +82,7 @@
         </archiverTool>
         <loading>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
-          <parseOnProdLoad>false</parseOnProdLoad>
+          <parseOnProdLoad>true</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
         <subordinates>

@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c ../../libraries/lib_pic/i2c.c ../../libraries/lib_misc/delays.c ../../libraries/lib_misc/misc.c ../../libraries/lib_pic/timer.c ../../libraries/lib_pic/pwm.c ../../libraries/lib_misc/bcd.c ../../libraries/lib_comp/ds1307.c ../../libraries/lib_comp/pcf8574.c ../../libraries/lib_misc/date_time.c ../../libraries/lib_pic/uart.c ../../libraries/lib_misc/console.c ../../libraries/lib_misc/i2c_tools.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c ../../libraries/lib_pic/i2c.c ../../libraries/lib_misc/delays.c ../../libraries/lib_misc/misc.c ../../libraries/lib_pic/timer.c ../../libraries/lib_pic/pwm.c ../../libraries/lib_misc/bcd.c ../../libraries/lib_comp/ds1307.c ../../libraries/lib_comp/pcf8574.c ../../libraries/lib_misc/date_time.c ../../libraries/lib_pic/uart.c ../../libraries/lib_misc/console.c ../../libraries/lib_misc/i2c_tools.c ../../libraries/lib_misc/log.c interrupts_management.c ../../libraries/lib_pic/interrupts.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/_ext/113394246/i2c.p1 ${OBJECTDIR}/_ext/779656892/delays.p1 ${OBJECTDIR}/_ext/779656892/misc.p1 ${OBJECTDIR}/_ext/113394246/timer.p1 ${OBJECTDIR}/_ext/113394246/pwm.p1 ${OBJECTDIR}/_ext/779656892/bcd.p1 ${OBJECTDIR}/_ext/779364575/ds1307.p1 ${OBJECTDIR}/_ext/779364575/pcf8574.p1 ${OBJECTDIR}/_ext/779656892/date_time.p1 ${OBJECTDIR}/_ext/113394246/uart.p1 ${OBJECTDIR}/_ext/779656892/console.p1 ${OBJECTDIR}/_ext/779656892/i2c_tools.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/_ext/113394246/i2c.p1.d ${OBJECTDIR}/_ext/779656892/delays.p1.d ${OBJECTDIR}/_ext/779656892/misc.p1.d ${OBJECTDIR}/_ext/113394246/timer.p1.d ${OBJECTDIR}/_ext/113394246/pwm.p1.d ${OBJECTDIR}/_ext/779656892/bcd.p1.d ${OBJECTDIR}/_ext/779364575/ds1307.p1.d ${OBJECTDIR}/_ext/779364575/pcf8574.p1.d ${OBJECTDIR}/_ext/779656892/date_time.p1.d ${OBJECTDIR}/_ext/113394246/uart.p1.d ${OBJECTDIR}/_ext/779656892/console.p1.d ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/_ext/113394246/i2c.p1 ${OBJECTDIR}/_ext/779656892/delays.p1 ${OBJECTDIR}/_ext/779656892/misc.p1 ${OBJECTDIR}/_ext/113394246/timer.p1 ${OBJECTDIR}/_ext/113394246/pwm.p1 ${OBJECTDIR}/_ext/779656892/bcd.p1 ${OBJECTDIR}/_ext/779364575/ds1307.p1 ${OBJECTDIR}/_ext/779364575/pcf8574.p1 ${OBJECTDIR}/_ext/779656892/date_time.p1 ${OBJECTDIR}/_ext/113394246/uart.p1 ${OBJECTDIR}/_ext/779656892/console.p1 ${OBJECTDIR}/_ext/779656892/i2c_tools.p1 ${OBJECTDIR}/_ext/779656892/log.p1 ${OBJECTDIR}/interrupts_management.p1 ${OBJECTDIR}/_ext/113394246/interrupts.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/_ext/113394246/i2c.p1.d ${OBJECTDIR}/_ext/779656892/delays.p1.d ${OBJECTDIR}/_ext/779656892/misc.p1.d ${OBJECTDIR}/_ext/113394246/timer.p1.d ${OBJECTDIR}/_ext/113394246/pwm.p1.d ${OBJECTDIR}/_ext/779656892/bcd.p1.d ${OBJECTDIR}/_ext/779364575/ds1307.p1.d ${OBJECTDIR}/_ext/779364575/pcf8574.p1.d ${OBJECTDIR}/_ext/779656892/date_time.p1.d ${OBJECTDIR}/_ext/113394246/uart.p1.d ${OBJECTDIR}/_ext/779656892/console.p1.d ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d ${OBJECTDIR}/_ext/779656892/log.p1.d ${OBJECTDIR}/interrupts_management.p1.d ${OBJECTDIR}/_ext/113394246/interrupts.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/_ext/113394246/i2c.p1 ${OBJECTDIR}/_ext/779656892/delays.p1 ${OBJECTDIR}/_ext/779656892/misc.p1 ${OBJECTDIR}/_ext/113394246/timer.p1 ${OBJECTDIR}/_ext/113394246/pwm.p1 ${OBJECTDIR}/_ext/779656892/bcd.p1 ${OBJECTDIR}/_ext/779364575/ds1307.p1 ${OBJECTDIR}/_ext/779364575/pcf8574.p1 ${OBJECTDIR}/_ext/779656892/date_time.p1 ${OBJECTDIR}/_ext/113394246/uart.p1 ${OBJECTDIR}/_ext/779656892/console.p1 ${OBJECTDIR}/_ext/779656892/i2c_tools.p1
+OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/_ext/113394246/i2c.p1 ${OBJECTDIR}/_ext/779656892/delays.p1 ${OBJECTDIR}/_ext/779656892/misc.p1 ${OBJECTDIR}/_ext/113394246/timer.p1 ${OBJECTDIR}/_ext/113394246/pwm.p1 ${OBJECTDIR}/_ext/779656892/bcd.p1 ${OBJECTDIR}/_ext/779364575/ds1307.p1 ${OBJECTDIR}/_ext/779364575/pcf8574.p1 ${OBJECTDIR}/_ext/779656892/date_time.p1 ${OBJECTDIR}/_ext/113394246/uart.p1 ${OBJECTDIR}/_ext/779656892/console.p1 ${OBJECTDIR}/_ext/779656892/i2c_tools.p1 ${OBJECTDIR}/_ext/779656892/log.p1 ${OBJECTDIR}/interrupts_management.p1 ${OBJECTDIR}/_ext/113394246/interrupts.p1
 
 # Source Files
-SOURCEFILES=main.c ../../libraries/lib_pic/i2c.c ../../libraries/lib_misc/delays.c ../../libraries/lib_misc/misc.c ../../libraries/lib_pic/timer.c ../../libraries/lib_pic/pwm.c ../../libraries/lib_misc/bcd.c ../../libraries/lib_comp/ds1307.c ../../libraries/lib_comp/pcf8574.c ../../libraries/lib_misc/date_time.c ../../libraries/lib_pic/uart.c ../../libraries/lib_misc/console.c ../../libraries/lib_misc/i2c_tools.c
+SOURCEFILES=main.c ../../libraries/lib_pic/i2c.c ../../libraries/lib_misc/delays.c ../../libraries/lib_misc/misc.c ../../libraries/lib_pic/timer.c ../../libraries/lib_pic/pwm.c ../../libraries/lib_misc/bcd.c ../../libraries/lib_comp/ds1307.c ../../libraries/lib_comp/pcf8574.c ../../libraries/lib_misc/date_time.c ../../libraries/lib_pic/uart.c ../../libraries/lib_misc/console.c ../../libraries/lib_misc/i2c_tools.c ../../libraries/lib_misc/log.c interrupts_management.c ../../libraries/lib_pic/interrupts.c
 
 
 
@@ -90,7 +90,7 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/clock_big_7seg_red_v2.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 
-MP_PROCESSOR_OPTION=18F26K42
+MP_PROCESSOR_OPTION=18F57K42
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
@@ -198,6 +198,30 @@ ${OBJECTDIR}/_ext/779656892/i2c_tools.p1: ../../libraries/lib_misc/i2c_tools.c  
 	@-${MV} ${OBJECTDIR}/_ext/779656892/i2c_tools.d ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/_ext/779656892/log.p1: ../../libraries/lib_misc/log.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/779656892" 
+	@${RM} ${OBJECTDIR}/_ext/779656892/log.p1.d 
+	@${RM} ${OBJECTDIR}/_ext/779656892/log.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/_ext/779656892/log.p1 ../../libraries/lib_misc/log.c 
+	@-${MV} ${OBJECTDIR}/_ext/779656892/log.d ${OBJECTDIR}/_ext/779656892/log.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/_ext/779656892/log.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/interrupts_management.p1: interrupts_management.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/interrupts_management.p1.d 
+	@${RM} ${OBJECTDIR}/interrupts_management.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/interrupts_management.p1 interrupts_management.c 
+	@-${MV} ${OBJECTDIR}/interrupts_management.d ${OBJECTDIR}/interrupts_management.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/interrupts_management.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/_ext/113394246/interrupts.p1: ../../libraries/lib_pic/interrupts.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/113394246" 
+	@${RM} ${OBJECTDIR}/_ext/113394246/interrupts.p1.d 
+	@${RM} ${OBJECTDIR}/_ext/113394246/interrupts.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/_ext/113394246/interrupts.p1 ../../libraries/lib_pic/interrupts.c 
+	@-${MV} ${OBJECTDIR}/_ext/113394246/interrupts.d ${OBJECTDIR}/_ext/113394246/interrupts.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/_ext/113394246/interrupts.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -302,6 +326,30 @@ ${OBJECTDIR}/_ext/779656892/i2c_tools.p1: ../../libraries/lib_misc/i2c_tools.c  
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/_ext/779656892/i2c_tools.p1 ../../libraries/lib_misc/i2c_tools.c 
 	@-${MV} ${OBJECTDIR}/_ext/779656892/i2c_tools.d ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/_ext/779656892/i2c_tools.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/_ext/779656892/log.p1: ../../libraries/lib_misc/log.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/779656892" 
+	@${RM} ${OBJECTDIR}/_ext/779656892/log.p1.d 
+	@${RM} ${OBJECTDIR}/_ext/779656892/log.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/_ext/779656892/log.p1 ../../libraries/lib_misc/log.c 
+	@-${MV} ${OBJECTDIR}/_ext/779656892/log.d ${OBJECTDIR}/_ext/779656892/log.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/_ext/779656892/log.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/interrupts_management.p1: interrupts_management.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/interrupts_management.p1.d 
+	@${RM} ${OBJECTDIR}/interrupts_management.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/interrupts_management.p1 interrupts_management.c 
+	@-${MV} ${OBJECTDIR}/interrupts_management.d ${OBJECTDIR}/interrupts_management.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/interrupts_management.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/_ext/113394246/interrupts.p1: ../../libraries/lib_pic/interrupts.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/113394246" 
+	@${RM} ${OBJECTDIR}/_ext/113394246/interrupts.p1.d 
+	@${RM} ${OBJECTDIR}/_ext/113394246/interrupts.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c    -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -I"../../libraries/lib_pic" -I"../../libraries/lib_comp" -I"../../libraries/lib_misc" -I"." -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx032 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/_ext/113394246/interrupts.p1 ../../libraries/lib_pic/interrupts.c 
+	@-${MV} ${OBJECTDIR}/_ext/113394246/interrupts.d ${OBJECTDIR}/_ext/113394246/interrupts.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/_ext/113394246/interrupts.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

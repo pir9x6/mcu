@@ -2,6 +2,19 @@
 #define _IO_H_
 
 #include <xc.h>
+#include "types.h"
+
+typedef enum{
+    GPIO_OUTPUT = 0,
+    GPIO_INPUT = 1
+}gpio_direction_t;
+
+typedef struct{
+    char *name;
+    unsigned port;
+    u8 num;
+    gpio_direction_t direction;
+}gpio_definition_t;
 
 #define IO_IN       1
 #define IO_OUT      0

@@ -1,23 +1,24 @@
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Project     :   Clock with Big Red 7seg Display v2                  &&&
-//&&&   Author      :   Pierre Blaché                                       &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   IDE         :   MPLABX v5.35                                        &&&
-//&&&   Compiler    :   XC8 v2.10                                           &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//&&&   Version     :                                                       &&&
-//&&&   - 1.0    30 Apr 2020    Creation                                    &&&
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//&&&   Project     :   Clock with Big Red 7seg Display v2                   &&&
+//&&&   Author      :   Pierre Blaché                                        &&&
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//&&&   IDE         :   MPLABX v5.35                                         &&&
+//&&&   Compiler    :   XC8 v2.10                                            &&&
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//&&&   Version     :                                                        &&&
+//&&&   - 1.0    30 Apr 2020    Creation                                     &&&
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-//------------------------- Remove useless warnings ---------------------------
+//------------------------- Remove useless warnings ----------------------------
 #pragma warning disable 520     // function is never called
 #pragma warning disable 759     // expression generates no code
 #pragma warning disable 1498    // pointer in expression may have no targets
 #pragma warning disable 1510    // non-reentrant function
 #pragma warning disable 2020    // IRQ N (...) in vector table @ 0xXX is unassigned
 
-//-------------------------------- includes -----------------------------------
-#include "config.h"             /* should be at the first place */
+//-------------------------------- includes ------------------------------------
+#include "config.h"             /* must be at the first place */
+
 #include "xc.h"
 #include "hardware_profile.h"
 
@@ -29,17 +30,18 @@
 #include "interrupts.h"
 #include "io.h"
 #include "log.h"
+#include "pin_manager.h"
 #include "timer.h"
 #include "types.h"
 #include "uart.h"
 
-//-------------------------------- Defines ------------------------------------
+//-------------------------------- Defines -------------------------------------
 #define SEG_OFF         10
-#define DEBOUNCE_DELAY  100
+#define DEBOUNCE_DELAY 120
 
 UART_ID UART_ID_LOG = UART_ID_1;
 
-//---------------------------- Global variables -------------------------------
+//---------------------------- Global variables --------------------------------
 bool_t time_has_changed_user = FALSE;
 bool_t time_has_changed_timer = FALSE;
 
@@ -56,8 +58,9 @@ typedef union{
 }segments_t;
 
 segments_t min, min10, hrs, hrs10;
+bool_t sec_led;
 
-//--------------------------------- Constants ---------------------------------
+//--------------------------------- Constants ----------------------------------
 const u8 encode_to_segment[] = {
     0xBF,   /* 0 */ 
     0x86,   /* 1 */
@@ -197,9 +200,9 @@ const u8 encode_to_segment[] = {
     SEG_HRS10_A = 0; Nop();\
 }
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//-------------------------------- Main Program -------------------------------
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//-------------------------------- Main Program --------------------------------
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 void main (void)
 {
     u8 cnt = 0;
@@ -210,98 +213,73 @@ void main (void)
     u8 bcd_min10 = 0;
     u8 bcd_hrs = 0;
     u8 bcd_hrs10 = 0;
+    sec_led = FALSE;
     
     date_time_t t = {
-        t.hrs = 23,
-        t.min = 36,
-        t.sec =  0,
+        t.hrs = 13,
+        t.min = 53,
+        t.sec = 40,
         t.dow =  7,
-        t.day = 12,
-        t.mth = 07,
+        t.day = 22,
+        t.mth = 11,
         t.yrs = 20
     };
 
+    /* power consumption is too high when set to 100% */
     u8 hour_to_brightness[] = {
-          1, /* 00 */     1, /* 01 */     1, /* 02 */     1, /* 03 */
-          1, /* 04 */     1, /* 05 */     1, /* 06 */     1, /* 07 */
-         10, /* 08 */    15, /* 09 */    30, /* 10 */   100, /* 11 */
-        100, /* 12 */   100, /* 13 */   100, /* 14 */   100, /* 15 */
-        100, /* 16 */   100, /* 17 */    90, /* 18 */    70, /* 19 */
-         50, /* 20 */    30, /* 21 */    20, /* 22 */     4, /* 23 */
+          1, /* 00 */     0, /* 01 */     0, /* 02 */     0, /* 03 */
+          0, /* 04 */     0, /* 05 */     0, /* 06 */     1, /* 07 */
+          1, /* 08 */    10, /* 09 */    20, /* 10 */    50, /* 11 */
+         50, /* 12 */    50, /* 13 */    50, /* 14 */    50, /* 15 */
+         50, /* 16 */    50, /* 17 */    50, /* 18 */    30, /* 19 */
+         20, /* 20 */     8, /* 21 */     3, /* 22 */     1, /* 23 */
     };
 
-//--------------------------- Initialisation du PIC ---------------------------
-    /* select analog (1) or digital (0) GPIO */
-    ANSELA = 0;
-    ANSELB = 0;
-    ANSELC = 0;
-    ANSELD = 0;
-    ANSELE = 0;
-    ANSELF = 0;
+//--------------------------- Initialisation du PIC ----------------------------
+    pin_manager_init();
 
-    /* config GPIO as an input (1) or an output (0) */
-    set_port_A_input(0);
-    set_port_B_input(BIT_5 | BIT_4);
-    set_port_C_input(BIT_0);
-    set_port_D_input(BIT_3 | BIT_0);
-    set_port_E_input(0);
-    set_port_F_input(0);
-
-    /* Configure RC3, RC4 as Open Drain */
-    ODCONA = 0;
-    ODCONB = 0;
-    ODCONC = 0;
-    ODCONCbits.ODCC3 = 1;   /* I2C1 SCL */
-    ODCONCbits.ODCC4 = 1;   /* I2C1 SDA */
-    ODCOND = 0;
-    ODCONE = 0;
-    ODCONF = 0;
-
-    /* default state */
-    LATA = 0x00;
-    LATB = 0x00;
-    LATC = 0x00;
-    LATD = 0x00;
-    LATE = 0x00;
-    LATF = 0x00;
-
-//----------------------------------- UART ------------------------------------
+//----------------------------------- UART -------------------------------------
     // if (uart_init(UART_ID_1, UART_FREQ) != SUCCESS){
-    //     LED_ERROR = 1;
+        // PRINT_ERROR("UART initialization failed");
     // }
     
-//--------------------- i2c, bus & devices initialization ---------------------
+//--------------------- i2c, bus & devices initialization ----------------------
     // if (i2c_init(I2C_BUS_1, I2C_FREQ, I2C_MASTER) != SUCCESS){
     //     PRINT_ERROR("I2C initialization failed");
-    //     LED_ERROR = 1;
     // }
     // i2c_detect(UART_ID_1, I2C_BUS_1);
     
-//------------------------------- Init Timer 2 --------------------------------
+//------------------------------- Init Timer 2 ---------------------------------
     /*                            PLL (x4) * Fosc(10M)                      */
     /* Period = ------------------------------------------------------ = 1s */
     /*          Prescaler(1) * Postscaler(10) * Timer(100) * Cnt(4000)      */
-    if (timer_init(TIMER_ID_2, TMR_PRESCALER_1, TMR_POSTSCALER_10, 100/*timer*/) != SUCCESS){
+    if (timer_init(
+            TIMER_ID_2, 
+            TMR_PRESCALER_1, 
+            TMR_POSTSCALER_10, 
+            100/*timer*/
+        )
+        != SUCCESS
+    ){
         PRINT_ERROR("Timer initialization failed");
-        LED_ERROR = 1;
     }
 
-//------------------------------------ RTC ------------------------------------
+//------------------------------------ RTC -------------------------------------
     // ds1307_init(I2C_BUS_1, I2C_ADR_DS1307);
     // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
     // ds1307_get_time(I2C_BUS_1, I2C_ADR_DS1307, &t);
 
-//----------------------------- Global Interrupts -----------------------------
+//----------------------------- Global Interrupts ------------------------------
     enable_global_interrupts();
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
     while (1)
     {
         /* set brightness */
         brightness = hour_to_brightness[t.hrs];
 
         /* update displayed time */
-        for (pwm = 0; pwm < 100; pwm++){
+        for (pwm = 0; pwm < 250; pwm++){
             if (pwm < brightness){
                 SET_MIN;
                 SET_MIN10;
@@ -312,43 +290,46 @@ void main (void)
                 else{
                     RESET_HRS10;
                 }
+                if (sec_led){
+                    PIN_LED_SEC = 1;
+                }
             }else{
                 RESET_MIN;
                 RESET_MIN10;
                 RESET_HRS;
                 RESET_HRS10;
+                PIN_LED_SEC = 0;
             }
         }
 
-    /* update date & time */
-    if (time_has_changed_user || time_has_changed_timer){
+        /* update date & time only if necessary as it takes time */
+        if (time_has_changed_user || time_has_changed_timer){
 
-        if (time_has_changed_user){
-            time_has_changed_user = FALSE;
-        }
+            if (time_has_changed_user){
+                time_has_changed_user = FALSE;
+            }
 
-        if (time_has_changed_timer){
-            time_has_changed_timer = FALSE;
+            if (time_has_changed_timer){
+                time_has_changed_timer = FALSE;
+            }
+
             datetime_increase_seconds(&t);
+
+            bcd_min   = bin_2_bcd(t.min) & 0x0F;
+            bcd_min10 = bin_2_bcd(t.min) >> 4;
+            bcd_hrs   = bin_2_bcd(t.hrs) & 0x0F;
+            bcd_hrs10 = bin_2_bcd(t.hrs) >> 4;
+
+            /* pre-compute time in order to save time in the pwm loop */
+            UPDATE_MIN  (bcd_min);
+            UPDATE_MIN10(bcd_min10);
+            UPDATE_HRS  (bcd_hrs);
+            UPDATE_HRS10(bcd_hrs10);
+
+            /* ToDo: update RTC */
+            // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
         }
 
-        bcd_min   = bin_2_bcd(t.min) & 0x0F;
-        bcd_min10 = bin_2_bcd(t.min) >> 4;
-        bcd_hrs   = bin_2_bcd(t.hrs) & 0x0F;
-        bcd_hrs10 = bin_2_bcd(t.hrs) >> 4;
-
-        UPDATE_MIN  (bcd_min);
-        UPDATE_MIN10(bcd_min10);
-        UPDATE_HRS  (bcd_hrs);
-        UPDATE_HRS10(bcd_hrs10);
-
-        /* update RTC */
-        // ds1307_set_time(I2C_BUS_1, I2C_ADR_DS1307, t);
-        
-
-    }
-
-/* peut on mettre des interruptions sur les entrées ????? */
         if (!BTN_MIN_P)
         {
             delay_ms (DEBOUNCE_DELAY);
@@ -359,15 +340,15 @@ void main (void)
             }
         }
 
-        // if (!BTN_MIN_M)
-        // {
-        //     delay_ms (DEBOUNCE_DELAY);
-        //     if (!BTN_MIN_M)
-        //     {
-        //         datetime_decrease_minutes(&t);
-        //         time_has_changed_user = TRUE;
-        //     }
-        // }
+        if (!BTN_MIN_M)
+        {
+            delay_ms (DEBOUNCE_DELAY);
+            if (!BTN_MIN_M)
+            {
+                datetime_decrease_minutes(&t);
+                time_has_changed_user = TRUE;
+            }
+        }
 
         if (!BTN_HRS_P)
         {

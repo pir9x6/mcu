@@ -1,22 +1,21 @@
 #ifndef _HARDWARE_PROFILE_H_
 #define _HARDWARE_PROFILE_H_
 
-//-------------------------------- Revision -----------------------------------
+//-------------------------------- Revision ------------------------------------
 #define VERSION_MAJ             0x01
 #define VERSION_MIN             0x01
 
-//-------------------------- I2C device addresses -----------------------------
+//-------------------------- I2C device addresses ------------------------------
 #define I2C_ADR_TMP75           0x48
 #define I2C_ADR_PCF8563         0x51
 
-//--------------------------------- GPIOs -------------------------------------
-#define LED_ERROR               LATEbits.LATE2
-#define LED_SEC                 LATFbits.LATF7
+//--------------------------------- GPIOs --------------------------------------
+#define PIN_LED_SEC             LATFbits.LATF7
 #define LED_DOT                 LATDbits.LATD2
 
 #define BTN_HRS_M               PORTBbits.RB4       // Decrease Hours button
 #define BTN_HRS_P               PORTBbits.RB5       // Increase Hours button
-#define BTN_MIN_M               PORTDbits.RD2       // Decrease Minutes button
+#define BTN_MIN_M               PORTEbits.RE2       // Decrease Minutes button
 #define BTN_MIN_P               PORTDbits.RD3       // Increase Minutes button
 
 #define SEG_MIN_A               LATCbits.LATC5
@@ -53,8 +52,8 @@
 
 #define RTC_1HZ                 PORTDbits.RD0
 
-//--------------------------- Peripherals speed -------------------------------
-#define UART_FREQ               115200          /* actual birate is 125k */
+//--------------------------- Peripherals speed --------------------------------
+#define UART_FREQ               115200          /* actual bitrate is 125k */
 #define I2C_FREQ                100000
 #define GetSystemClock()        4 * 10000000L   /* 10MHz crystal + 4x PLL */
 #define GetPeripheralClock()    GetSystemClock()

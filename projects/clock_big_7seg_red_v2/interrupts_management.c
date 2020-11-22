@@ -4,6 +4,7 @@
 #include "pic_compiler.h"
 
 extern bool_t time_has_changed_timer;
+extern bool_t sec_led;
 
 #define TIMER_COUNTER   10000
 
@@ -33,14 +34,12 @@ void __interrupt() INTERRUPT_InterruptManager (void)
         CntTmrIncSec++;
 
         if (CntTmrIncSec == ((TIMER_COUNTER / 2) - 1)){
-            LED_SEC = !LED_SEC;
-            LED_ERROR = !LED_ERROR;
+            sec_led = !sec_led;
         }
         else if (CntTmrIncSec == (TIMER_COUNTER - 1))
         {
             time_has_changed_timer = TRUE;
-            LED_SEC = !LED_SEC;
-            LED_ERROR = !LED_ERROR;
+            sec_led = !sec_led;
             CntTmrIncSec = 0;
         }
     }
